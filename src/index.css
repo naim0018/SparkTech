@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1 {
+  @apply text-[3.815rem] font-medium text-white;
+}
+h2 {
+  @apply text-[2.488rem] font-medium text-white;
+}
+
+h3 {
+  @apply text-[2.074rem] font-semibold text-white;
+}
+h4 {
+  @apply text-[1.953rem] font-semibold text-white;
+}
+h5 {
+  @apply text-[1.44rem] font-semibold text-white;
+}
+h6 {
+  @apply text-[1.2rem] font-semibold text-white;
+}
+
+p {
+  @apply text-base text-white;
+}
