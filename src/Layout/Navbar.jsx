@@ -78,7 +78,7 @@ const Navbar = () => {
             <p className="text-xs font-normal text-[#CAD0D9]">
               Only this month
             </p>
-            <p className="text-base font-medium">Super Sale 20%</p>
+            <p className="text-base font-medium text-white">Super Sale 20%</p>
           </div>
         </div>
 

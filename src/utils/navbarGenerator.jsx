@@ -8,8 +8,7 @@ export const navbarGenerator = (items)=>{
                 name:item.name,
                 path:item.path,
             })
-        }
-        if(item?.name && item?.path){
+        }else if(item?.name && item?.path){
             acc.push({
                 key:item?.name,
                 path:item?.path
