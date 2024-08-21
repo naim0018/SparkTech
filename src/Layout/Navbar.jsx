@@ -30,7 +30,7 @@ const Navbar = () => {
       <div className="w-[1296px] mx-auto flex flex-col md:flex-row items-center justify-between  p-5">
         <div className="flex items-center justify-between w-full md:w-fit pb-2 mr-[179px]">
          <NavLink to="/">
-         <h5>SparkTech</h5>
+         <h5 className="text-white">SparkTech</h5>
          </NavLink>
           <div className=" md:hidden relative z-10">
             <label
@@ -115,7 +115,7 @@ const Navbar = () => {
           <div className="flex items-center justify-between w-[306px] px-6 py-3 bg-[#333d4b] rounded-tl-md rounded-tr-md">
             <div className="text-white flex items-center gap-2">
               <MdGridView className="text-lg"/>
-              <p className="">Categories</p>
+              <p className="text-white">Categories</p>
             </div>
             <TfiAngleRight className="text-white text-xs rotate-90" />
           </div>

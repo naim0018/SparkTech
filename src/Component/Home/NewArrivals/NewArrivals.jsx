@@ -1,15 +1,17 @@
+import Title from "../../../UI/Title"
+import NAProductsList from "./NAProductsList"
 
 
 const NewArrivals = () => {
   return (
     <div className="w-[1296px] mx-auto">
-        <h6  className="text-[28px] font-semibold mb-8">New arrivals</h6>
-        <div className="">
-             <div className="">
-
+        <Title title={"New Arrivals"}/>
+        <div className=" flex items-start gap-6">
+             <div className="w-[416px]">
+                <img src="https://i.imgur.com/vZLZS8L.png" alt="" />
              </div>
              <div className="">
-                
+                 <NAProductsList/>
              </div>
         </div>
 
