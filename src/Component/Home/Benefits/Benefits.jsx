@@ -6,7 +6,7 @@ import { TbCurrencyTaka } from "react-icons/tb";
 
 const Benefits = () => {
   return (
-    <div className="w-[1296px] mx-auto flex gap-6 items-center justify-between ">
+    <div className="container mx-auto md:grid md:grid-cols-2 gap-6 items-center justify-between ">
       <div className="flex items-center justify-center  gap-4">
         <div className="w-[86px] h-[86px] rounded-full flex items-center justify-center border bg-gray-200">
           <LiaShippingFastSolid className="text-[32px] " />
@@ -15,9 +15,9 @@ const Benefits = () => {
           <h6 className="text-base font-semibold">Free Shipping & Returns</h6>
           <p className="flex items-center text-sm font-normal">
             For all orders over 2000{" "}
-            <spn>
+            <span>
               <TbCurrencyTaka />
-            </spn>
+            </span>
           </p>
         </div>
       </div>

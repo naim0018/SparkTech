@@ -29,36 +29,8 @@ const Carosule = () => {
     return () => clearInterval(intervalId);
   }, [nextSlider]);
   return (
-    <div className=" w-[966px] h-[522px] mt-6 rounded-lg relative overflow-hidden">
-      {/* arrow left */}
-      {/* <button
-        onClick={prevSlider}
-        className="absolute top-1/2 left-3 z-50 flex justify-center items-center bg-white rounded-full w-6 h-6 md:w-8 md:h-8"
-      >
-        <svg
-          className="icon h-4 w-4 fill-black/50 md:h-6 md:w-6"
-          viewBox="0 0 1024 1024"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M685.248 104.704a64 64 0 010 90.496L368.448 512l316.8 316.8a64 64 0 01-90.496 90.496L232.704 557.248a64 64 0 010-90.496l362.048-362.048a64 64 0 0190.496 0z"></path>
-        </svg>
-      </button> */}
-      {/* arrow right */}
-      {/* <button
-        onClick={nextSlider}
-        className="absolute top-1/2 z-50 right-3  flex justify-center items-center bg-white rounded-full w-6 h-6 md:w-8 md:h-8"
-      >
-        <svg
-          className="icon h-4 w-4 fill-black/50 md:h-6 md:w-6"
-          viewBox="0 0 1024 1024"
-          xmlns="http://www.w3.org/2000/svg"
-          transform="rotate(180)"
-        >
-          <path d="M685.248 104.704a64 64 0 010 90.496L368.448 512l316.8 316.8a64 64 0 01-90.496 90.496L232.704 557.248a64 64 0 010-90.496l362.048-362.048a64 64 0 0190.496 0z"></path>
-        </svg>
-      </button> */}
-      {/* dots */}
-      <div className="flex justify-center items-center rounded-full z-50 absolute bottom-4 w-full gap-1">
+    <div className=" mx-auto lg:h-[522px] mt-6 rounded-lg relative overflow-hidden">
+      <div className="flex justify-center items-center rounded-full z-10 absolute bottom-4 w-full gap-1">
         {carouselImages.map((img, idx) => (
           <button
             key={`${img}_${idx}`}

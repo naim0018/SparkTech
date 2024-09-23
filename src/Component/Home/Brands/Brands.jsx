@@ -2,7 +2,7 @@
 
 const Brands = () => {
   return (
-    <div className="w-[1296px] mx-auto flex items-center justify-evenly text-center">
+    <div className="container mx-auto grid grid-cols-2 gap-2 lg:flex items-center justify-evenly text-center">
         <div className="w-[164px] border rounded-lg">
             <h5 className="p-4 text-gray-600">Ultrapods</h5>
         </div>

@@ -5,10 +5,11 @@ import Home from "../Pages/Home"
 
 const Mainlayout = () => {
   return (
-    <div>
-        <Navbar/>
-        <Home/>
-        <Outlet/>
+    <div className="">
+      <Navbar/>
+      {/* <Home/> */}
+      <Outlet/>
+      
     </div>
   )
 }

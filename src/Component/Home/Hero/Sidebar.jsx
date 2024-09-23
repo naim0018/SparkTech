@@ -5,7 +5,6 @@ import { navbarGenerator } from "../../../utils/navbarGenerator"
 
 const Sidebar = () => {
     const sidebar = navbarGenerator(sidebarRoute)
-
   return (
     <div className="text-black w-[306px] h-full border border-t-0 rounded-bl-lg rounded-br-lg p-3 bg-white">
 {

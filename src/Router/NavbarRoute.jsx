@@ -2,6 +2,7 @@
 import Shop from "../Pages/Shop";
 
 export const navbarRoute = [
+    
     {
         name:'Shop',
         path:'shop',

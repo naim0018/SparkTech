@@ -4,10 +4,10 @@ import NAProductsList from "./NAProductsList"
 
 const NewArrivals = () => {
   return (
-    <div className="w-[1296px] mx-auto">
+    <div className="container mx-auto">
         <Title title={"New Arrivals"}/>
-        <div className=" flex items-start gap-6">
-             <div className="w-[416px]">
+        <div className=" lg:flex items-start gap-6">
+             <div className="lg:w-[416px]">
                 <img src="https://i.imgur.com/vZLZS8L.png" alt="" />
              </div>
              <div className="">

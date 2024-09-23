@@ -10,7 +10,7 @@ export const navbarGenerator = (items)=>{
             })
         }else if(item?.name && item?.path){
             acc.push({
-                key:item?.name,
+                name:item?.name,
                 path:item?.path
             })
         }

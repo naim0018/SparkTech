@@ -2,7 +2,7 @@ import Title from '../../../UI/Title'
 
 const SpecialOffers = () => {
   return (
-    <div className='w-[1296px] mx-auto'>
+    <div className='container mx-auto'>
         <Title title={"Special Offers"}/>
     </div>
   )

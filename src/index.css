@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-h1 {
+/* h1 {
   @apply text-[3.815rem] font-medium text-gray-900;
 }
 h2 {
@@ -24,4 +24,4 @@ h6 {
 
 p {
   @apply text-base text-gray-600;
-}
+} */
