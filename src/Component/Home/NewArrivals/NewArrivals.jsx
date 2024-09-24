@@ -8,7 +8,7 @@ const NewArrivals = () => {
         <Title title={"New Arrivals"}/>
         <div className=" lg:flex items-start gap-6">
              <div className="lg:w-[416px]">
-                <img src="https://i.imgur.com/vZLZS8L.png" alt="" />
+                <img src="https://i.imgur.com/vZLZS8L.png" alt=""/>
              </div>
              <div className="">
                  <NAProductsList/>
