@@ -1,7 +1,7 @@
 // Import necessary dependencies and components
 import { useState, useEffect } from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { FiMenu, FiX } from 'react-icons/fi'
+import { FiMenu, FiX, FiHome } from 'react-icons/fi'
 import { navbarGenerator } from '../../utils/navbarGenerator'
 import { adminRoute } from '../../Router/AdminRoute'
 
@@ -50,6 +50,19 @@ const AdminLayout = () => {
         </header>
         {/* Navigation menu */}
         <nav className="mt-8 px-5 pb-10">
+          {/* Home NavLink */}
+          <NavLink
+            to="/"
+            className={({ isActive }) => 
+              `flex items-center gap-2 py-2 px-4 text-white transition-colors duration-200 ${
+                isActive ? 'bg-white/20 font-bold' : 'hover:bg-white/10'
+              }`
+            }
+            onClick={() => isSmallScreen && setIsSidebarOpen(false)}
+          >
+            <FiHome />
+            Home
+          </NavLink>
           {sidebarItems.map(({ name, path, icon }) => (
             <NavLink
               key={name}

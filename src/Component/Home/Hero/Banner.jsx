@@ -1,10 +1,11 @@
-import Carosule from "./Carosule"
-
+import Carosule from "./Carosule";
 
 const Banner = () => {
   return (
-    <div className=""><Carosule/></div>
-  )
-}
+    <div className="">
+      <Carosule />
+    </div>
+  );
+};
 
-export default Banner
+export default Banner;

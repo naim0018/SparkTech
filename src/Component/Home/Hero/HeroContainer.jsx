@@ -3,11 +3,13 @@ import Sidebar from './Sidebar'
 
 const HeroContainer = () => {
   return (
-    <div className='container mx-auto lg:flex items-start gap-6 h-[546px]'>
-      <div className="hidden lg:flex w-[306px] h-[546px]">
+    <div className='container mx-auto flex flex-col lg:flex-row items-start gap-6'>
+      <div className=" w-full lg:w-[306px] lg:h-[546px] hidden lg:block">
         <Sidebar/>
       </div>
+      <div className="flex-grow w-full">
         <Banner/>
+      </div>
     </div>
   )
 }
