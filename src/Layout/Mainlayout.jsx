@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 import Navbar from "./Navbar"
-import Home from "../Pages/Home"
+
 
 
 const Mainlayout = () => {

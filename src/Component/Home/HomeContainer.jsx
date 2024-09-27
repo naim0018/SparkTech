@@ -1,6 +1,6 @@
-
 import Benefits from './Benefits/Benefits'
 import Brands from './Brands/Brands'
+// import CustomerReviews from './CustomerReviews/CustomerReviews'
 import HeroContainer from './Hero/HeroContainer'
 import NewArrivals from './NewArrivals/NewArrivals'
 import Offers from './Offers/Offers'
@@ -18,6 +18,7 @@ const HomeContainer = () => {
         <Offers/>
         <SpecialOffers/>
         <Brands/>
+        {/* <CustomerReviews/> */}
         </div>
     </div>
   )

@@ -4,6 +4,9 @@ import { routeGenerator } from "../utils/routesGenerator";
 import { navbarRoute } from "./NavbarRoute";
 import ErrorPage from "../Component/ErrorPage/ErrorPage";
 import Home from "../Pages/Home";
+import AdminDashboard from "../Component/Admin/AdminDashboard/AdminDashboard";
+import AdminLayout from "../Layout/AdminLayout/AdminLayout";
+import { adminRoute } from "./AdminRoute";
 
 
 export const router = createBrowserRouter([
@@ -19,5 +22,17 @@ export const router = createBrowserRouter([
             ...routeGenerator(navbarRoute)
         ],
     },
+    {
+        path:'/admin',
+        element:<AdminLayout/>,
+        children:[
+            {
+                index:true,
+                element:<AdminDashboard/>            
+            },
+            ...routeGenerator(adminRoute)
+
+        ]
+    }
 ])
 

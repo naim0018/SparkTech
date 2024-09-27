@@ -1,4 +1,6 @@
 
+// import AdminContainer from "../Component/Admin/AdminContainer";
+// import AdminLayout from "../Layout/AdminLayout/AdminLayout";
 import Shop from "../Pages/Shop";
 
 export const navbarRoute = [
@@ -22,5 +24,6 @@ export const navbarRoute = [
         name:'New Arrivals',
         path:'shop/new-arrivals',
         element:<Shop/>
-    }
+    },
+   
 ]
