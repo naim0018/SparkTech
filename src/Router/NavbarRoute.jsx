@@ -1,6 +1,5 @@
 
-// import AdminContainer from "../Component/Admin/AdminContainer";
-// import AdminLayout from "../Layout/AdminLayout/AdminLayout";
+import BestSellers from "../Component/BestSellers/BestSellers";
 import Shop from "../Pages/Shop";
 
 export const navbarRoute = [
@@ -13,7 +12,7 @@ export const navbarRoute = [
     {
         name:'Best Sellers',
         path:'shop/best-sellers',
-        element:<Shop/> 
+        element:<BestSellers/> 
     },
     {
         name:"Today's Deals",

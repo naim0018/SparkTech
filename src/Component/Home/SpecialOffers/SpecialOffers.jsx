@@ -57,16 +57,20 @@ const ProductCard = ({ product }) => {
 };
 
 const SpecialOffers = () => {
-  const { data, isLoading, error } = useGetAllProductsQuery();
+  const { data, isLoading, error } = useGetAllProductsQuery({
+  });
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error occurred!</div>;
 
+  // Check if data and data.products exist and are an array before mapping
+  const products = data?.data ? data.data : [];
+  console.log(products);
   return (
     <div className="container mx-auto">
       <Title title="Special Offers" />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {data.data.slice(0, 8).map((product) => (
+        {products.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </div>
