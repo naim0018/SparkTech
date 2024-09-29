@@ -4,6 +4,8 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
 import { BsPlusCircle } from "react-icons/bs";
 import { FaMinusCircle } from "react-icons/fa";
+import { toast } from 'react-toastify';
+import { useAddProductMutation } from "../../../redux/api/ProductApi";
 
 export default function AddProductForm() {
   // State for form submission and input focus
@@ -16,11 +18,15 @@ export default function AddProductForm() {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       images: [""],
       variants: [{ variantName: "", options: [""] }],
       shippingDetails: { dimensions: { length: 0, width: 0, height: 0 } },
+      specifications: {},
+      stockQuantity: 0,
+      category: "",
     },
   });
 
@@ -76,13 +82,40 @@ export default function AddProductForm() {
     name: "specifications",
   });
 
+  // Use the mutation hook
+  const [addProduct, { isLoading }] = useAddProductMutation();
+
   // Function to handle form submission
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-    // Here you would typically send the data to your backend
-    console.log(data);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating API call
-    setIsSubmitting(false);
+    try {
+      // Prepare the data
+      const productData = {
+        ...data,
+        tags,
+        specifications: Object.fromEntries(
+          data.specifications.map(spec => [spec.key, spec.value])
+        ),
+        productCode: parseInt(data.productCode),
+      };
+
+      // Send the data using productsapi
+      const response = await addProduct(productData).unwrap();
+
+      // Reset the form
+      reset();
+      setTags([]);
+
+      // Show success message
+      toast.success('Product added successfully!');
+
+    } catch (error) {
+      // Handle error
+      toast.error('Failed to add product. Please try again.');
+      console.error('Error adding product:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -128,12 +161,9 @@ export default function AddProductForm() {
                     </label>
                     <textarea
                       id="description"
-                      {...register("description.en", { required: "Description is required" })}
+                      {...register("description")}
                       className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200 h-32"
                     />
-                    {errors.description?.en && (
-                      <p className="text-red-500 text-sm mt-1">{errors.description.en.message}</p>
-                    )}
                   </div>
 
                   {/* Price and Product Code */}
@@ -158,7 +188,7 @@ export default function AddProductForm() {
                       </label>
                       <input
                         id="productCode"
-                        type="text"
+                        type="number"
                         {...register("productCode", { required: "Product Code is required" })}
                         className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
                       />
@@ -166,6 +196,49 @@ export default function AddProductForm() {
                         <p className="text-red-500 text-sm mt-1">{errors.productCode.message}</p>
                       )}
                     </div>
+                  </div>
+
+                  {/* Category and Subcategory */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label htmlFor="category" className="block text-sm font-semibold text-gray-700 mb-1">
+                        Category
+                      </label>
+                      <input
+                        id="category"
+                        {...register("category", { required: "Category is required" })}
+                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                      />
+                      {errors.category && (
+                        <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label htmlFor="subCategory" className="block text-sm font-semibold text-gray-700 mb-1">
+                        Subcategory
+                      </label>
+                      <input
+                        id="subCategory"
+                        {...register("subCategory")}
+                        className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Stock Quantity */}
+                  <div className="mt-4">
+                    <label htmlFor="stockQuantity" className="block text-sm font-semibold text-gray-700 mb-1">
+                      Stock Quantity
+                    </label>
+                    <input
+                      id="stockQuantity"
+                      type="number"
+                      {...register("stockQuantity", { required: "Stock Quantity is required" })}
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                    />
+                    {errors.stockQuantity && (
+                      <p className="text-red-500 text-sm mt-1">{errors.stockQuantity.message}</p>
+                    )}
                   </div>
                 </div>
 
@@ -190,7 +263,7 @@ export default function AddProductForm() {
                       </label>
                       <input
                         id="estimatedDelivery"
-                        {...register("shippingDetails.estimatedDelivery", { required: "Estimated delivery is required" })}
+                        {...register("shippingDetails.estimatedDelivery")}
                         className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
                       />
                     </div>
@@ -207,6 +280,7 @@ export default function AddProductForm() {
                           </label>
                           <input
                             id={dim}
+                            type="number"
                             {...register(`shippingDetails.dimensions.${dim}`, { required: `${dim} is required` })}
                             placeholder={`Enter ${dim}`}
                             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
@@ -403,9 +477,9 @@ export default function AddProductForm() {
             <button
               type="submit"
               className="w-full bg-gray-800 text-white p-4 rounded-lg font-semibold text-lg hover:bg-gray-700 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoading}
             >
-              {isSubmitting ? "Adding Product..." : "Add Product"}
+              {isSubmitting || isLoading ? "Processing..." : "Add Product"}
             </button>
           </form>
         </div>
