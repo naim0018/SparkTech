@@ -97,10 +97,22 @@ export default function AddProductForm() {
           data.specifications.map(spec => [spec.key, spec.value])
         ),
         productCode: parseInt(data.productCode),
+        price: parseFloat(data.price),
+        stockQuantity: parseInt(data.stockQuantity),
+        shippingDetails: {
+          ...data.shippingDetails,
+          weight: parseFloat(data.shippingDetails.weight),
+          dimensions: {
+            length: parseFloat(data.shippingDetails.dimensions.length),
+            width: parseFloat(data.shippingDetails.dimensions.width),
+            height: parseFloat(data.shippingDetails.dimensions.height),
+          },
+        },
       };
 
       // Send the data using productsapi
       const response = await addProduct(productData).unwrap();
+      console.log(response);
 
       // Reset the form
       reset();
@@ -175,6 +187,7 @@ export default function AddProductForm() {
                       <input
                         id="price"
                         type="number"
+                        step="0.01"
                         {...register("price", { required: "Price is required" })}
                         className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
                       />
@@ -204,11 +217,18 @@ export default function AddProductForm() {
                       <label htmlFor="category" className="block text-sm font-semibold text-gray-700 mb-1">
                         Category
                       </label>
-                      <input
+                      <select
                         id="category"
                         {...register("category", { required: "Category is required" })}
                         className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
-                      />
+                      >
+                        <option value="">Select a category</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="books">Books</option>
+                        <option value="home">Home & Garden</option>
+                        <option value="toys">Toys & Games</option>
+                      </select>
                       {errors.category && (
                         <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
                       )}
@@ -253,6 +273,7 @@ export default function AddProductForm() {
                       <input
                         id="weight"
                         type="number"
+                        step="0.01"
                         {...register("shippingDetails.weight", { required: "Weight is required" })}
                         className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
                       />
@@ -281,6 +302,7 @@ export default function AddProductForm() {
                           <input
                             id={dim}
                             type="number"
+                            step="0.01"
                             {...register(`shippingDetails.dimensions.${dim}`, { required: `${dim} is required` })}
                             placeholder={`Enter ${dim}`}
                             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"

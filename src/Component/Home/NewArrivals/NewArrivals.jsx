@@ -12,12 +12,17 @@ const NewArrivals = () => {
   // Update products when data changes
   useEffect(() => {
     if (data?.data) {
-      setProducts(data.data.slice(0, 6));
+      setProducts(data.data);
     }
   }, [data]);
 
   if (isLoading) return <LoadingIndicator />;
   if (error) return <ErrorMessage message={error.message} />;
+
+  // Check if products array is empty
+  if (products.length === 0) {
+    return <ErrorMessage message="No products available at the moment." />;
+  }
 
   return (
     <section className="container mx-auto px-4 py-8">
@@ -56,7 +61,9 @@ const FeaturedProduct = () => (
       src="https://i.imgur.com/vZLZS8L.png"
       alt="Featured Product"
       className="w-full h-full object-contain rounded-lg"
-    />
+      loading="lazy"
+      decoding="async"
+    />  
   </div>
 );
 
@@ -72,12 +79,12 @@ const ProductGrid = ({ products }) => (
 // Individual product card component
 const ProductCard = ({ product }) => (
   <div className="bg-white h-fit rounded-lg shadow-md p-3 md:p-4 flex items-start space-x-2 md:space-x-3 hover:shadow-lg transition duration-300 ease-in-out">
-    <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg flex-shrink-0 overflow-hidden">
+    <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg flex-shrink-0 overflow-hidden ">
       {product.images && product.images.length > 0 && (
         <img
-          src={product.images[0]}
-          alt={product.title}
-          className="w-full h-full object-contain"
+          src={product.images[0].url}
+          alt={product.images[0].alt}
+          className="w-full h-full object-contain "
           loading="lazy"
           decoding="async"
         />
@@ -85,12 +92,16 @@ const ProductCard = ({ product }) => (
     </div>
     <div className="flex-grow">
       <h3 className="font-semibold text-sm md:text-base mb-1 line-clamp-2">{product.title}</h3>
-      <RatingStars rating={product.rating} />
+      {
+        product?.rating && <RatingStars rating={product.rating.average} count={product.rating.count} />
+      }
       <div className="mt-1 flex flex-wrap items-center">
-        <span className="font-bold text-sm md:text-base">${product.price.toFixed(2)}</span>
-        {product.discountPrice && (
+        <span className="font-bold text-sm md:text-base">
+          ${product.price?.discounted || product.price?.regular || 'N/A'}
+        </span>
+        {product.price?.discounted && product.price?.regular && (
           <span className="ml-2 text-xs text-gray-500 line-through">
-            ${product.discountPrice.toFixed(2)}
+            ${product.price.regular}
           </span>
         )}
       </div>
@@ -99,7 +110,7 @@ const ProductCard = ({ product }) => (
 );
 
 // Rating stars component
-const RatingStars = ({ rating }) => (
+const RatingStars = ({ rating, count }) => (
   <div className="flex items-center">
     {[...Array(5)].map((_, i) => (
       <FaStar
@@ -109,7 +120,9 @@ const RatingStars = ({ rating }) => (
         }`}
       />
     ))}
-    <span className="ml-1 text-xs text-gray-600">({rating.toFixed(1)})</span>
+    <span className="ml-1 text-xs text-gray-600">
+      {rating ? `(${rating.toFixed(1)})` : ''} {count} reviews
+    </span>
   </div>
 );
 

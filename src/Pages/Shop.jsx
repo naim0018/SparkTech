@@ -1,8 +1,8 @@
-
+import ShopContainer from "../Component/Shop/ShopContainer"
 
 const Shop = () => {
   return (
-    <div>Shop</div>
+    <ShopContainer/>
   )
 }
 
