@@ -76,7 +76,7 @@ const StockInfo = ({ stockStatus, stockQuantity }) => (
         </p>
         <div className="w-full overflow-hidden bg-gray-300 rounded-full h-1 my-[5px]">
           <div
-            className="bg-red-500 h-1 rounded-full"
+            className={`h-1 rounded-full ${stockQuantity < 30 ? 'bg-red-500' : 'bg-green-500'}`}
             style={{ width: `${(stockQuantity / 100) * 100}%` }}
           ></div>
         </div>

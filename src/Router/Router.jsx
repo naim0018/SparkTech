@@ -7,7 +7,9 @@ import Home from "../Pages/Home";
 import AdminDashboard from "../Component/Admin/AdminDashboard/AdminDashboard";
 import AdminLayout from "../Layout/AdminLayout/AdminLayout";
 import { adminRoute } from "./AdminRoute";
-import ProductDetails from "../Pages/ProductDetails";
+import ProductDetails from "../Component/ProductDetails/ProductDetails";
+
+
 
 export const router = createBrowserRouter([
     {
@@ -21,7 +23,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'product/:productId',
-                element: <ProductDetails />
+                element: <ProductDetails/>
             },
             ...routeGenerator(navbarRoute)
         ],
