@@ -245,9 +245,9 @@ const AllProducts = () => {
                       value={productsPerPage}
                       onChange={(e) => setProductsPerPage(Number(e.target.value))}
                     >
-                      <option value={20}>20</option>
-                      <option value={40}>40</option>
-                      <option value={60}>60</option>
+                      {[20, 40, 60].map((value) => (
+                        <option key={value} value={value}>{value}</option>
+                      ))}
                     </select>
                   </div>
                   {/* Sort by selector */}
@@ -258,9 +258,13 @@ const AllProducts = () => {
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
                     >
-                      <option value="default">Default</option>
-                      <option value="price-low-high">Price: Low to High</option>
-                      <option value="price-high-low">Price: High to Low</option>
+                      {[
+                        { value: "default", label: "Default" },
+                        { value: "price-low-high", label: "Price: Low to High" },
+                        { value: "price-high-low", label: "Price: High to Low" }
+                      ].map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
