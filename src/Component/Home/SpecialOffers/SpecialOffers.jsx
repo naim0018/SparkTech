@@ -10,24 +10,27 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
+import { Link } from 'react-router-dom';
 
 // Component to display a single product card
 const ProductCard = ({ product }) => {
-  const { images, title, rating, price, stockStatus, stockQuantity } = product;
+  const { _id, images, title, rating, price, stockStatus, stockQuantity } = product;
 
   return (
     <div className="w-full flex flex-col items-center justify-center p-4 pt-8 group cursor-pointer">
-      <img
-        src={images[0]?.url}
-        alt={images[0]?.alt || title}
-        className="size-72 object-contain p-6 group-hover:scale-110 group-hover:transition group-hover:duration-300"
-      />
-      <RatingStars rating={rating.average} />
-      <h2 className="text-sm font-medium mb-3 mt-2 overflow-hidden text-ellipsis h-10 text-gray-900">
-        {title}
-      </h2>
-      <PriceDisplay price={price} />
-      <StockInfo stockStatus={stockStatus} stockQuantity={stockQuantity} />
+      <Link to={`/product/${_id}`} className="w-full flex flex-col items-center">
+        <img
+          src={images[0]?.url}
+          alt={images[0]?.alt || title}
+          className="size-72 object-contain p-6 group-hover:scale-110 group-hover:transition group-hover:duration-300"
+        />
+        <RatingStars rating={rating.average} />
+        <h2 className="text-sm font-medium mb-3 mt-2 overflow-hidden text-ellipsis h-10 text-gray-900">
+          {title}
+        </h2>
+        <PriceDisplay price={price} />
+        <StockInfo stockStatus={stockStatus} stockQuantity={stockQuantity} />
+      </Link>
     </div>
   );
 };
