@@ -12,7 +12,7 @@ const NewArrivals = () => {
   // Update products when data changes
   useEffect(() => {
     if (data?.data) {
-      setProducts(data.data);
+      setProducts(data.data.slice(0, 4)); // Limit to 4 products for better responsiveness
     }
   }, [data]);
 
@@ -26,12 +26,12 @@ const NewArrivals = () => {
 
   return (
     <section className="container mx-auto px-4 py-8">
-      <Title title="New Arrivals" className="mb-6 text-center lg:text-left" />
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="w-full lg:w-1/3">
+      <Title title="New Arrivals" className="mb-6 text-center" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="md:col-span-2 lg:col-span-1">
           <FeaturedProduct />
         </div>
-        <div className="w-full lg:w-2/3">
+        <div className="md:col-span-2">
           <ProductGrid products={products} />
         </div>
       </div>
@@ -42,15 +42,15 @@ const NewArrivals = () => {
 // Loading indicator component
 const LoadingIndicator = () => (
   <div className="flex justify-center items-center h-48">
-    <div className="animate-spin rounded-full h-16 w-16 md:h-24 md:w-24 border-t-2 border-b-2 border-blue-500"></div>
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
   </div>
 );
 
 // Error message component
 const ErrorMessage = ({ message }) => (
   <div className="text-center py-8 text-red-500">
-    <p className="text-lg md:text-xl font-semibold">Error occurred!</p>
-    <p className="mt-2 text-sm md:text-base">{message}</p>
+    <p className="text-base font-semibold">Error occurred!</p>
+    <p className="mt-2 text-sm">{message}</p>
   </div>
 );
 
@@ -60,7 +60,7 @@ const FeaturedProduct = () => (
     <img
       src="https://i.imgur.com/vZLZS8L.png"
       alt="Featured Product"
-      className="w-full h-full object-contain rounded-lg"
+      className="w-full h-full object-cover rounded-lg"
       loading="lazy"
       decoding="async"
     />  
@@ -78,25 +78,25 @@ const ProductGrid = ({ products }) => (
 
 // Individual product card component
 const ProductCard = ({ product }) => (
-  <div className="bg-white h-fit rounded-lg shadow-md p-3 md:p-4 flex items-start space-x-2 md:space-x-3 hover:shadow-lg transition duration-300 ease-in-out">
-    <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg flex-shrink-0 overflow-hidden ">
+  <div className="bg-white rounded-lg shadow-md p-3 flex items-start space-x-2 hover:shadow-lg transition duration-300 ease-in-out">
+    <div className="w-16 h-16 rounded-lg flex-shrink-0 overflow-hidden">
       {product.images && product.images.length > 0 && (
         <img
           src={product.images[0].url}
           alt={product.images[0].alt}
-          className="w-full h-full object-contain "
+          className="w-full h-full object-contain"
           loading="lazy"
           decoding="async"
         />
       )}
     </div>
     <div className="flex-grow">
-      <h3 className="font-semibold text-sm md:text-base mb-1 line-clamp-2">{product.title}</h3>
+      <h3 className="font-semibold text-sm mb-1 line-clamp-2">{product.title}</h3>
       {
         product?.rating && <RatingStars rating={product.rating.average} count={product.rating.count} />
       }
       <div className="mt-1 flex flex-wrap items-center">
-        <span className="font-bold text-sm md:text-base">
+        <span className="font-bold text-sm">
           ${product.price?.discounted || product.price?.regular || 'N/A'}
         </span>
         {product.price?.discounted && product.price?.regular && (

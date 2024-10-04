@@ -1,54 +1,56 @@
-import { BiSupport } from "react-icons/bi";
-import { BsArrowRepeat } from "react-icons/bs";
-import { CiCreditCard1 } from "react-icons/ci";
-import { LiaShippingFastSolid } from "react-icons/lia";
+import { FaShippingFast, FaCreditCard, FaExchangeAlt, FaHeadset } from 'react-icons/fa';
 import { TbCurrencyTaka } from "react-icons/tb";
 
 const Benefits = () => {
   const benefitItems = [
     {
-      icon: <LiaShippingFastSolid className="text-3xl md:text-4xl" />,
-      title: "Free Shipping & Returns",
+      icon: <FaShippingFast className="text-2xl sm:text-3xl text-blue-500" />,
+      title: "Swift Delivery",
       description: (
         <>
-          For all orders over 2000 <TbCurrencyTaka className="inline" />
+          Free for orders above 2000 <TbCurrencyTaka className="inline" />
         </>
       ),
     },
     {
-      icon: <CiCreditCard1 className="text-3xl md:text-4xl" />,
-      title: "Secure Payment",
-      description: "We ensure secure payment",
+      icon: <FaCreditCard className="text-2xl sm:text-3xl text-green-500" />,
+      title: "Safe Transactions",
+      description: "Secure payment options",
     },
     {
-      icon: <BsArrowRepeat className="text-3xl md:text-4xl" />,
-      title: "Money Back Guarantee",
-      description: "Returning money within 30 days",
+      icon: <FaExchangeAlt className="text-2xl sm:text-3xl text-purple-500" />,
+      title: "Easy Returns",
+      description: "30-day return policy",
     },
     {
-      icon: <BiSupport className="text-3xl md:text-4xl" />,
-      title: "24/7 Customer Support",
-      description: "Friendly customer support",
+      icon: <FaHeadset className="text-2xl sm:text-3xl text-red-500" />,
+      title: "24/7 Support",
+      description: "Expert assistance anytime",
     },
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {benefitItems.map((item, index) => (
-          <div
-            key={index}
-            className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left space-y-4 sm:space-y-0 sm:space-x-4 p-4 bg-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg"
-          >
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-gray-100">
-              {item.icon}
+    <div className=" py-8 sm:py-12">
+      <div className="container mx-auto px-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-800">
+          Our Commitment
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {benefitItems.map((item, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105"
+            >
+              <div className="p-4">
+                <div className="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center bg-gray-100">
+                  {item.icon}
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold text-center mb-1">{item.title}</h3>
+                <p className="text-gray-600 text-center text-sm">{item.description}</p>
+              </div>
             </div>
-            <div className="flex-1">
-              <h6 className="text-lg font-semibold mb-2">{item.title}</h6>
-              <p className="text-sm text-gray-600">{item.description}</p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

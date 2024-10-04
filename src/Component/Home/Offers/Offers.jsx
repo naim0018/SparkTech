@@ -1,22 +1,64 @@
+// Import necessary dependencies
+import { useState, useEffect } from 'react';
+import { FaGift} from 'react-icons/fa';
+
+// Offers component for displaying seasonal sale information and countdown timer
 const Offers = () => {
+  // State to hold the time left for the sale
+  const [timeLeft, setTimeLeft] = useState({});
+
+  // Effect to update the countdown timer every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const difference = +new Date("2024-12-31") - +new Date();
+      setTimeLeft({
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60)
+      });
+    }, 1000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="flex items-center justify-center ">
-      <div className="w-[306px] h-[210px] flex justify-center items-center rounded-xl  bg-gradient-to-r from-[#E7F0FD] to-[#ACCBEE] ">
-        <p className="flex items-center justify-center gap-4">
-          <span className="text-7xl font-bold text-gray-900">20 </span>
-          <span className=" flex flex-col items-center justify-center">
-            <span className="text-5xl font-bold text-gray-900">%</span>
-            <span className="text-xl font-bold text-gray-900">OFF</span>
-          </span>
-        </p>
-      </div>
-      <p  className="border border-dashed  border-[#ACCBEE] w-[2px] h-[180px] "></p>
-      <div className="w-[990px] h-[210px] bg-gradient-to-l from-[#E7F0FD] to-[#ACCBEE] flex justify-evenly items-center rounded-xl ">
-        <div className="">
-        <h4 className="text-[28px] font-bold uppercase">Seasonal weekly sale 2024</h4>
-        <p className="text-lg text-[#222934]">Use code <span>Sale 2024</span> to get best offer</p>
+    <div className="py-12">
+      <div className="container mx-auto px-4">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2" style={{backgroundImage: "url('https://i.imgur.com/gsT43Ib.png')", backgroundSize: 'cover', backgroundPosition: 'center'}}>
+            {/* Left side: Sale information */}
+            <div className="p-8 pr-2">
+              <div className="bg-white bg-opacity-80 p-6 rounded-lg h-full">
+                <h2 className="text-3xl font-bold text-gray-800 mb-4">Seasonal Sale 2024</h2>
+                <p className="text-gray-600 mb-6">Use code <span className="font-semibold text-indigo-600">SALE2024</span> to get 20% off on all items!</p>
+                <div className="flex items-center mb-6">
+                  <FaGift className="text-2xl text-indigo-600 mr-3" />
+                  <span className="text-2xl font-bold text-indigo-600">20% OFF</span>
+                </div>
+                <button className="bg-indigo-600 text-white py-2 px-6 rounded-full hover:bg-indigo-700 transition duration-300">Shop Now</button>
+              </div>
+            </div>
+            {/* Right side: Countdown timer */}
+            <div className="p-8 pl-2">
+              <div className="bg-white bg-opacity-80 p-6 rounded-lg h-full flex flex-col justify-center">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Sale Ends In:</h3>
+                <div className="flex space-x-4 justify-center">
+                  {/* Display countdown timer for each time unit */}
+                  {Object.entries(timeLeft).map(([unit, value]) => (
+                    <div key={unit} className="text-center">
+                      <div className="bg-white rounded-lg shadow p-3 mb-2">
+                        <span className="text-2xl font-bold text-indigo-600">{value}</span>
+                      </div>
+                      <span className="text-sm text-gray-600 capitalize">{unit}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className=""></div>
       </div>
     </div>
   );
