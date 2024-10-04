@@ -3,17 +3,12 @@ import { useGetAllProductsQuery } from '../../../redux/api/ProductApi'
 import Title from '../../../UI/Title'
 import { FaStar } from 'react-icons/fa'
 import { MdOutlineShoppingCart } from 'react-icons/md'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useInView } from 'framer-motion'
 
-const ProductCard = ({ product, index }) => {
+const ProductCard = ({ product }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5}}
-    >
+    <div>
       <Link to={`/product/${product._id}`} className="block w-full">
         <div className="w-full flex flex-col items-center justify-center p-2 sm:p-4 rounded-lg group cursor-pointer">
           <div className="relative w-full aspect-square overflow-hidden">
@@ -37,28 +32,28 @@ const ProductCard = ({ product, index }) => {
           </h2>
           <div className="flex items-center justify-between w-full px-1 sm:px-2">
             <div className="flex items-center mb-1 sm:mb-2">
-              <span className="text-sm sm:text-base font-bold">${product.price.discounted || product.price.regular}</span>
+              <span className="text-sm sm:text-base font-bold">
+                ${product.price.discounted || product.price.regular}
+              </span>
               {product.price.discounted && (
-                <span className="text-gray-500 line-through ml-1 sm:ml-2 text-xs sm:text-sm">${product.price.regular}</span>
+                <span className="text-gray-500 line-through ml-1 sm:ml-2 text-xs sm:text-sm">
+                  ${product.price.regular}
+                </span>
               )}
             </div>
-            <button 
-              className="bg-gray-100 text-gray-700 p-1 sm:p-2 rounded hover:bg-gray-200"
-            >
+            <button className="bg-gray-100 text-gray-700 p-1 sm:p-2 rounded hover:bg-gray-200">
               <MdOutlineShoppingCart className="text-base sm:text-lg" />
             </button>
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   )
 }
 
 const TrendingProducts = () => {
   const { data, isLoading, error } = useGetAllProductsQuery()
   const [trendingProducts, setTrendingProducts] = useState([])
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: false })
 
   useEffect(() => {
     if (data?.data) {
@@ -72,27 +67,20 @@ const TrendingProducts = () => {
   if (!data || !data.data) return <div className="text-center py-4 sm:py-8">No data available</div>
 
   return (
-    <div ref={ref} className='container mx-auto px-2 sm:px-4 py-4 sm:py-8'>
-      <div>
-        <Title title="Trending Products" />
-      </div>
+    <section className='container mx-auto px-2 sm:px-4 py-4 sm:py-8'>
+      <Title title="Trending Products" className="mb-6 text-center" />
       {trendingProducts.length > 0 ? (
-        <motion.div 
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {trendingProducts.map((product, index) => (
-            <ProductCard key={product._id} product={product} index={index} />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
+          {trendingProducts.map((product) => (
+            <ProductCard key={product._id} product={product} />
           ))}
-        </motion.div>
+        </div>
       ) : (
         <div className="text-center py-4 sm:py-8">
           No trending products available.
         </div>
       )}
-    </div>
+    </section>
   )
 }
 

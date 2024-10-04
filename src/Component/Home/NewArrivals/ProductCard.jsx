@@ -5,7 +5,7 @@ import { FaStar } from 'react-icons/fa';
 import { useState } from 'react';
 
 const ProductCard = ({ product }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [setIsHovered] = useState(false);
   const imageSpring = useSpring(1, {
     stiffness: 300,
     damping: 10
