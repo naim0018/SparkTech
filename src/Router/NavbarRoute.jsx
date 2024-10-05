@@ -1,4 +1,5 @@
 
+import About from "../Component/About/About";
 import BestSellers from "../Component/BestSellers/BestSellers";
 import Shop from "../Pages/Shop";
 
@@ -23,6 +24,11 @@ export const navbarRoute = [
         name:'New Arrivals',
         path:'shop/new-arrivals',
         element:<Shop/>
+    },
+    {
+        name:'About',
+        path:'about',
+        element:<About/>
     },
    
 ]

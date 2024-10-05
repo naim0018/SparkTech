@@ -33,7 +33,7 @@ const TrendingProducts = () => {
         <motion.div  
           initial={{ y: 50 }}
           animate={isInView ? { y: 0 } : { y: 50 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 1.5 }}
         >
           {trendingProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">

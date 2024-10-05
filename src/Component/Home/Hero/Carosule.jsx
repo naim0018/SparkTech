@@ -3,11 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 const Carousel = () => {
   const [currentSlider, setCurrentSlider] = useState(0);
   const carouselImages = [
-    "https://images.unsplash.com/photo-1421789665209-c9b2a435e3dc?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1508873881324-c92a3fc536ba?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1719749990914-a3ba54e6343f?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1467195468637-72eb862bb14e?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1532155297578-a43684be8db8?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://i.imgur.com/YG0e1r8.jpg",
+    "https://i.imgur.com/0tQT1TU.jpg",
+    "https://i.imgur.com/SclS1fR.jpg",
   ];
 
   const prevSlider = useCallback(() => {
@@ -24,7 +22,7 @@ const Carousel = () => {
   }, [nextSlider]);
 
   return (
-    <div className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[522px] mt-6 overflow-hidden">
+    <div className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[522px] mt-6 overflow-hidden rounded-lg">
       {/* Carousel container */}
       <div
         className="flex transition-transform duration-500 ease-linear h-full"
@@ -34,7 +32,7 @@ const Carousel = () => {
           <img
             key={slide}
             src={slide}
-            className="min-w-full h-full object-cover"
+            className="min-w-full h-full object-fill"
             alt={`Slider - ${idx + 1}`}
           />
         ))}
