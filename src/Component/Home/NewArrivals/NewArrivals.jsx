@@ -31,6 +31,7 @@ const NewArrivals = () => {
             className="md:col-span-2 lg:col-span-1"
             initial={{ x: -50 }}
             animate={isInView ? { x: 0 } : { x: -50 }}
+            exit={{ x: -50 }}
             transition={{ duration: 1 }}
           >
             <FeaturedProduct />
