@@ -20,28 +20,42 @@ const TrendingProducts = () => {
     }
   }, [data])
 
-  if (isLoading) return <div className="text-center py-4 sm:py-8">Loading...</div>
-  if (error) return <div className="text-center py-4 sm:py-8 text-red-500">Error occurred: {error.message}</div>
+  if (isLoading) return (
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <Title title="Trending Products" className="mb-6 text-center"/>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
+        {[...Array(8)].map((_, index) => (
+          <div key={index} className="animate-pulse">
+            <div className="bg-gray-300 rounded-lg h-48 mb-2"></div>
+            <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
   if (!data || !data.data) return <div className="text-center py-4 sm:py-8">No data available</div>
 
   return (
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <Title title="Trending Products" className="mb-6 text-center"/>
     <motion.section 
       ref={ref}
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className='container mx-auto px-2 sm:px-4 py-4 sm:py-8'
+      initial={{ y: 50 }}
+      animate={isInView ? { y: 0 } : { y: 50 }}
+      transition={{ duration: 1 }}
+      className=''
     >
-      <Title title="Trending Products" className="mb-6 text-center" />
       {trendingProducts.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
           <AnimatePresence>
             {trendingProducts.map((product, index) => (
               <motion.div 
                 key={product._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+                initial={{ y: 20, scale: 0.5 }}
+                animate={isInView ? { y: 0, scale: 1 } : { y: 20, scale: 0.5 }}
+                exit={{ y: -20, scale: 0.5 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Link to={`/product/${product._id}`} className="block w-full">
@@ -50,7 +64,7 @@ const TrendingProducts = () => {
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 300, damping: 10 }}
                   >
-                    <div className="relative w-full aspect-square overflow-hidden">
+                    <div className="relative w-[90%] aspect-square overflow-hidden">
                       <motion.img 
                         src={product.images[0]?.url} 
                         alt={product.images[0]?.alt || product.title} 
@@ -105,6 +119,7 @@ const TrendingProducts = () => {
         </div>
       )}
     </motion.section>
+    </div>
   )
 }
 
