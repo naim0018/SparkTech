@@ -29,29 +29,29 @@ const NewArrivals = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <motion.div 
             className="md:col-span-2 lg:col-span-1"
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-            transition={{ duration: 0.5 }}
+            initial={{ x: -50 }}
+            animate={isInView ? { x: 0 } : { x: -50 }}
+            transition={{ duration: 1 }}
           >
             <FeaturedProduct />
           </motion.div>
           <motion.div 
             className="md:col-span-2"
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-            transition={{ duration: 0.5 }}
+            initial={{ x: 50 }}
+            animate={isInView ? { x: 0 } : { x: 50 }}
+            transition={{ duration: 1 }}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <AnimatePresence>
                 {products.map((product, index) => (
                   <motion.div
                     key={product._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    initial={{ x: 50, }}
+                    animate={isInView ? { x: 0  } : { x: 50 }}
+                    exit={{ x: -50 }}
+                    transition={{ duration: 1, delay: index * 0.2 }}
                   >
-                    <ProductCard product={product} />
+                    <ProductCard product={product} isInView={isInView} />
                   </motion.div>
                 ))}
               </AnimatePresence>

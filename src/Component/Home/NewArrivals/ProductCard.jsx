@@ -1,21 +1,35 @@
 /* eslint-disable react/prop-types */
 import { Link } from 'react-router-dom';
-import { motion, useSpring } from 'framer-motion';
+import { motion, useSpring, useAnimation } from 'framer-motion';
 import { FaStar } from 'react-icons/fa';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const ProductCard = ({ product }) => {
-  const [setIsHovered] = useState(false);
+// ProductCard component for displaying individual product information
+const ProductCard = ({ product, isInView }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const imageSpring = useSpring(1, {
     stiffness: 300,
     damping: 10
   });
 
+  const controls = useAnimation();
+
+  // Effect to control animation based on view status
+  useEffect(() => {
+    if (isInView) {
+      controls.start({ opacity: 1, y: 0 });
+    } else {
+      controls.start({ opacity: 0, y: 50 });
+    }
+  }, [isInView, controls]);
+
+  // Handler for mouse hover start
   const handleHover = () => {
     setIsHovered(true);
     imageSpring.set(1.1);
   };
 
+  // Handler for mouse hover end
   const handleHoverEnd = () => {
     setIsHovered(false);
     imageSpring.set(1);
@@ -23,13 +37,18 @@ const ProductCard = ({ product }) => {
 
   return (
    // Individual product card component
-   <div className="">
+   <motion.div 
+     initial={{  y: 50 }}
+     animate={controls}
+     transition={{ duration: 0.5 }}
+   >
      <Link to={`/product/${product._id}`} className="block">
       <motion.div
-      className="bg-white rounded-lg p-4 flex items-start space-x-3 transition duration-300 ease-in-out h-36 hover:shadow-lg"
+      className="bg-white rounded-lg p-4 flex items-start  space-x-5 transition duration-300 ease-in-out h-36 hover:shadow-lg"
       onHoverStart={handleHover}
       onHoverEnd={handleHoverEnd}
       >
+        {/* Product image container */}
         <motion.div
           className="w-28 h-28 rounded-lg flex-shrink-0 overflow-hidden"
           style={{ scale: imageSpring }}
@@ -44,12 +63,12 @@ const ProductCard = ({ product }) => {
                 e.target.onerror = null;
                 e.target.src = 'path/to/fallback/image.jpg';
               }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              animate={{ scale: isHovered ? 1.1 : 1 }}
               transition={{ duration: 0.3 }}
             />
           )}
         </motion.div>
+        {/* Product details container */}
         <motion.div 
           className="flex-grow"
           whileHover={{ 
@@ -57,13 +76,16 @@ const ProductCard = ({ product }) => {
             transition: { type: "spring", stiffness: 300, damping: 10 }
           }}
         >
+          {/* Product title */}
           <motion.h3 
             className="font-semibold text-sm mb-2 line-clamp-2"
             whileHover={{ color: "#4a5568" }}
           >
             {product.title}
           </motion.h3>
+          {/* Product rating */}
           {product?.rating && <RatingStars rating={product.rating.average} count={product.rating.count} />}
+          {/* Product price */}
           <motion.div 
             className="mt-3 flex flex-wrap items-center"
             whileHover={{ y: -2 }}
@@ -87,10 +109,11 @@ const ProductCard = ({ product }) => {
       </motion.div>
     </Link>
   
-   </div>
+   </motion.div>
   )
 }
 
+// RatingStars component for displaying product ratings
 const RatingStars = ({ rating, count }) => (
     <div className="flex items-center">
       {[...Array(5)].map((_, i) => (

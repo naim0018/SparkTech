@@ -16,9 +16,9 @@ const FeaturedProduct = () => {
           className="w-full h-full object-contain rounded-lg"
           loading="lazy"
           decoding="async"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
+          initial={{ y: 20 }}
+          animate={{ y: 0 }}
+          exit={{ y: -20 }}
           transition={{ duration: 0.3, delay: 0.2 }}
         />
       </AnimatePresence>
