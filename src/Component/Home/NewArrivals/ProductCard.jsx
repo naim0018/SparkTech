@@ -75,11 +75,12 @@ const ProductCard = ({ product, isInView }) => {
             scale: 1.05,
             transition: { type: "spring", stiffness: 300, damping: 10 }
           }}
+          animate={{ scale: isHovered ? 1.05 : 1 }}
+          transition={{ duration: 0.3 }}
         >
           {/* Product title */}
           <motion.h3 
             className="font-semibold text-sm mb-2 line-clamp-2"
-            whileHover={{ color: "#4a5568" }}
           >
             {product.title}
           </motion.h3>
@@ -89,10 +90,12 @@ const ProductCard = ({ product, isInView }) => {
           <motion.div 
             className="mt-3 flex flex-wrap items-center"
             whileHover={{ y: -2 }}
+            animate={{ y: isHovered ? -2 : 0 }}
           >
             <motion.span 
               className="font-bold text-base"
               whileHover={{ scale: 1.1 }}
+              animate={{ scale: isHovered ? 1.1 : 1 }}
             >
               ${product.price?.discounted || product.price?.regular || 'N/A'}
             </motion.span>
@@ -100,6 +103,7 @@ const ProductCard = ({ product, isInView }) => {
               <motion.span 
                 className="ml-2 text-sm text-gray-500 line-through"
                 whileHover={{ opacity: 0.7 }}
+                animate={{ opacity: isHovered ? 0.7 : 1 }}
               >
                 ${product.price.regular}
               </motion.span>
