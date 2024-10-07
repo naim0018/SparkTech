@@ -2,7 +2,7 @@
 import { FaMinusCircle } from "react-icons/fa";
 import { BsPlusCircle } from "react-icons/bs";
 
-const ProductVariants = ({ register, variantFields, removeVariant, appendVariant }) => {
+const ProductVariants = ({ register, variantFields, removeVariant, appendVariant, defaultValues }) => {
   return (
     <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -16,6 +16,7 @@ const ProductVariants = ({ register, variantFields, removeVariant, appendVariant
                 {...register(`variants.${index}.name`, {
                   required: "Variant name is required",
                 })}
+                defaultValue={defaultValues?.variants?.[index]?.name || ""}
                 placeholder="Variant Name"
                 className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />
@@ -23,6 +24,7 @@ const ProductVariants = ({ register, variantFields, removeVariant, appendVariant
                 {...register(`variants.${index}.value`, {
                   required: "Variant value is required",
                 })}
+                defaultValue={defaultValues?.variants?.[index]?.value || ""}
                 placeholder="Variant Value"
                 className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />

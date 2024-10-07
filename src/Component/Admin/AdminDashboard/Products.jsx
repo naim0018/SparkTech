@@ -1,10 +1,13 @@
+// Import necessary dependencies and components
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { useGetAllProductsQuery, useDeleteProductMutation, useUpdateProductMutation } from '../../../redux/api/ProductApi';
+import { useGetAllProductsQuery, useDeleteProductMutation } from '../../../redux/api/ProductApi';
 import { FaEdit, FaTrash, FaEye, FaSearch} from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import UpdateProducts from './UpdateProducts';
 
 const Products = () => {
+  // State variables for pagination, search, and filtering
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOptions, setFilterOptions] = useState({
@@ -14,14 +17,17 @@ const Products = () => {
     maxPrice: '',
     stockStatus: ''
   });
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // Fetch products data and delete mutation
   const { data, isLoading, isError, error } = useGetAllProductsQuery();
   const [deleteProduct] = useDeleteProductMutation();
-  const [updateProduct] = useUpdateProductMutation();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
 
+  // Effect to set initial filtered products, categories, and brands
   useEffect(() => {
     if (data?.data) {
       setFilteredProducts(data.data);
@@ -30,6 +36,7 @@ const Products = () => {
     }
   }, [data]);
 
+  // Effect to filter products based on search term and filter options
   useEffect(() => {
     if (data?.data) {
       const filtered = data.data.filter(product => {
@@ -47,6 +54,7 @@ const Products = () => {
       setFilteredProducts(filtered);
       setCurrentPage(1);
       
+      // Show toast if no matching products found
       if (filtered.length === 0) {
         toast.info('No matching products found', {
           position: "top-right",
@@ -60,19 +68,18 @@ const Products = () => {
     }
   }, [data, searchTerm, filterOptions]);
 
-  const handleEdit = useCallback(async (productId) => {
-    try {
-      const updatedProductData = {
-        // Add the fields you want to update
-      };
-      await updateProduct({ id: productId, ...updatedProductData }).unwrap();
-      toast.success('Product updated successfully');
-    } catch (err) {
-      console.error('Failed to update the product', err);
-      toast.error('Failed to update the product');
-    }
-  }, [updateProduct]);
+  // Callback functions for modal operations
+  const openUpdateModal = useCallback((product) => {
+    setSelectedProduct(product);
+    setIsUpdateModalOpen(true);
+  }, []);
 
+  const closeUpdateModal = useCallback(() => {
+    setSelectedProduct(null);
+    setIsUpdateModalOpen(false);
+  }, []);
+
+  // Function to handle product deletion
   const handleDelete = useCallback(async (productId) => {
     try {
       await deleteProduct(productId).unwrap();
@@ -84,6 +91,7 @@ const Products = () => {
     }
   }, [deleteProduct]);
 
+  // Callback functions for pagination, search, and filtering
   const handlePageChange = useCallback((page) => setCurrentPage(page), []);
   const handleSearch = useCallback((e) => setSearchTerm(e.target.value), []);
   const handleSearchBlur = useCallback(() => setCurrentPage(1), []);
@@ -92,6 +100,7 @@ const Products = () => {
     setFilterOptions(prev => ({ ...prev, [name]: value }));
   }, []);
 
+  // Loading and error states
   if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (isError) return <div className="flex justify-center items-center h-screen text-red-500">Error: {error.message}</div>;
 
@@ -102,6 +111,7 @@ const Products = () => {
       <div className="max-w-full mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">Product Management</h1>
         
+        {/* Search and Add Product section */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6">
             <div className="relative w-full md:w-64 mb-4 md:mb-0">
@@ -120,6 +130,7 @@ const Products = () => {
             </Link>
           </div>
           
+          {/* Filter options */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <select
               name="category"
@@ -173,6 +184,7 @@ const Products = () => {
           </div>
         </div>
 
+        {/* Product table */}
         {filteredProducts.length > 0 ? (
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="overflow-x-auto">
@@ -221,7 +233,7 @@ const Products = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
-                          <button onClick={() => handleEdit(product._id)} className="text-indigo-600 hover:text-indigo-900">
+                          <button onClick={() => openUpdateModal(product)} className="text-indigo-600 hover:text-indigo-900">
                             <FaEdit className="w-5 h-5" />
                           </button>
                           <button onClick={() => handleDelete(product._id)} className="text-red-600 hover:text-red-900">
@@ -244,6 +256,7 @@ const Products = () => {
           </div>
         )}
 
+        {/* Pagination */}
         {totalPages > 1 && (
           <div className="mt-8 flex justify-center">
             <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
@@ -264,6 +277,14 @@ const Products = () => {
           </div>
         )}
       </div>
+      {/* Update Product Modal */}
+      {isUpdateModalOpen && selectedProduct && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative  mx-auto p-5 border w-full  shadow-lg rounded-md bg-white">  
+              <UpdateProducts products={selectedProduct} closeModal={closeUpdateModal} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

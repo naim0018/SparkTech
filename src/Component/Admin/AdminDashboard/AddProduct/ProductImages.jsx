@@ -3,7 +3,7 @@
 import { FaMinusCircle } from "react-icons/fa";
 import { BsPlusCircle } from "react-icons/bs";
 
-const ProductImages = ({ register, imageFields, removeImage, appendImage }) => {
+const ProductImages = ({ register, imageFields, removeImage, appendImage, defaultValues }) => {
   return (
     <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -17,6 +17,7 @@ const ProductImages = ({ register, imageFields, removeImage, appendImage }) => {
                 {...register(`images.${index}.url`, {
                   required: "Image URL is required",
                 })}
+                defaultValue={defaultValues?.images?.[index]?.url}
                 placeholder="Image URL"
                 className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />
@@ -24,6 +25,7 @@ const ProductImages = ({ register, imageFields, removeImage, appendImage }) => {
                 {...register(`images.${index}.alt`, {
                   required: "Image alt text is required",
                 })}
+                defaultValue={defaultValues?.images?.[index]?.alt}
                 placeholder="Image alt text"
                 className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />

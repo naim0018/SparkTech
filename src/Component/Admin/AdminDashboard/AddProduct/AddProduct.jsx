@@ -25,20 +25,6 @@ export default function AddProductForm() {
     reset,
   } = useForm({
     defaultValues: {
-      images: [{ url: "", alt: "" }],
-      variants: [{ name: "", value: "" }],
-      specifications: [{ group: "", items: [{ name: "", value: "" }] }],
-      price: { regular: 0, discounted: 0, savings: 0, savingsPercentage: 0 },
-      dimensions: { length: 0, width: 0, height: 0, unit: "cm" },
-      stockQuantity: 0,
-      category: "",
-      subcategory: "",
-      additionalInfo: {
-        freeShipping: false,
-        estimatedDelivery: "",
-        returnPolicy: "",
-        warranty: "",
-      },
       isFeatured: false,
       isOnSale: false,
     },
@@ -189,7 +175,7 @@ export default function AddProductForm() {
                 <ShippingDetails register={register} errors={errors} />
 
                 {/* Additional Options */}
-                <AdditionalOptions register={register} />
+                <AdditionalOptions register={register} errors={errors} />
               </div>
 
               <div className="space-y-8">
@@ -217,6 +203,7 @@ export default function AddProductForm() {
                   specificationFields={specificationFields}
                   removeSpecification={removeSpecification}
                   appendSpecification={appendSpecification}
+                  errors={errors}
                 />
 
                 {/* Product Variants */}
@@ -225,6 +212,7 @@ export default function AddProductForm() {
                   variantFields={variantFields}
                   removeVariant={removeVariant}
                   appendVariant={appendVariant}
+                  
                 />
               </div>
             </div>

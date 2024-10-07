@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-const BasicInformation = ({ register, errors }) => {
+const BasicInformation = ({ register, errors, defaultValues = {} }) => {
   return (
     <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -16,6 +16,7 @@ const BasicInformation = ({ register, errors }) => {
         <input
           id="title"
           {...register("title", { required: "Title is required" })}
+          defaultValue={defaultValues.title}
           className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
           placeholder="Enter product title"
         />
@@ -37,6 +38,7 @@ const BasicInformation = ({ register, errors }) => {
           {...register("description", {
             required: "Description is required",
           })}
+          defaultValue={defaultValues.description}
           className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200 h-32"
           placeholder="Enter product description"
         />
@@ -63,6 +65,7 @@ const BasicInformation = ({ register, errors }) => {
             {...register("price.regular", {
               required: "Regular price is required",
             })}
+            defaultValue={defaultValues.price?.regular}
             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
             placeholder="Enter regular price"
           />
@@ -84,6 +87,7 @@ const BasicInformation = ({ register, errors }) => {
             type="number"
             step="0.01"
             {...register("price.discounted")}
+            defaultValue={defaultValues.price?.discounted}
             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
             placeholder="Enter discounted price (if any)"
           />
@@ -103,6 +107,7 @@ const BasicInformation = ({ register, errors }) => {
           {...register("productCode", {
             required: "Product Code is required",
           })}
+          defaultValue={defaultValues.productCode}
           className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
           placeholder="Enter product code"
         />
@@ -127,9 +132,10 @@ const BasicInformation = ({ register, errors }) => {
             {...register("category", {
               required: "Category is required",
             })}
+            defaultValue={defaultValues.category}
             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
           >
-            <option value="" disabled >
+            <option value="" disabled>
               Select a category
             </option>
             <option value="electronics">Electronics</option>
@@ -154,6 +160,7 @@ const BasicInformation = ({ register, errors }) => {
           <input
             id="subcategory"
             {...register("subcategory")}
+            defaultValue={defaultValues.subcategory}
             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
             placeholder="Enter subcategory"
           />
@@ -174,6 +181,7 @@ const BasicInformation = ({ register, errors }) => {
           {...register("stockQuantity", {
             required: "Stock Quantity is required",
           })}
+          defaultValue={defaultValues.stockQuantity}
           className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
           placeholder="Enter stock quantity"
         />
@@ -195,6 +203,7 @@ const BasicInformation = ({ register, errors }) => {
         <input
           id="brand"
           {...register("brand", { required: "Brand is required" })}
+          defaultValue={defaultValues.brand}
           className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
           placeholder="Enter brand name"
         />

@@ -4,7 +4,7 @@ import { BsPlusCircle } from "react-icons/bs";
 
 // This component handles the specification section of the product form
 // It allows users to add, remove, and edit product specifications
-const Specification = ({ register, specificationFields, removeSpecification, appendSpecification }) => {
+const Specification = ({ register, specificationFields, removeSpecification, appendSpecification, errors, defaultValues }) => {
   return (
     <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -20,28 +20,50 @@ const Specification = ({ register, specificationFields, removeSpecification, app
                 {...register(`specifications.${index}.group`, {
                   required: "Specification group is required",
                 })}
+                defaultValue={defaultValues?.specifications?.[index]?.group}
                 placeholder="Specification Group"
                 className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />
+              {errors.specifications?.[index]?.group && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.specifications[index].group.message}
+                </p>
+              )}
               <div className="flex space-x-2">
                 {/* Input for specification name */}
-                <input
-                  {...register(
-                    `specifications.${index}.items.0.name`,
-                    { required: "Specification name is required" }
+                <div className="w-full">
+                  <input
+                    {...register(
+                      `specifications.${index}.items.0.name`,
+                      { required: "Specification name is required" }
+                    )}
+                    defaultValue={defaultValues?.specifications?.[index]?.items?.[0]?.name}
+                    placeholder="Name"
+                    className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                  />
+                  {errors.specifications?.[index]?.items?.[0]?.name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.specifications[index].items[0].name.message}
+                    </p>
                   )}
-                  placeholder="Name"
-                  className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
-                />
+                </div>
                 {/* Input for specification value */}
-                <input
-                  {...register(
-                    `specifications.${index}.items.0.value`,
-                    { required: "Specification value is required" }
+                <div className="w-full">
+                  <input
+                    {...register(
+                      `specifications.${index}.items.0.value`,
+                      { required: "Specification value is required" }
+                    )}
+                    defaultValue={defaultValues?.specifications?.[index]?.items?.[0]?.value}
+                    placeholder="Value"
+                    className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                  />
+                  {errors.specifications?.[index]?.items?.[0]?.value && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.specifications[index].items[0].value.message}
+                    </p>
                   )}
-                  placeholder="Value"
-                  className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
-                />
+                </div>
               </div>
             </div>
             {/* Button to remove specification */}
