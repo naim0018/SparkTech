@@ -1,9 +1,8 @@
 import { BiPackage, BiListUl, BiCart, BiGroup, BiCog } from "react-icons/bi";
-
-import Products from "../Component/Admin/AdminDashboard/Products";
 import Orders from "../Component/Admin/AdminDashboard/Orders";
 import Customers from "../Component/Admin/AdminDashboard/Customers";
 import AddProductForm from "../Component/Admin/AdminDashboard/AddProduct/AddProduct";
+import Products from "../Component/Admin/AdminDashboard/Products/Products";
 
 export const adminRoute = [
     {
