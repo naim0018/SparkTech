@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 // Import necessary dependencies and components
 import { useState, useEffect } from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { FiMenu, FiX, FiHome } from 'react-icons/fi'
+import { FiMenu, FiX, FiHome, FiUser, FiLogOut } from 'react-icons/fi'
 import { navbarGenerator } from '../../utils/navbarGenerator'
 import { adminRoute } from '../../Router/AdminRoute'
 
@@ -9,15 +10,16 @@ import { adminRoute } from '../../Router/AdminRoute'
 const AdminLayout = () => {
   // State for sidebar visibility and screen size
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isSmallScreen, setIsSmallScreen] = useState(false)
+  const [isLargeScreen, setIsLargeScreen] = useState(false)
   // Generate sidebar items from admin routes
   const sidebarItems = navbarGenerator(adminRoute)
 
   // Effect to handle screen resize and sidebar visibility
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 1024)
-      setIsSidebarOpen(window.innerWidth >= 1024)
+      const largeScreen = window.innerWidth >= 1440
+      setIsLargeScreen(largeScreen)
+      setIsSidebarOpen(largeScreen)
     }
 
     handleResize()
@@ -31,59 +33,69 @@ const AdminLayout = () => {
   }
 
   return (
-    <div className='flex flex-col lg:flex-row min-h-screen'>
-      {/* Hamburger menu button for small screens */}
-      <button
-        className="fixed top-4 left-4 z-20 lg:hidden bg-gray-700 text-white p-2 rounded-md"
-        onClick={toggleSidebar}
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <aside
+        className={`bg-emerald-700 text-white w-64 min-h-screen p-4 ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } transition-transform duration-300 ease-in-out xl:translate-x-0 fixed xl:static z-30 hover:bg-emerald-600`}
       >
-        {isSidebarOpen ? <FiX /> : <FiMenu />}
-      </button>
-
-      {/* Sidebar component */}
-      <aside className={`bg-gray-700 text-white w-full lg:w-64 lg:min-h-screen fixed lg:static z-10 transition-all duration-300 ease-in-out ${
-        isSidebarOpen ? 'top-0' : '-top-full lg:top-0'
-      }`}>
-        {/* Admin dashboard header */}
-        <header className="p-4 mt-10 lg:mt-0 flex justify-center items-center">
-          <h1 className="text-2xl font-bold">E-commerce Admin</h1>
-        </header>
-        {/* Navigation menu */}
-        <nav className="mt-8 px-5 pb-10">
-          {/* Home NavLink */}
-          <NavLink
-            to="/"
-            className={({ isActive }) => 
-              `flex items-center gap-2 py-2 px-4 text-white transition-colors duration-200 ${
-                isActive ? 'bg-white/20 font-bold' : 'hover:bg-white/10'
-              }`
-            }
-            onClick={() => isSmallScreen && setIsSidebarOpen(false)}
-          >
-            <FiHome />
-            Home
-          </NavLink>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold">Admin Panel</h2>
+          <button onClick={toggleSidebar} className="xl:hidden">
+            <FiX size={24} />
+          </button>
+        </div>
+        <nav>
           {sidebarItems.map(({ name, path, icon }) => (
             <NavLink
               key={name}
               to={path}
-              className={({ isActive }) => 
-                `flex items-center gap-2 py-2 px-4 text-white transition-colors duration-200 ${
-                  isActive ? 'bg-white/20 font-bold' : 'hover:bg-white/10'
+              className={({ isActive }) =>
+                `flex items-center space-x-2 mb-4 px-4 py-2 rounded transition-colors ${
+                  isActive ? 'bg-emerald-800' : 'hover:bg-emerald-600'
                 }`
               }
-              onClick={() => isSmallScreen && setIsSidebarOpen(false)}
             >
               {icon}
-              {name}
+              <span>{name}</span>
             </NavLink>
           ))}
         </nav>
       </aside>
 
-      {/* Main content area */}
-      <div className="flex-grow p-4 lg:p-8">
-        <Outlet />
+      {/* Main content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top navbar */}
+        <header className="bg-white shadow-md p-4">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={toggleSidebar}
+              className="text-gray-500 focus:outline-none xl:hidden"
+            >
+              <FiMenu size={24} />
+            </button>
+            <div className="flex items-center space-x-4">
+              <NavLink to="/" className="flex items-center space-x-2 text-gray-700">
+                <FiHome />
+                <span>Home</span>
+              </NavLink>
+              <button className="flex items-center space-x-2 text-gray-700">
+                <FiUser />
+                <span>Profile</span>
+              </button>
+              <button className="flex items-center space-x-2 text-gray-700">
+                <FiLogOut />
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Page content */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 p-6">
+          <Outlet />
+        </main>
       </div>
     </div>
   )
