@@ -6,19 +6,42 @@ import { MdOutlineShoppingCart } from 'react-icons/md'
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { useDispatch } from 'react-redux'
+import { addToCart } from '../../../redux/features/CartSlice'
+import { toast } from 'react-toastify'
 
 const TrendingProducts = () => {
   const { data, isLoading } = useGetAllProductsQuery()
   const [trendingProducts, setTrendingProducts] = useState([])
   const ref = useRef(null)
   const isInView = useInView(ref, { once: false})
-  console.log("TrendingProducts", isInView)
+  const dispatch = useDispatch()
+
   useEffect(() => {
     if (data?.data) {
       const filtered = data.data.filter(product => product.isFeatured || product.isOnSale).slice(0, 8)
       setTrendingProducts(filtered)
     }
   }, [data])
+
+  const handleAddToCart = (product) => {
+    dispatch(addToCart({
+      id: product._id,
+      name: product.title,
+      price: product.price.discounted || product.price.regular,
+      image: product.images[0].url,
+      quantity: 1
+    }))
+    toast.success('Product added to cart!', {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    })
+  }
 
   return (
     <div ref={ref} className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
@@ -46,13 +69,13 @@ const TrendingProducts = () => {
                     exit={{ y: -20, scale: 0.5 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
-                    <Link to={`/product/${product._id}`} className="block w-full">
+                    <div className="block w-full">
                       <motion.div 
                         className="w-full flex flex-col items-center justify-center p-2 sm:p-4 rounded-lg group cursor-pointer"
                         whileHover={{ scale: 1.05 }}
                         transition={{ type: "spring", stiffness: 300, damping: 10 }}
                       >
-                        <div className="relative w-[90%] aspect-square overflow-hidden">
+                        <Link to={`/product/${product._id}`} className="relative w-[90%] aspect-square overflow-hidden">
                           <motion.img 
                             src={product.images[0]?.url} 
                             alt={product.images[0]?.alt || product.title} 
@@ -60,7 +83,7 @@ const TrendingProducts = () => {
                             whileHover={{ scale: 1.1 }}
                             transition={{ duration: 0.3 }}
                           />
-                        </div>
+                        </Link>
                         <div className="flex items-center my-1 sm:my-2">
                           {[...Array(5)].map((_, starIndex) => (
                             <FaStar
@@ -91,12 +114,13 @@ const TrendingProducts = () => {
                             className="bg-gray-100 text-gray-700 p-1 sm:p-2 rounded hover:bg-gray-200"
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
+                            onClick={() => handleAddToCart(product)}
                           >
                             <MdOutlineShoppingCart className="text-base sm:text-lg" />
                           </motion.button>
                         </div>
                       </motion.div>
-                    </Link>
+                    </div>
                   </motion.div>
                 ))}
               </AnimatePresence>

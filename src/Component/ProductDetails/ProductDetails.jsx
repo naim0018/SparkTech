@@ -4,6 +4,9 @@ import { useParams } from 'react-router-dom';
 import { FaShoppingCart, FaHeart, FaStar } from 'react-icons/fa';
 import { useGetProductByIdQuery } from '../../redux/api/ProductApi';
 import RelatedProducts from './RelatedProducts';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../redux/features/CartSlice';
+import { toast } from 'react-toastify';
 
 // Define the ProductDetails component
 const ProductDetails = () => {
@@ -17,6 +20,8 @@ const ProductDetails = () => {
   // State for selected image and quantity
   const [selectedImage, setSelectedImage] = useState('');
   const [quantity, setQuantity] = useState(1);
+
+  const dispatch = useDispatch();
 
   // Set the initial selected image when product data is loaded
   useEffect(() => {
@@ -33,6 +38,26 @@ const ProductDetails = () => {
   // Functions to handle quantity changes
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
+
+  // Function to handle adding to cart
+  const handleAddToCart = () => {
+    dispatch(addToCart({
+      id: product._id,
+      name: product.title,
+      price: product.price.discounted || product.price.regular,
+      image: product.images[0].url,
+      quantity: quantity
+    }));
+    toast.success('Product added to cart!', {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
 
   // Render the component
   return (
@@ -136,7 +161,10 @@ const ProductDetails = () => {
 
               {/* Action buttons */}
               <div className="flex gap-4 mb-6">
-                <button className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-md text-base font-semibold hover:bg-blue-700 transition flex items-center justify-center">
+                <button 
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-md text-base font-semibold hover:bg-blue-700 transition flex items-center justify-center"
+                >
                   <FaShoppingCart className="mr-2" />
                   Add to Cart
                 </button>

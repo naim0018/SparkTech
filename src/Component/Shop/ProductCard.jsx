@@ -1,8 +1,32 @@
 /* eslint-disable react/prop-types */
 import { FaStar, FaShoppingCart, FaHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../redux/features/CartSlice';
+import { toast } from 'react-toastify';
 
 const ProductCard = ({ product }) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({
+      id: product._id,
+      name: product.title,
+      price: product.price.discounted || product.price.regular,
+      image: product.images[0].url,
+      quantity: 1
+    }));
+    toast.success('Product added to cart!', {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
   return (
     <div className="bg-white border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* Product image and discount badge */}
@@ -49,7 +73,10 @@ const ProductCard = ({ product }) => {
         </div>
         {/* Action buttons */}
         <div className="flex space-x-2">
-          <button className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition flex items-center justify-center">
+          <button 
+            onClick={handleAddToCart}
+            className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition flex items-center justify-center"
+          >
             <FaShoppingCart className="mr-2" />
             Add to Cart
           </button>
@@ -67,4 +94,3 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
-

@@ -19,7 +19,7 @@ const NewArrivals = () => {
   }, [data]);
 
   return (
-    <section ref={ref} className="container mx-auto px-4 py-8">
+    <section ref={ref} className="container mx-auto px-4 py-8 overflow-x-hidden">
       <Title title="New Arrivals" className="mb-6 text-center" />
       {isLoading ? (
         <div className="flex justify-center items-center h-48">
@@ -42,7 +42,7 @@ const NewArrivals = () => {
             animate={isInView ? { x: 0 } : { x: 50 }}
             transition={{ duration: 1 }}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
               <AnimatePresence>
                 {products.map((product, index) => (
                   <motion.div

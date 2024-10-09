@@ -11,6 +11,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../../redux/features/CartSlice';
+import { toast } from 'react-toastify';
 
 const SpecialOffers = () => {
   const { data, isLoading } = useGetAllProductsQuery({
@@ -18,6 +21,7 @@ const SpecialOffers = () => {
   });
   const [products, setProducts] = useState([]);
   const [swiper, setSwiper] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (data?.data) {
@@ -35,6 +39,25 @@ const SpecialOffers = () => {
     if (swiper?.autoplay && !swiper.autoplay.running) {
       swiper.autoplay.start();
     }
+  };
+
+  const handleAddToCart = (product) => {
+    dispatch(addToCart({
+      id: product._id,
+      name: product.title,
+      price: product.price.discounted || product.price.regular,
+      image: product.images[0].url,
+      quantity: 1
+    }));
+    toast.success('Product added to cart!', {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   return (
@@ -99,7 +122,13 @@ const SpecialOffers = () => {
                           </span>
                         )}
                       </div>
-                      <button className="bg-gray-100 text-gray-700 py-2 px-4 rounded hover:bg-gray-200">
+                      <button 
+                        className="bg-gray-100 text-gray-700 py-2 px-4 rounded hover:bg-gray-200"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAddToCart(product);
+                        }}
+                      >
                         <MdOutlineShoppingCart className="size-[20px]" />
                       </button>
                     </div>
