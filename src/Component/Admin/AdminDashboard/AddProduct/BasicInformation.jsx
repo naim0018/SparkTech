@@ -1,5 +1,23 @@
 /* eslint-disable react/prop-types */
-const BasicInformation = ({ register, errors, defaultValues = {} }) => {
+import { useEffect } from 'react';
+
+const BasicInformation = ({ register, errors, defaultValues = {}, watch, savingsPercentage }) => {
+  const regularPrice = watch("price.regular");
+  const discountedPrice = watch("price.discounted");
+
+  useEffect(() => {
+    if (regularPrice && discountedPrice) {
+      const regular = parseFloat(regularPrice);
+      const discounted = parseFloat(discountedPrice);
+      if (regular > 0 && discounted < regular) {
+        const savings = ((regular - discounted) / regular) * 100;
+        register("price.savingsPercentage", { value: savings.toFixed(2) });
+      } else {
+        register("price.savingsPercentage", { value: 0 });
+      }
+    }
+  }, [regularPrice, discountedPrice, register]);
+
   return (
     <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -64,6 +82,7 @@ const BasicInformation = ({ register, errors, defaultValues = {} }) => {
             step="0.01"
             {...register("price.regular", {
               required: "Regular price is required",
+              min: { value: 0, message: "Price must be positive" }
             })}
             defaultValue={defaultValues.price?.regular}
             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
@@ -86,12 +105,34 @@ const BasicInformation = ({ register, errors, defaultValues = {} }) => {
             id="discountedPrice"
             type="number"
             step="0.01"
-            {...register("price.discounted")}
+            {...register("price.discounted", {
+              min: { value: 0, message: "Price must be positive" },
+              validate: (value) => 
+                !value || parseFloat(value) <= parseFloat(watch("price.regular")) || 
+                "Discounted price must be less than or equal to regular price"
+            })}
             defaultValue={defaultValues.price?.discounted}
             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
             placeholder="Enter discounted price (if any)"
           />
+          {errors.price?.discounted && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.price.discounted.message}
+            </p>
+          )}
         </div>
+      </div>
+
+      {/* Savings Percentage */}
+      <div className="mt-2">
+        <p className="text-sm font-semibold text-gray-700">
+          Discount Percentage: {savingsPercentage}%
+        </p>
+        <input
+          type="hidden"
+          {...register("price.savingsPercentage")}
+          value={savingsPercentage}
+        />
       </div>
 
       {/* Product Code */}
@@ -181,6 +222,7 @@ const BasicInformation = ({ register, errors, defaultValues = {} }) => {
           type="number"
           {...register("stockQuantity", {
             required: "Stock Quantity is required",
+            min: { value: 0, message: "Stock quantity must be non-negative" }
           })}
           defaultValue={defaultValues.stockQuantity}
           className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"

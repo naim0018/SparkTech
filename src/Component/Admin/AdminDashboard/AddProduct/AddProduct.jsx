@@ -15,6 +15,8 @@ export default function AddProductForm() {
   // State for form submission and input focus
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRef = useRef(null);
+  const [discountedPercentage, setDiscountedPercentage] = useState(0);
+  console.log(discountedPercentage);
 
   // Initialize react-hook-form
   const {
@@ -23,10 +25,15 @@ export default function AddProductForm() {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm({
     defaultValues: {
       isFeatured: false,
       isOnSale: false,
+      price: {
+        regular: 0,
+        discounted: 0,
+      },
     },
   });
 
@@ -85,6 +92,24 @@ export default function AddProductForm() {
   // Use the mutation hook
   const [addProduct, { isLoading }] = useAddProductMutation();
 
+  // Watch for changes in regular and discounted prices
+  const regularPrice = watch("price.regular");
+  const discountedPrice = watch("price.discounted");
+
+  // Calculate savings percentage when prices change
+  useEffect(() => {
+    if (regularPrice && discountedPrice) {
+      const regular = parseFloat(regularPrice);
+      const discounted = parseFloat(discountedPrice);
+      if (regular > 0 && discounted < regular) {
+        const savings = ((regular - discounted) / regular) * 100;
+        setDiscountedPercentage(savings.toFixed(2));
+      } else {
+        setDiscountedPercentage(0);
+      }
+    }
+  }, [regularPrice, discountedPrice]);
+
   // Function to handle form submission
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -102,8 +127,8 @@ export default function AddProductForm() {
         price: {
           regular: Number(data.price.regular),
           discounted: Number(data.price.discounted),
-          savings: Number(data.price.savings),
-          savingsPercentage: Number(data.price.savingsPercentage),
+          savings: Number(data.price.regular) - Number(data.price.discounted),
+          savingsPercentage: Number(discountedPercentage),
         },
         stockQuantity: Number(data.stockQuantity),
         dimensions: {
@@ -169,7 +194,12 @@ export default function AddProductForm() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-8">
                 {/* Basic Information */}
-                <BasicInformation register={register} errors={errors} />
+                <BasicInformation 
+                  register={register} 
+                  errors={errors} 
+                  watch={watch}
+                  savingsPercentage={discountedPercentage}
+                />
 
                 {/* Shipping Details */}
                 <ShippingDetails register={register} errors={errors} />
