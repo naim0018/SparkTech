@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useSpring, useAnimation } from 'framer-motion';
 import { FaStar } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import { useTheme } from '../../../ThemeContext'; // Import useTheme hook
 
 // ProductCard component for displaying individual product information
 const ProductCard = ({ product, isInView }) => {
@@ -13,6 +14,7 @@ const ProductCard = ({ product, isInView }) => {
   });
 
   const controls = useAnimation();
+  const { isDarkMode } = useTheme(); // Use the useTheme hook
 
   // Effect to control animation based on view status
   useEffect(() => {
@@ -44,7 +46,7 @@ const ProductCard = ({ product, isInView }) => {
    >
      <Link to={`/product/${product._id}`} className="block">
       <motion.div
-      className="bg-white rounded-lg p-4 flex items-start  space-x-5 transition duration-300 ease-in-out h-36 hover:shadow-lg"
+      className={`${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'} rounded-lg p-4 flex items-start space-x-5 transition duration-300 ease-in-out h-36 hover:shadow-lg`}
       onHoverStart={handleHover}
       onHoverEnd={handleHoverEnd}
       >
@@ -57,7 +59,7 @@ const ProductCard = ({ product, isInView }) => {
             <motion.img
               src={product.images[0].url}
               alt={product.images[0].alt || product.title}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain bg-white rounded-lg"
               loading="lazy"
               onError={(e) => {
                 e.target.onerror = null;
@@ -80,12 +82,12 @@ const ProductCard = ({ product, isInView }) => {
         >
           {/* Product title */}
           <motion.h3 
-            className="font-semibold text-sm mb-2 line-clamp-2"
+            className={`font-semibold text-sm mb-2 line-clamp-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
           >
             {product.title}
           </motion.h3>
           {/* Product rating */}
-          {product?.rating && <RatingStars rating={product.rating.average} count={product.rating.count} />}
+          {product?.rating && <RatingStars rating={product.rating.average} count={product.rating.count} isDarkMode={isDarkMode} />}
           {/* Product price */}
           <motion.div 
             className="mt-3 flex flex-wrap items-center"
@@ -93,7 +95,7 @@ const ProductCard = ({ product, isInView }) => {
             animate={{ y: isHovered ? -2 : 0 }}
           >
             <motion.span 
-              className="font-bold text-base"
+              className={`font-bold text-base ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
               whileHover={{ scale: 1.1 }}
               animate={{ scale: isHovered ? 1.1 : 1 }}
             >
@@ -101,7 +103,7 @@ const ProductCard = ({ product, isInView }) => {
             </motion.span>
             {product.price?.discounted && product.price?.regular && (
               <motion.span 
-                className="ml-2 text-sm text-gray-500 line-through"
+                className={`ml-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} line-through`}
                 whileHover={{ opacity: 0.7 }}
                 animate={{ opacity: isHovered ? 0.7 : 1 }}
               >
@@ -118,17 +120,17 @@ const ProductCard = ({ product, isInView }) => {
 }
 
 // RatingStars component for displaying product ratings
-const RatingStars = ({ rating, count }) => (
+const RatingStars = ({ rating, count, isDarkMode }) => (
     <div className="flex items-center">
       {[...Array(5)].map((_, i) => (
         <FaStar
           key={i}
           className={`w-3 h-3 ${
-            i < Math.round(rating) ? "text-yellow-400" : "text-gray-300"
+            i < Math.round(rating) ? "text-yellow-400" : isDarkMode ? "text-gray-600" : "text-gray-300"
           }`}
         />
       ))}
-      <span className="ml-1 text-xs text-gray-600">
+      <span className={`ml-1 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
         {rating ? `(${rating.toFixed(1)})` : ''} {count} reviews
       </span>
     </div>

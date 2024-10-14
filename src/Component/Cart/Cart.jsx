@@ -5,9 +5,10 @@ import { FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
 import { incrementQuantity, decrementQuantity, removeFromCart } from '../../redux/features/CartSlice';
 
 const Cart = ({ toggleCart }) => {
-  const cartItems = useSelector((state) => state.cart.items);
-  const total = useSelector((state) => state.cart.total);
+  const cartItems = useSelector((state) => state.cart.cartItems) || [];
   const dispatch = useDispatch();
+
+  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
     <div className="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-lg z-50 flex flex-col">
@@ -18,7 +19,7 @@ const Cart = ({ toggleCart }) => {
         </button>
       </div>
       <div className="flex-grow overflow-y-auto p-4 ">
-        {cartItems.length === 0 ? (
+        {!cartItems || cartItems.length === 0 ? (
           <p className="text-center text-gray-500 mt-8">Your cart is empty</p>
         ) : (
           <ul className="space-y-4">
@@ -33,20 +34,20 @@ const Cart = ({ toggleCart }) => {
                   <p className="mt-1 text-sm text-gray-600">${item.price.toFixed(2)} each</p>
                   <div className="mt-2 flex items-center">
                     <button
-                      onClick={() => dispatch(decrementQuantity(item.id))}
+                      onClick={() => dispatch(decrementQuantity({ id: item.id }))}
                       className="text-red-500 hover:text-red-700 focus:outline-none"
                     >
                       <FaMinus />
                     </button>
                     <span className="mx-3 text-gray-700 font-semibold">{item.quantity}</span>
                     <button
-                      onClick={() => dispatch(incrementQuantity(item.id))}
+                      onClick={() => dispatch(incrementQuantity({ id: item.id }))}
                       className="text-green-500 hover:text-green-700 focus:outline-none"
                     >
                       <FaPlus />
                     </button>
                     <button
-                      onClick={() => dispatch(removeFromCart(item.id))}
+                      onClick={() => dispatch(removeFromCart({ id: item.id }))}
                       className="ml-auto text-red-500 hover:text-red-600 focus:outline-none"
                     >
                       <FaTrash />

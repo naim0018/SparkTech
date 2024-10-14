@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
+import { useTheme } from "../../../ThemeContext"; // Import useTheme hook
 
 const Carousel = () => {
   const [currentSlider, setCurrentSlider] = useState(0);
+  const { isDarkMode } = useTheme(); // Use the useTheme hook
   const carouselImages = [
     "https://i.imgur.com/YG0e1r8.jpg",
     "https://i.imgur.com/0tQT1TU.jpg",
@@ -22,7 +24,7 @@ const Carousel = () => {
   }, [nextSlider]);
 
   return (
-    <div className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[522px] mt-6 overflow-hidden rounded-lg">
+    <div className={`relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[522px] mt-6 overflow-hidden rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
       {/* Carousel container */}
       <div
         className="flex transition-transform duration-500 ease-linear h-full"
@@ -41,13 +43,13 @@ const Carousel = () => {
       {/* Navigation buttons */}
       <button
         onClick={prevSlider}
-        className="absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-black/30 text-white p-1 sm:p-2 rounded-full hover:bg-black/50 transition text-sm sm:text-base"
+        className={`absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-black/30 text-white'} p-1 sm:p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-black/50'} transition text-sm sm:text-base`}
       >
         &#10094;
       </button>
       <button
         onClick={nextSlider}
-        className="absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-black/30 text-white p-1 sm:p-2 rounded-full hover:bg-black/50 transition text-sm sm:text-base"
+        className={`absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-black/30 text-white'} p-1 sm:p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-black/50'} transition text-sm sm:text-base`}
       >
         &#10095;
       </button>
@@ -59,7 +61,9 @@ const Carousel = () => {
             key={idx}
             onClick={() => setCurrentSlider(idx)}
             className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
-              currentSlider === idx ? "bg-white w-4 sm:w-8" : "bg-white/50"
+              currentSlider === idx 
+                ? (isDarkMode ? "bg-gray-300 w-4 sm:w-8" : "bg-white w-4 sm:w-8")
+                : (isDarkMode ? "bg-gray-600" : "bg-white/50")
             }`}
           ></button>
         ))}

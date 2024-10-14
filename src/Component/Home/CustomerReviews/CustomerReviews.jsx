@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Title from "../../../UI/Title";
+import { useTheme } from "../../../ThemeContext"; // Import useTheme hook
 
 // Sample reviews data
 const reviews = [
@@ -26,6 +27,7 @@ const reviews = [
 
 const CustomerReviews = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { isDarkMode } = useTheme(); // Use the useTheme hook
 
   const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
@@ -39,21 +41,29 @@ const CustomerReviews = () => {
   };
 
   return (
-    <div className="container mx-auto my-8 ">
+    <div className={`container mx-auto my-8 ${isDarkMode ? 'text-white' : 'text-black'}`}>
       <Title title={"Customer Reviews"} />
 
       {/* Review Card */}
-      <div className="relative p-6 border rounded-lg shadow-lg ">
+      <div className={`relative p-6 border rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         {/* Navigation Buttons */}
         <button
           onClick={handlePrev}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-1 rounded-full"
+          className={`absolute left-0 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full ${
+            isDarkMode
+              ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+              : 'bg-gray-300 hover:bg-gray-400 text-gray-700'
+          }`}
         >
           ❮
         </button>
         <button
           onClick={handleNext}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-1 rounded-full"
+          className={`absolute right-0 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full ${
+            isDarkMode
+              ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+              : 'bg-gray-300 hover:bg-gray-400 text-gray-700'
+          }`}
         >
           ❯
         </button>
@@ -66,11 +76,6 @@ const CustomerReviews = () => {
                 index === currentIndex ? "block" : "hidden"
               }`}
             >
-              {/* <img
-                  src={slide.img}
-                  className="block w-full"
-                  alt={`Slide ${index + 1}`}
-                /> */}
               {/* Star Ratings */}
               <div className="flex items-center mb-4">
                 {[...Array(5)].map((_, index) => (
@@ -79,7 +84,7 @@ const CustomerReviews = () => {
                     className={`${
                       index < reviews[currentIndex].rating
                         ? "text-yellow-500"
-                        : "text-gray-300"
+                        : isDarkMode ? "text-gray-600" : "text-gray-300"
                     }`}
                   >
                     ★
@@ -87,10 +92,10 @@ const CustomerReviews = () => {
                 ))}
               </div>
               {/* Reviewer Name */}
-              <p className="mt-2 font-semibold text-gray-900">
+              <p className={`mt-2 font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                 {reviews[currentIndex].name}
               </p>
-              <div className="absolute inset-x-[15%] bottom-5 hidden py-5 text-center text-white md:block">
+              <div className={`absolute inset-x-[15%] bottom-5 hidden py-5 text-center md:block ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <h5 className="text-xl">{slide.title}</h5>
                 <p>{slide.review}</p>
               </div>

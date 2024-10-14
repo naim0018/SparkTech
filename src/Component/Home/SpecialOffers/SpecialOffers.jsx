@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../../redux/features/CartSlice';
 import { toast } from 'react-toastify';
+import { useTheme } from '../../../ThemeContext'; // Import useTheme hook
 
 const SpecialOffers = () => {
   const { data, isLoading } = useGetAllProductsQuery({
@@ -22,6 +23,7 @@ const SpecialOffers = () => {
   const [products, setProducts] = useState([]);
   const [swiper, setSwiper] = useState(null);
   const dispatch = useDispatch();
+  const { isDarkMode } = useTheme(); // Use the useTheme hook
 
   useEffect(() => {
     if (data?.data) {
@@ -61,11 +63,11 @@ const SpecialOffers = () => {
   };
 
   return (
-    <div className="container mx-auto">
+    <div className={`container mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <Title title="Special Offers" />
       {isLoading ? (
         <div className="flex justify-center items-center h-48">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 ${isDarkMode ? 'border-blue-400' : 'border-blue-500'}`}></div>
         </div>
       ) : (
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -93,37 +95,37 @@ const SpecialOffers = () => {
           >
             {products.map((product) => (
               <SwiperSlide key={product._id}>
-                <div className="w-full flex flex-col items-center justify-center mb-10 p-4 pt-8 group cursor-pointer transition duration-300 ease-in-out hover:shadow-lg hover:bg-white rounded-lg lg:rounded-lg">
+                <div className={`w-full flex flex-col items-center justify-center mb-10 p-4 pt-8 group cursor-pointer transition duration-300 ease-in-out hover:shadow-lg ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-white'} rounded-lg lg:rounded-lg`}>
                   <Link to={`/product/${product._id}`} className="w-full flex flex-col items-center">
                     <img
                       src={product.images[0]?.url}
                       alt={product.images[0]?.alt || product.title}
-                      className="size-72 object-contain p-6 transition duration-300 ease-in-out group-hover:scale-105"
+                      className="size-72 object-contain bg-white rounded-lg p-6 transition duration-300 ease-in-out group-hover:scale-105"
                     />
-                    <div className="flex items-center my-1">
+                    <div className="flex items-center my-2 mt-3">
                       {[...Array(5)].map((_, index) => (
                         <FaStar
                           key={index}
                           className={`${
-                            index < product.rating.average ? "text-yellow-500" : "text-gray-300"
+                            index < product.rating.average ? "text-yellow-500" : isDarkMode ? "text-gray-600" : "text-gray-300"
                           } size-[12px] lg:size-[16px]`}
                         />
                       ))}
                     </div>
-                    <h2 className="text-sm font-medium mb-3 mt-2 overflow-hidden text-ellipsis h-10 text-gray-900">
+                    <h2 className={`text-sm font-medium mb-3 mt-2 overflow-hidden text-ellipsis h-10 ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
                       {product.title}
                     </h2>
                     <div className="flex items-center justify-between w-full px-2">
                       <div className="flex items-center mb-2">
-                        <span className="text-xl font-bold">${product.price.discounted || product.price.regular}</span>
+                        <span className={`text-xl font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>${product.price.discounted || product.price.regular}</span>
                         {product.price.discounted && (
-                          <span className="text-gray-500 line-through ml-2">
+                          <span className={`${isDarkMode ? 'text-gray-500' : 'text-gray-500'} line-through ml-2`}>
                             ${product.price.regular}
                           </span>
                         )}
                       </div>
                       <button 
-                        className="bg-gray-100 text-gray-700 py-2 px-4 rounded hover:bg-gray-200"
+                        className={`${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'} py-2 px-4 rounded`}
                         onClick={(e) => {
                           e.preventDefault();
                           handleAddToCart(product);
@@ -133,15 +135,15 @@ const SpecialOffers = () => {
                       </button>
                     </div>
                     <div className="w-full px-2 my-2">
-                      <p className="text-gray-500 text-sm">
-                        Status: <span className="text-gray-900 font-semibold">{product.stockStatus}</span>
+                      <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>
+                        Status: <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-900'} font-semibold`}>{product.stockStatus}</span>
                       </p>
                       {product.stockStatus === 'In Stock' && product.stockQuantity && (
                         <>
-                          <p className="text-gray-500 text-sm">
-                            Available: <span className="text-gray-900 font-semibold">{product.stockQuantity}</span>
+                          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>
+                            Available: <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-900'} font-semibold`}>{product.stockQuantity}</span>
                           </p>
-                          <div className="w-full overflow-hidden bg-gray-300 rounded-full h-1 my-[5px]">
+                          <div className={`w-full overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'} rounded-full h-1 my-[5px]`}>
                             <div
                               className={`h-1 rounded-full ${product.stockQuantity < 30 ? 'bg-red-500' : 'bg-green-500'}`}
                               style={{ width: `${(product.stockQuantity / 100) * 100}%` }}
@@ -162,7 +164,7 @@ const SpecialOffers = () => {
       <style >{`
         .special-offers-swiper .swiper-button-next,
         .special-offers-swiper .swiper-button-prev {
-          color: #222934;
+          color: ${isDarkMode ? '#e2e8f0' : '#222934'};
           width: 35px;
           height: 35px;
           border-radius: 50%;

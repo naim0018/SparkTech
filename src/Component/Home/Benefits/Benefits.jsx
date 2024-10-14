@@ -2,11 +2,13 @@ import { FaShippingFast, FaCreditCard, FaExchangeAlt, FaHeadset } from 'react-ic
 import { TbCurrencyTaka } from "react-icons/tb";
 import { motion, useInView } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
+import { useTheme } from '../../../ThemeContext'; // Import useTheme hook
 
 const Benefits = () => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false });
+  const { isDarkMode } = useTheme(); // Use the useTheme hook
 
   useEffect(() => {
     if (isInView) {
@@ -50,21 +52,27 @@ const Benefits = () => {
           {benefitItems.map((item, index) => (
             <motion.div
               key={index}
-              initial={{  y: 20 }}
+              initial={{ y: 20 }}
               animate={isVisible ? { y: 0 } : { y: 20 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105"
+              className={`rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 ${
+                isDarkMode ? 'bg-gray-700 text-gray-100' : 'bg-white text-gray-900'
+              }`}
             >
               <div className="p-4">
                 <motion.div
-                  className="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center bg-gray-100"
+                  className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center ${
+                    isDarkMode ? 'bg-gray-600' : 'bg-gray-100'
+                  }`}
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
                 >
                   {item.icon}
                 </motion.div>
                 <h3 className="text-lg sm:text-xl font-semibold text-center mb-1">{item.title}</h3>
-                <p className="text-gray-600 text-center text-sm">{item.description}</p>
+                <p className={`text-center text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>
+                  {item.description}
+                </p>
               </div>
             </motion.div>
           ))}

@@ -2,17 +2,19 @@ import { useState, useEffect, useRef } from "react";
 import { CiSearch } from "react-icons/ci";
 import { FaUserCircle } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
-import { RiMoonLine } from "react-icons/ri";
+import { RiMoonLine, RiSunLine } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Cart from "../../Component/Cart/Cart";
 import { useSelector } from "react-redux";
+import { useTheme } from "../../ThemeContext";
 
 const SocialButton = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const cartRef = useRef(null);
-  const cartItems = useSelector((state) => state.cart.items);
-
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const { isDarkMode, toggleTheme } = useTheme();
+  
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
   };
@@ -32,7 +34,13 @@ const SocialButton = () => {
 
   return (
     <div className="lg:w-[204px] flex items-center lg:justify-between gap-[2px]">
-      <RiMoonLine className="text-xl m-[10px] text-white" />
+      <button onClick={toggleTheme} className="m-[10px]">
+        {isDarkMode ? (
+          <RiSunLine className="text-xl text-white" />
+        ) : (
+          <RiMoonLine className="text-xl text-white" />
+        )}
+      </button>
       <CiSearch className="lg:hidden m-[10px] text-xl text-white" />
       <NavLink to="/admin">
         <FaUserCircle className="hidden lg:flex text-xl text-white" />
@@ -42,7 +50,7 @@ const SocialButton = () => {
         onClick={toggleCart}
       >
         <p className="bg-[#33b36b] size-6 text-sm rounded-full flex items-center justify-center absolute translate-x-5 -translate-y-4 border-[3px] border-[#222934]">
-          {cartItems.length || 0}
+          {cartItems.length}
         </p>
         <IoCartOutline className="text-xl text-white" />
       </div>

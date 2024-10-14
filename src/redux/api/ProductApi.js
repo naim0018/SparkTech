@@ -33,6 +33,7 @@ export const productApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Product"],
     }),
+    
   }),
 });
 
