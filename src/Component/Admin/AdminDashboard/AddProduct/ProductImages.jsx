@@ -9,6 +9,9 @@ const ProductImages = ({ register, imageFields, removeImage, appendImage, defaul
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Product Images
       </h2>
+      <p className="text-sm text-gray-600 mb-4">
+        Please ensure first product image have white background for better visibility.
+      </p>
       <div className="space-y-4">
         {imageFields.map((field, index) => (
           <div key={field.id} className="flex items-center space-x-2">
