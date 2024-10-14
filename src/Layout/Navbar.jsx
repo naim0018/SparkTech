@@ -88,10 +88,12 @@ const SearchBar = () => {
   const searchBarRef = useRef(null);
 
   const { data: products = [], isLoading, isError } = useGetAllProductsQuery();
-  console.log(products);
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(localSearchTerm.toLowerCase())
-  ).slice(0, 5); // Limit to 5 suggestions
+  
+  const filteredProducts = products
+    .filter((product) =>
+      product.name.toLowerCase().includes(localSearchTerm.toLowerCase())
+    )
+    .slice(0, 5); // Limit to 5 suggestions
 
   const handleSearch = useCallback(
     (e) => {
@@ -121,11 +123,11 @@ const SearchBar = () => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="text-white">Loading...</div>;
   }
 
   if (isError) {
-    return <div>Error loading products</div>;
+    return <div className="text-red-500">Error loading products</div>;
   }
 
   return (
@@ -140,7 +142,7 @@ const SearchBar = () => {
         onFocus={() => setShowSuggestions(localSearchTerm.length > 0)}
       />
       {showSuggestions && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-md shadow-lg z-50">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
               <div
@@ -281,7 +283,7 @@ const Navbar = () => {
             </div>
             <Logo />
           </div>
-          <SearchBar />
+          {/* <SearchBar /> */}
           <SaleInfo />
           <UserActions
             isDarkMode={isDarkMode}
@@ -299,7 +301,7 @@ const Navbar = () => {
         <nav className="fixed top-0 left-0 right-0 bg-[#222934] shadow-md z-50 transition-all duration-300">
           <div className="container mx-auto flex items-center justify-between px-5 py-3">
             <Logo />
-            <SearchBar />
+            {/* <SearchBar /> */}
             <UserActions
               isDarkMode={isDarkMode}
               toggleTheme={toggleTheme}
