@@ -4,16 +4,18 @@ import { navbarRoute } from "../Router/NavbarRoute";
 import { NavLink } from "react-router-dom";
 import { TfiAngleRight } from "react-icons/tfi";
 import { MdGridView } from "react-icons/md";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { PiPercentBold } from "react-icons/pi";
 import { CiSearch } from "react-icons/ci";
 import { useTheme } from "../ThemeContext";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RiMoonLine, RiSunLine } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
 import Cart from "../Component/Cart/Cart";
+import { setSearchTerm } from "../redux/slices/searchSlice";
+import { useGetAllProductsQuery } from "../redux/api/ProductApi";
 
 // NavItem component for rendering individual navigation items
 const NavItem = ({ item, isActive }) => (
@@ -79,16 +81,84 @@ const Logo = () => (
 );
 
 // SearchBar component for search functionality
-const SearchBar = () => (
-  <div className="lg:w-[490px] lg:px-5 lg:border border-white rounded-full flex items-center">
-    <CiSearch className="hidden lg:flex text-xl text-white" />
-    <input
-      type="text"
-      placeholder="Search the products"
-      className="hidden lg:flex outline-none py-2 bg-transparent w-full text-white font-normal px-4 placeholder:text-[#6c727f]"
-    />
-  </div>
-);
+const SearchBar = () => {
+  const [localSearchTerm, setLocalSearchTerm] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const dispatch = useDispatch();
+  const searchBarRef = useRef(null);
+
+  const { data: products = [], isLoading, isError } = useGetAllProductsQuery();
+  console.log(products);
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(localSearchTerm.toLowerCase())
+  ).slice(0, 5); // Limit to 5 suggestions
+
+  const handleSearch = useCallback(
+    (e) => {
+      const newSearchTerm = e.target.value;
+      setLocalSearchTerm(newSearchTerm);
+      setShowSuggestions(newSearchTerm.length > 0);
+      dispatch(setSearchTerm(newSearchTerm));
+    },
+    [dispatch]
+  );
+
+  const handleSuggestionClick = (productName) => {
+    setLocalSearchTerm(productName);
+    dispatch(setSearchTerm(productName));
+    setShowSuggestions(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading products</div>;
+  }
+
+  return (
+    <div ref={searchBarRef} className="lg:w-[490px] lg:px-5 lg:border border-white rounded-full flex items-center relative">
+      <CiSearch className="hidden lg:flex text-xl text-white" />
+      <input
+        type="text"
+        placeholder="Search the products"
+        className="hidden lg:flex outline-none py-2 bg-transparent w-full text-white font-normal px-4 placeholder:text-[#6c727f]"
+        value={localSearchTerm}
+        onChange={handleSearch}
+        onFocus={() => setShowSuggestions(localSearchTerm.length > 0)}
+      />
+      {showSuggestions && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-md shadow-lg z-50">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <div
+                key={product.id}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-800"
+                onClick={() => handleSuggestionClick(product.name)}
+              >
+                {product.name}
+              </div>
+            ))
+          ) : (
+            <div className="px-4 py-2 text-gray-500">No suggestions found</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 // SaleInfo component for displaying sale information
 const SaleInfo = () => (

@@ -143,6 +143,7 @@ const BasicInformation = ({ register, errors, defaultValues = {} }) => {
             <option value="books">Books</option>
             <option value="home">Home & Garden</option>
             <option value="toys">Toys & Games</option>
+            <option value="kitchen">Kitchen</option>
           </select>
           {errors.category && (
             <p className="text-red-500 text-sm mt-1">
