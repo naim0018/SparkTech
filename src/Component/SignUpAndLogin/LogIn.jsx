@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaEnvelope, FaLock, FaGoogle, FaGithub, FaUser } from 'react-icons/fa';
+import { useTheme } from '../../ThemeContext'; // Import useTheme hook
 
 const LogIn = () => {
   // State variables for form inputs and login/signup mode
@@ -10,6 +11,7 @@ const LogIn = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [isLogin, setIsLogin] = useState(true);
+  const { isDarkMode } = useTheme(); // Use the useTheme hook
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -37,12 +39,12 @@ const LogIn = () => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className={`flex h-screen items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
-        className="flex h-[90%] w-[90%] max-w-5xl overflow-hidden rounded-3xl shadow-2xl bg-white"
+        className={`flex h-[90%] w-[90%] max-w-5xl overflow-hidden rounded-3xl shadow-2xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
       >
         <AnimatePresence initial={false}>
           {isLogin ? (
@@ -113,14 +115,14 @@ const LogIn = () => {
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={{ type: 'tween', duration: 0.5 }}
-                className="flex w-full md:w-1/2 flex-col justify-center bg-white py-10 px-8"
+                className={`flex w-full md:w-1/2 flex-col justify-center py-10 px-8 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
               >
-                <h2 className="mb-8 text-center text-4xl font-bold text-gray-800">Welcome Back</h2>
+                <h2 className={`mb-8 text-center text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Welcome Back</h2>
                 <form onSubmit={handleSubmit} className="flex w-full flex-col items-center justify-center gap-6">
                   <div className="relative w-full max-w-md">
                     <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
-                      className="w-full rounded-lg border border-gray-300 bg-gray-50 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                      className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
                       type="email"
                       placeholder="Email"
                       value={email}
@@ -131,7 +133,7 @@ const LogIn = () => {
                   <div className="relative w-full max-w-md">
                     <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
-                      className="w-full rounded-lg border border-gray-300 bg-gray-50 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                      className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
                       type="password"
                       placeholder="Password"
                       value={password}
@@ -142,7 +144,7 @@ const LogIn = () => {
                   <div className="flex w-full max-w-md justify-between items-center">
                     <label className="flex items-center">
                       <input type="checkbox" className="mr-2 rounded text-purple-600 focus:ring-purple-500" />
-                      <span className="text-sm text-gray-600">Remember me</span>
+                      <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Remember me</span>
                     </label>
                     <a href="#" className="text-sm text-purple-600 hover:underline">Forgot password?</a>
                   </div>
@@ -155,14 +157,14 @@ const LogIn = () => {
                     Log In
                   </motion.button>
                 </form>
-                <p className="mt-8 text-center text-sm text-gray-600">
+                <p className={`mt-8 text-center text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   Don&apos;t have an account? <button onClick={toggleMode} className="text-purple-600 hover:underline font-medium">Create now</button>
                 </p>
                 {/* Divider and social login buttons */}
                 <div className="my-8 flex items-center px-8">
-                  <hr className="flex-1 border-gray-300" />
-                  <div className="mx-4 text-gray-500">OR</div>
-                  <hr className="flex-1 border-gray-300" />
+                  <hr className={`flex-1 ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`} />
+                  <div className={`mx-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>OR</div>
+                  <hr className={`flex-1 ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`} />
                 </div>
                 <div className="flex justify-center space-x-4">
                   <motion.button
@@ -193,14 +195,14 @@ const LogIn = () => {
       animate={{ x: 0 }}
       exit={{ x: '-100%' }}
       transition={{ type: 'tween', duration: 0.5 }}
-      className="flex w-full md:w-1/2 flex-col justify-center bg-white py-10 px-8"
+      className={`flex w-full md:w-1/2 flex-col justify-center py-10 px-8 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
     >
-      <h2 className="mb-8 text-center text-4xl font-bold text-gray-800">Create Account</h2>
+      <h2 className={`mb-8 text-center text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Create Account</h2>
       <form onSubmit={handleSubmit} className="flex w-full flex-col items-center justify-center gap-6">
         <div className="relative w-full max-w-md">
           <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
-            className="w-full rounded-lg border border-gray-300 bg-gray-50 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
             type="text"
             placeholder="Name"
             value={name}
@@ -211,7 +213,7 @@ const LogIn = () => {
         <div className="relative w-full max-w-md">
           <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
-            className="w-full rounded-lg border border-gray-300 bg-gray-50 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
             type="email"
             placeholder="Email"
             value={email}
@@ -222,7 +224,7 @@ const LogIn = () => {
         <div className="relative w-full max-w-md">
           <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
-            className="w-full rounded-lg border border-gray-300 bg-gray-50 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
             type="password"
             placeholder="Password"
             value={password}
@@ -244,7 +246,7 @@ const LogIn = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleGoogleSignUp}
-          className="flex items-center justify-center rounded-full bg-white p-2 text-gray-700 shadow-md border border-gray-300 transition-all hover:bg-gray-50"
+          className={`flex items-center justify-center rounded-full p-2 shadow-md transition-all ${isDarkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'}`}
         >
           <FaGoogle className="text-red-500 text-xl" />
         </motion.button>
@@ -257,7 +259,7 @@ const LogIn = () => {
           <FaGithub className="text-xl" />
         </motion.button>
       </div>
-      <p className="mt-8 text-center text-sm text-gray-600">
+      <p className={`mt-8 text-center text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
         Already have an account? <button onClick={toggleMode} className="text-purple-600 hover:underline font-medium">Login</button>
       </p>
     </motion.div>

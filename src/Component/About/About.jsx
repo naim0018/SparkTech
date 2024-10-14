@@ -2,9 +2,12 @@
 import { motion } from 'framer-motion';
 import { FaLinkedin, FaTwitter, FaEnvelope } from 'react-icons/fa';
 import { useState } from 'react';
+import { useTheme } from '../../ThemeContext'; // Import useTheme hook
 
 // Define the About component
 const About = () => {
+  const { isDarkMode } = useTheme(); // Use the useTheme hook
+
   // Sample data for team members
   const teamMembers = [
     { name: 'John Doe', role: 'CEO', image: 'https://i.pravatar.cc/150?img=3' },
@@ -39,7 +42,7 @@ const About = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className={`container mx-auto px-4 py-12 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       {/* Main heading with animation */}
       <motion.h1 
         className="text-4xl font-bold text-center mb-8"
@@ -76,19 +79,19 @@ const About = () => {
           {teamMembers.map((member, index) => (
             <motion.div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-md text-center"
+              className={`p-6 rounded-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 + index * 0.1, duration: 0.5 }}
             >
               <img src={member.image} alt={member.name} className="w-32 h-32 rounded-full mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
-              <p className="text-gray-600 mb-4">{member.role}</p>
+              <p className={`mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{member.role}</p>
               {/* Social media links */}
               <div className="flex justify-center space-x-4">
-                <a href="#" className="text-blue-500 hover:text-blue-600"><FaLinkedin size={20} /></a>
-                <a href="#" className="text-blue-400 hover:text-blue-500"><FaTwitter size={20} /></a>
-                <a href="#" className="text-gray-600 hover:text-gray-700"><FaEnvelope size={20} /></a>
+                <a href="#" className={`${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-500 hover:text-blue-600'}`}><FaLinkedin size={20} /></a>
+                <a href="#" className={`${isDarkMode ? 'text-blue-300 hover:text-blue-200' : 'text-blue-400 hover:text-blue-500'}`}><FaTwitter size={20} /></a>
+                <a href="#" className={`${isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-700'}`}><FaEnvelope size={20} /></a>
               </div>
             </motion.div>
           ))}
@@ -97,17 +100,17 @@ const About = () => {
 
       {/* Our History section */}
       <motion.section
-        className="mt-12 py-16 rounded-lg "
+        className="mt-12 py-16 rounded-lg"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 2 }}
       >
-        <h2 className="text-4xl font-bold text-center mb-8 text-gray-800">Our Journey Through Time</h2>
+        <h2 className={`text-4xl font-bold text-center mb-8 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>Our Journey Through Time</h2>
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between mb-8">
             <div className="md:w-1/2 mb-6 md:mb-0">
-              <h3 className="text-2xl font-semibold mb-3 ">2010: The Beginning</h3>
-              <p className="text-gray-700">
+              <h3 className="text-2xl font-semibold mb-3">2010: The Beginning</h3>
+              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
                 Started as a small local shop with a big dream to revolutionize electronics retail.
               </p>
             </div>
@@ -117,8 +120,8 @@ const About = () => {
           </div>
           <div className="flex flex-col md:flex-row-reverse items-center justify-between mb-8">
             <div className="md:w-1/2 mb-6 md:mb-0">
-              <h3 className="text-2xl font-semibold mb-3 ">2015: Going Online</h3>
-              <p className="text-gray-700">
+              <h3 className="text-2xl font-semibold mb-3">2015: Going Online</h3>
+              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
                 Launched our e-commerce platform, expanding our reach to customers nationwide.
               </p>
             </div>
@@ -129,7 +132,7 @@ const About = () => {
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-6 md:mb-0">
               <h3 className="text-2xl font-semibold mb-3">Today: A Trusted Name</h3>
-              <p className="text-gray-700">
+              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
                 Now a leading electronics retailer, known for our extensive range, competitive prices, and exceptional service.
               </p>
             </div>
@@ -150,12 +153,12 @@ const About = () => {
         <h2 className="text-3xl font-semibold text-center mb-6">Customer Testimonials</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Testimonial 1 */}
-          <div className="bg-gray-100 p-6 rounded-lg">
+          <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
             <p className="italic mb-4">&quot;Excellent service and top-quality products. I&apos;m a repeat customer and always satisfied!&quot;</p>
             <p className="font-semibold">- John D.</p>
           </div>
           {/* Testimonial 2 */}
-          <div className="bg-gray-100 p-6 rounded-lg">
+          <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
             <p className="italic mb-4">&quot;The best place to find the latest tech gadgets. Their knowledgeable staff is always helpful.&quot;</p>
             <p className="font-semibold">- Sarah M.</p>
           </div>
@@ -172,44 +175,54 @@ const About = () => {
         <h2 className="text-3xl font-semibold text-center mb-6">Contact Us</h2>
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
           <div className="mb-4">
-            <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name</label>
+            <label htmlFor="name" className={`block text-sm font-bold mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Name</label>
             <input
               type="text"
               id="name"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+                isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'
+              }`}
               required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+            <label htmlFor="email" className={`block text-sm font-bold mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Email</label>
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+                isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'
+              }`}
               required
             />
           </div>
           <div className="mb-6">
-            <label htmlFor="message" className="block text-gray-700 text-sm font-bold mb-2">Message</label>
+            <label htmlFor="message" className={`block text-sm font-bold mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Message</label>
             <textarea
               id="message"
               name="message"
               value={formData.message}
               onChange={handleInputChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline h-32 ${
+                isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'
+              }`}
               required
             ></textarea>
           </div>
           <div className="flex items-center justify-center">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                isDarkMode
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-blue-500 hover:bg-blue-700 text-white'
+              }`}
             >
               Send Message
             </button>

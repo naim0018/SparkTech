@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import { FaChevronDown, FaChevronUp, FaFilter } from "react-icons/fa";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
 import ProductCard from "./ProductCard";
+import { useTheme } from "../../ThemeContext"; // Import useTheme hook
 
 const AllProducts = () => {
+  const { isDarkMode } = useTheme(); // Use the useTheme hook
   // State variables for pagination, sorting, filtering, and UI control
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(20);
@@ -55,13 +57,13 @@ const AllProducts = () => {
   // Loading and error states
   if (isLoading)
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className={`flex justify-center items-center h-screen ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
         Loading...
       </div>
     );
   if (isError)
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className={`flex justify-center items-center h-screen ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
         Error loading products
       </div>
     );
@@ -89,7 +91,7 @@ const AllProducts = () => {
 
   // Filters component
   const Filters = () => (
-    <div className="bg-white border rounded-lg shadow-md p-3">
+    <div className={`${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'} border rounded-lg shadow-md p-3`}>
       <h2 className="text-lg font-bold mb-3">Filters</h2>
 
       {/* Price Range Filter */}
@@ -125,7 +127,7 @@ const AllProducts = () => {
                   },
                 })
               }
-              className="w-16 p-1 border rounded text-center text-sm"
+              className={`w-16 p-1 border rounded text-center text-sm ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'}`}
               placeholder="Min"
             />
             <input
@@ -140,7 +142,7 @@ const AllProducts = () => {
                   },
                 })
               }
-              className="w-16 p-1 border rounded text-center text-sm"
+              className={`w-16 p-1 border rounded text-center text-sm ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'}`}
               placeholder="Max"
             />
           </div>
@@ -217,13 +219,13 @@ const AllProducts = () => {
   );
 
   return (
-    <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div className={`max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 ${isDarkMode ? 'bg-gray-900 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
       <div className="flex flex-col lg:flex-row">
         {/* Mobile filter toggle */}
         <div className="lg:hidden mb-4">
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded flex items-center justify-center"
+            className={`w-full ${isDarkMode ? 'bg-blue-700' : 'bg-blue-500'} text-white py-2 px-4 rounded flex items-center justify-center`}
           >
             <FaFilter className="mr-2" />{" "}
             {showMobileFilters ? "Hide Filters" : "Show Filters"}
@@ -234,14 +236,14 @@ const AllProducts = () => {
         <div className="w-full">
           {/* Header section */}
           <div className="w-full mb-4 mt-4">
-            <div className="bg-white p-4 border-t border-gray-100 rounded-lg shadow-md">
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 border-t border-gray-100 rounded-lg shadow-md`}>
               <div className="flex justify-end">
                 <div className="flex items-center space-x-4">
                   {/* Products per page selector */}
                   <div className="flex items-center">
                     <span className="mr-2">Show:</span>
                     <select
-                      className="border px-2 py-1 rounded"
+                      className={`border px-2 py-1 rounded ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'}`}
                       value={productsPerPage}
                       onChange={(e) => setProductsPerPage(Number(e.target.value))}
                     >
@@ -254,7 +256,7 @@ const AllProducts = () => {
                   <div className="flex items-center">
                     <span className="mr-2">Sort By:</span>
                     <select
-                      className="border px-2 py-1 rounded"
+                      className={`border px-2 py-1 rounded ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'}`}
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
                     >
@@ -296,11 +298,11 @@ const AllProducts = () => {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-200 rounded-md sm:rounded-l-md mb-2 sm:mb-0 w-full sm:w-auto"
+              className={`px-4 py-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-md sm:rounded-l-md mb-2 sm:mb-0 w-full sm:w-auto`}
             >
               Previous
             </button>
-            <span className="px-4 py-2 bg-gray-100 mb-2 sm:mb-0">
+            <span className={`px-4 py-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} mb-2 sm:mb-0`}>
               Page {currentPage} of{" "}
               {Math.ceil(filteredProducts.length / productsPerPage)}
             </span>
@@ -317,7 +319,7 @@ const AllProducts = () => {
                 currentPage ===
                 Math.ceil(filteredProducts.length / productsPerPage)
               }
-              className="px-4 py-2 bg-gray-200 rounded-md sm:rounded-r-md w-full sm:w-auto"
+              className={`px-4 py-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-md sm:rounded-r-md w-full sm:w-auto`}
             >
               Next
             </button>
