@@ -34,12 +34,12 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action) => {
-      const { id, name, price, quantity = 1 } = action.payload;
+      const { id, name, price, quantity = 1, image } = action.payload;
       const existingItem = state.cartItems.find(item => item.id === id);
       if (existingItem) {
         existingItem.quantity += quantity;
       } else {
-        state.cartItems.push({ id, name, price, quantity });
+        state.cartItems.push({ id, name, price, quantity, image });
       }
       saveCartToStorage(state.cartItems);
     },

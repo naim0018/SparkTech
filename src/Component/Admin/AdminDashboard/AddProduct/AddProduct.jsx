@@ -16,7 +16,7 @@ export default function AddProductForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRef = useRef(null);
   const [discountedPercentage, setDiscountedPercentage] = useState(0);
-  console.log(discountedPercentage);
+
 
   // Initialize react-hook-form
   const {
