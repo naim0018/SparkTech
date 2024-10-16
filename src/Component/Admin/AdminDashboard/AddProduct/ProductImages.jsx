@@ -5,11 +5,11 @@ import { BsPlusCircle } from "react-icons/bs";
 
 const ProductImages = ({ register, imageFields, removeImage, appendImage, defaultValues }) => {
   return (
-    <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
         Product Images
       </h2>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
         Please ensure first product image have white background for better visibility.
       </p>
       <div className="space-y-4">
@@ -22,7 +22,7 @@ const ProductImages = ({ register, imageFields, removeImage, appendImage, defaul
                 })}
                 defaultValue={defaultValues?.images?.[index]?.url}
                 placeholder="Image URL"
-                className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />
               <input
                 {...register(`images.${index}.alt`, {
@@ -30,7 +30,7 @@ const ProductImages = ({ register, imageFields, removeImage, appendImage, defaul
                 })}
                 defaultValue={defaultValues?.images?.[index]?.alt}
                 placeholder="Image alt text"
-                className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />
             </div>
             <button

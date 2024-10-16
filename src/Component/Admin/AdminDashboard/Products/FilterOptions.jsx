@@ -12,7 +12,7 @@ const FilterOptions = ({ filterOptions, handleFilterChange, categories, brands }
         name="category"
         value={filterOptions.category}
         onChange={handleFilterChange}
-        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
       >
         <option value="">All Categories</option>
         {categories.map(category => (
@@ -23,7 +23,7 @@ const FilterOptions = ({ filterOptions, handleFilterChange, categories, brands }
         name="brand"
         value={filterOptions.brand}
         onChange={handleFilterChange}
-        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
       >
         <option value="">All Brands</option>
         {brands.map(brand => (
@@ -37,12 +37,12 @@ const FilterOptions = ({ filterOptions, handleFilterChange, categories, brands }
           placeholder="Min Price"
           value={filterOptions.minPrice}
           onChange={handleFilterChange}
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-8"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-8 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
         />
         {filterOptions.minPrice && (
           <button
             onClick={() => handleResetPrice('minPrice')}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             <FaTimes />
           </button>
@@ -55,12 +55,12 @@ const FilterOptions = ({ filterOptions, handleFilterChange, categories, brands }
           placeholder="Max Price"
           value={filterOptions.maxPrice}
           onChange={handleFilterChange}
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-8"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-8 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
         />
         {filterOptions.maxPrice && (
           <button
             onClick={() => handleResetPrice('maxPrice')}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             <FaTimes />
           </button>
@@ -70,7 +70,7 @@ const FilterOptions = ({ filterOptions, handleFilterChange, categories, brands }
         name="stockStatus"
         value={filterOptions.stockStatus}
         onChange={handleFilterChange}
-        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
       >
         <option value="">All Stock Status</option>
         <option value="In Stock">In Stock</option>

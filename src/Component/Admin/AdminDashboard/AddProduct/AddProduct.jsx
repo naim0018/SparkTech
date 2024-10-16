@@ -176,10 +176,10 @@ export default function AddProductForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full mx-auto bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
+    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto bg-gray-800 shadow-lg rounded-xl overflow-hidden border border-gray-700">
         <div className="px-4 sm:px-6 lg:px-8 py-10">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">
+          <h1 className="text-3xl font-bold text-gray-100 mb-8">
             Add New Product
           </h1>
           <form
@@ -250,7 +250,7 @@ export default function AddProductForm() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gray-800 text-white p-4 rounded-lg font-semibold text-lg hover:bg-gray-700 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+              className="w-full bg-gray-700 text-white p-4 rounded-lg font-semibold text-lg hover:bg-gray-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
               disabled={isSubmitting || isLoading}
             >
               {isSubmitting || isLoading ? "Processing..." : "Add Product"}

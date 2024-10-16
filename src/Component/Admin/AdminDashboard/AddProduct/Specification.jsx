@@ -6,8 +6,8 @@ import { BsPlusCircle } from "react-icons/bs";
 // It allows users to add, remove, and edit product specifications
 const Specification = ({ register, specificationFields, removeSpecification, appendSpecification, errors, defaultValues }) => {
   return (
-    <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
         Specifications
       </h2>
       <div className="space-y-4">
@@ -22,7 +22,7 @@ const Specification = ({ register, specificationFields, removeSpecification, app
                 })}
                 defaultValue={defaultValues?.specifications?.[index]?.group}
                 placeholder="Specification Group"
-                className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />
               {errors.specifications?.[index]?.group && (
                 <p className="text-red-500 text-sm mt-1">
@@ -39,7 +39,7 @@ const Specification = ({ register, specificationFields, removeSpecification, app
                     )}
                     defaultValue={defaultValues?.specifications?.[index]?.items?.[0]?.name}
                     placeholder="Name"
-                    className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                    className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
                   />
                   {errors.specifications?.[index]?.items?.[0]?.name && (
                     <p className="text-red-500 text-sm mt-1">
@@ -56,7 +56,7 @@ const Specification = ({ register, specificationFields, removeSpecification, app
                     )}
                     defaultValue={defaultValues?.specifications?.[index]?.items?.[0]?.value}
                     placeholder="Value"
-                    className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                    className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
                   />
                   {errors.specifications?.[index]?.items?.[0]?.value && (
                     <p className="text-red-500 text-sm mt-1">
@@ -85,7 +85,7 @@ const Specification = ({ register, specificationFields, removeSpecification, app
               items: [{ name: "", value: "" }],
             })
           }
-          className="w-full flex items-center justify-center bg-gray-800 text-white p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+          className="w-full flex items-center justify-center bg-gray-800 dark:bg-gray-700 text-white p-3 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition duration-200"
         >
           <BsPlusCircle className="h-5 w-5 mr-2" /> Add Specification
         </button>

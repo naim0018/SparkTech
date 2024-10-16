@@ -4,8 +4,8 @@ import { BsPlusCircle } from "react-icons/bs";
 
 const ProductVariants = ({ register, variantFields, removeVariant, appendVariant, defaultValues }) => {
   return (
-    <div className="bg-gray-50 p-6 rounded-xl shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
         Product Variants
       </h2>
       <div className="space-y-4">
@@ -18,7 +18,7 @@ const ProductVariants = ({ register, variantFields, removeVariant, appendVariant
                 })}
                 defaultValue={defaultValues?.variants?.[index]?.name || ""}
                 placeholder="Variant Name"
-                className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
               />
               <input
                 {...register(`variants.${index}.value`, {
@@ -26,13 +26,13 @@ const ProductVariants = ({ register, variantFields, removeVariant, appendVariant
                 })}
                 defaultValue={defaultValues?.variants?.[index]?.value || ""}
                 placeholder="Variant Value"
-                className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
               />
             </div>
             <button
               type="button"
               onClick={() => removeVariant(index)}
-              className="self-center text-red-500 hover:text-red-700 transition duration-200"
+              className="self-center text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-600 transition duration-200"
             >
               <FaMinusCircle className="h-5 w-5" />
             </button>
@@ -41,7 +41,7 @@ const ProductVariants = ({ register, variantFields, removeVariant, appendVariant
         <button
           type="button"
           onClick={() => appendVariant({ name: "", value: "" })}
-          className="w-full flex items-center justify-center bg-gray-800 text-white p-3 rounded-lg hover:bg-gray-700 transition duration-200"
+          className="w-full flex items-center justify-center bg-gray-800 dark:bg-gray-700 text-white dark:text-gray-200 p-3 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition duration-200"
         >
           <BsPlusCircle className="h-5 w-5 mr-2" /> Add Variant
         </button>

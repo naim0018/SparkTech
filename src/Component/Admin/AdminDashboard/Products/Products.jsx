@@ -71,6 +71,7 @@ const Products = () => {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
+          theme: "dark"
         });
       }
     }
@@ -93,10 +94,14 @@ const Products = () => {
       await deleteProduct(productId).unwrap();
       // Remove the deleted product from the filtered products list
       setFilteredProducts(prevProducts => prevProducts.filter(product => product._id !== productId));
-      toast.success('Product deleted successfully');
+      toast.success('Product deleted successfully', {
+        theme: "dark"
+      });
     } catch (err) {
       console.error('Failed to delete the product', err);
-      toast.error('Failed to delete the product');
+      toast.error('Failed to delete the product', {
+        theme: "dark"
+      });
     }
   }, [deleteProduct]);
 
@@ -110,7 +115,7 @@ const Products = () => {
   }, []);
 
   // Loading and error states
-  if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if (isLoading) return <div className="flex justify-center items-center h-screen dark:text-gray-200">Loading...</div>;
 
 
   // Calculate total number of pages for pagination

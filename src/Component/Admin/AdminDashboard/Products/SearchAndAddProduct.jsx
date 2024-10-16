@@ -5,7 +5,7 @@ import { FaSearch } from 'react-icons/fa';
 
 const SearchAndAddProduct = ({ handleSearch, handleSearchBlur, searchTerm }) => {
   return (
-    <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+    <div className="flex flex-col md:flex-row justify-between items-center mb-6 dark:bg-gray-800 dark:text-gray-200">
       <div className="relative w-full md:w-64 mb-4 md:mb-0">
         <input
           type="text"

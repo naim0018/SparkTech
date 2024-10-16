@@ -33,12 +33,12 @@ const AdminLayout = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       {/* Sidebar */}
       <aside
-        className={`bg-emerald-700 text-white w-64 min-h-screen p-4 ${
+        className={`bg-emerald-700 dark:bg-emerald-900 text-white w-64 min-h-screen p-4 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } transition-transform duration-300 ease-in-out xl:translate-x-0 fixed xl:static z-30 hover:bg-emerald-600`}
+        } transition-transform duration-300 ease-in-out xl:translate-x-0 fixed xl:static z-30 hover:bg-emerald-600 dark:hover:bg-emerald-800`}
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold">Admin Panel</h2>
@@ -53,7 +53,7 @@ const AdminLayout = () => {
               to={path}
               className={({ isActive }) =>
                 `flex items-center space-x-2 mb-4 px-4 py-2 rounded transition-colors ${
-                  isActive ? 'bg-emerald-800' : 'hover:bg-emerald-600'
+                  isActive ? 'bg-emerald-800 dark:bg-emerald-700' : 'hover:bg-emerald-600 dark:hover:bg-emerald-800'
                 }`
               }
             >
@@ -67,24 +67,24 @@ const AdminLayout = () => {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top navbar */}
-        <header className="bg-white shadow-md p-4">
+        <header className="bg-white dark:bg-gray-800 shadow-md p-4">
           <div className="flex items-center justify-between">
             <button
               onClick={toggleSidebar}
-              className="text-gray-500 focus:outline-none xl:hidden"
+              className="text-gray-500 dark:text-gray-300 focus:outline-none xl:hidden"
             >
               <FiMenu size={24} />
             </button>
             <div className="flex items-center space-x-4">
-              <NavLink to="/" className="flex items-center space-x-2 text-gray-700">
+              <NavLink to="/" className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                 <FiHome />
                 <span>Home</span>
               </NavLink>
-              <button className="flex items-center space-x-2 text-gray-700">
+              <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                 <FiUser />
                 <span>Profile</span>
               </button>
-              <button className="flex items-center space-x-2 text-gray-700">
+              <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                 <FiLogOut />
                 <span>Logout</span>
               </button>
@@ -93,7 +93,7 @@ const AdminLayout = () => {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 dark:bg-gray-700 p-6">
           <Outlet />
         </main>
       </div>
