@@ -117,12 +117,12 @@ const Products = () => {
   const totalPages = Math.ceil(filteredProducts.length / 10);
 
   return (
-    <div className="bg-gray-100 min-h-screen p-4 sm:p-6 md:p-8 overflow-x-hidden">
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen p-4 sm:p-6 md:p-8 overflow-x-hidden">
       <div className="max-w-full mx-auto">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 text-center">Product Management</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-gray-200 text-center">Product Management</h1>
         
         {/* Search and Add Product section */}
-        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
           <SearchAndAddProduct handleSearch={handleSearch} handleSearchBlur={handleSearchBlur} />
           
           {/* Filter options */}
@@ -154,8 +154,8 @@ const Products = () => {
                   onClick={() => handlePageChange(page)}
                   className={`relative inline-flex items-center px-2 sm:px-4 py-2 border text-sm font-medium ${
                     currentPage === page
-                      ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
-                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                      ? 'z-10 bg-indigo-50 dark:bg-indigo-900 border-indigo-500 text-indigo-600 dark:text-indigo-200'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   {page}
@@ -167,8 +167,8 @@ const Products = () => {
       </div>
       {/* Update Product Modal */}
       {isUpdateModalOpen && selectedProduct && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative mx-auto p-4 sm:p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">  
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative mx-auto p-4 sm:p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white dark:bg-gray-800">  
             <UpdateProducts products={selectedProduct} closeModal={closeUpdateModal} />
           </div>
         </div>

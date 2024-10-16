@@ -16,9 +16,9 @@ const ProductTable = ({ filteredProducts, currentPage, openUpdateModal, handleDe
   return (
     <div className="w-full overflow-x-auto">
       {filteredProducts.length > 0 ? (
-        <div className="bg-white rounded-lg shadow-lg p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
           {/* Table header for all screen sizes */}
-          <div className="grid grid-cols-12 gap-4 mb-4 font-medium text-sm text-gray-700 uppercase border-b border-gray-200 pb-2 text-center">
+          <div className="grid grid-cols-12 gap-4 mb-4 font-medium text-sm text-gray-700 dark:text-gray-300 uppercase border-b border-gray-200 dark:border-gray-700 pb-2 text-center">
             <div className="col-span-3 lg:col-span-1">Image</div>
             <div className="col-span-5 lg:col-span-2">Title</div>
             <div className="hidden lg:block lg:col-span-1">Brand</div>
@@ -33,7 +33,7 @@ const ProductTable = ({ filteredProducts, currentPage, openUpdateModal, handleDe
           </div>
           {/* Map through filtered products and display each product */}
           {filteredProducts.slice((currentPage - 1) * 10, currentPage * 10).map((product) => (
-            <div key={product._id} className="mb-4 border-b border-gray-200 last:border-b-0">
+            <div key={product._id} className="mb-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
               {/* Mobile view: Collapsed product information */}
               <div className="grid grid-cols-12 gap-4 items-center py-4 cursor-pointer lg:hidden" onClick={() => toggleProductExpansion(product._id)}>
                 <div className="col-span-2">
@@ -60,7 +60,7 @@ const ProductTable = ({ filteredProducts, currentPage, openUpdateModal, handleDe
               </div>
               {/* Expanded view for mobile */}
               {expandedProduct === product._id && (
-                <div className="bg-gray-50 p-4 rounded-lg shadow-inner lg:hidden">
+                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-inner lg:hidden">
                   <div className="grid grid-cols-1 gap-3">
                     <div className="flex justify-between items-center border-b border-gray-200 pb-2">
                       <span className="text-sm font-medium text-gray-600">Category:</span>
@@ -96,28 +96,28 @@ const ProductTable = ({ filteredProducts, currentPage, openUpdateModal, handleDe
                 </div>
               )}
               {/* Desktop view: Full product information */}
-              <div className="hidden lg:grid lg:grid-cols-12 lg:gap-4 lg:py-4 lg:items-center lg:hover:bg-gray-50 lg:text-center">
+              <div className="hidden lg:grid lg:grid-cols-12 lg:gap-4 lg:py-4 lg:items-center lg:hover:bg-gray-50 lg:dark:hover:bg-gray-700 lg:text-center">
                 <div className="lg:col-span-1">
                   <img src={product.images && product.images[0].url} alt={product.images && product.images[0].alt} className="h-12 w-12 rounded-full object-cover mx-auto" />
                 </div>
                 <div className="lg:col-span-2">
-                  <div className="font-medium text-gray-900 truncate" title={product.title}>
+                  <div className="font-medium text-gray-900 dark:text-gray-100 truncate" title={product.title}>
                     {product.title}
                   </div>
                 </div>
-                <div className="lg:col-span-1 text-gray-500 truncate" title={product.brand}>
+                <div className="lg:col-span-1 text-gray-500 dark:text-gray-400 truncate" title={product.brand}>
                   {product.brand}
                 </div>
-                <div className="lg:col-span-1 text-gray-500 truncate" title={product.category}>
+                <div className="lg:col-span-1 text-gray-500 dark:text-gray-400 truncate" title={product.category}>
                   {product.category}
                 </div>
-                <div className="lg:col-span-1 text-gray-500 truncate" title={product.productCode}>
+                <div className="lg:col-span-1 text-gray-500 dark:text-gray-400 truncate" title={product.productCode}>
                   {product.productCode}
                 </div>
-                <div className="lg:col-span-1 text-gray-500">
+                <div className="lg:col-span-1 text-gray-500 dark:text-gray-400">
                   ${product.price.regular.toFixed(2)}
                 </div>
-                <div className="lg:col-span-1 text-gray-500">
+                <div className="lg:col-span-1 text-gray-500 dark:text-gray-400">
                   {product.price.discounted ? `$${product.price.discounted.toFixed(2)}` : '-'}
                 </div>
                 <div className="lg:col-span-1">
@@ -132,10 +132,10 @@ const ProductTable = ({ filteredProducts, currentPage, openUpdateModal, handleDe
                     </span>
                   </div>
                 </div>
-                <div className="lg:col-span-1 text-gray-500">
+                <div className="lg:col-span-1 text-gray-500 dark:text-gray-400">
                   {product.isFeatured ? 'Yes' : 'No'}
                 </div>
-                <div className="lg:col-span-1 text-gray-500">
+                <div className="lg:col-span-1 text-gray-500 dark:text-gray-400">
                   {product.isOnSale ? 'Yes' : 'No'}
                 </div>
                 <div className=" lg:col-span-1 flex space-x-2 justify-center">
@@ -155,8 +155,8 @@ const ProductTable = ({ filteredProducts, currentPage, openUpdateModal, handleDe
         </div>
       ) : (
         // Display message when no products are found
-        <div className="flex justify-center items-center h-64 bg-white rounded-lg shadow-lg">
-          <p className="text-gray-500 text-lg text-center">No products found</p>
+        <div className="flex justify-center items-center h-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+          <p className="text-gray-500 dark:text-gray-400 text-lg text-center">No products found</p>
         </div>
       )}
     </div>

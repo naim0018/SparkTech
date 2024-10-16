@@ -76,17 +76,17 @@ const UpdateProducts = ({ products, closeModal }) => {
     }
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-            <div className="relative top-20 mx-auto p-5 border border-red-300 w-11/12 shadow-lg rounded-md bg-white">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full dark:bg-gray-800 dark:bg-opacity-75">
+            <div className="relative top-20 mx-auto p-5 border border-red-300 w-11/12 shadow-lg rounded-md bg-white dark:bg-gray-900">
                 <button
                     onClick={closeModal}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500"
                 >
                     <FaTimes size={20} />
                 </button>
-                <h1 className="text-2xl font-bold mb-4">Update Product</h1>
+                <h1 className="text-2xl font-bold mb-4 dark:text-white">Update Product</h1>
                 {updateError && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 dark:bg-red-200 dark:border-red-500 dark:text-red-800" role="alert">
                         <strong className="font-bold">Error: </strong>
                         <span className="block sm:inline">{updateError}</span>
                     </div>
@@ -152,20 +152,20 @@ const UpdateProducts = ({ products, closeModal }) => {
                         </div>
                     ) : (
                         <div className="flex justify-center items-center h-64">
-                            <p className="text-xl text-gray-500 font-semibold">Loading product data...</p>
+                            <p className="text-xl text-gray-500 font-semibold dark:text-gray-300">Loading product data...</p>
                         </div>
                     )}
                     <div className="mt-6 flex justify-end space-x-2">
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 dark:bg-blue-700 dark:hover:bg-blue-800"
                         >
                             Update Product
                         </button>
                         <button
                             type="button"
                             onClick={closeModal}
-                            className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200"
+                            className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition duration-200 dark:bg-gray-500 dark:text-gray-200 dark:hover:bg-gray-600"
                         >
                             Cancel
                         </button>
