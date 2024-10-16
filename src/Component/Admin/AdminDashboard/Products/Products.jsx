@@ -7,6 +7,7 @@ import SearchAndAddProduct from './SearchAndAddProduct';
 import FilterOptions from './FilterOptions';
 import ProductTable from './ProductTable';
 
+
 const Products = () => {
   // State variables for pagination, search, and filtering
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,7 +23,7 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   // Fetch products data and delete mutation
-  const { data, isLoading, isError, error } = useGetAllProductsQuery();
+  const { data, isLoading } = useGetAllProductsQuery();
   const [deleteProduct] = useDeleteProductMutation();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -110,7 +111,7 @@ const Products = () => {
 
   // Loading and error states
   if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  if (isError) return <div className="flex justify-center items-center h-screen text-red-500">Error: {error.message}</div>;
+
 
   // Calculate total number of pages for pagination
   const totalPages = Math.ceil(filteredProducts.length / 10);

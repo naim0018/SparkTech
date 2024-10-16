@@ -13,7 +13,7 @@ const Specification = ({ register, specificationFields, removeSpecification, app
       <div className="space-y-4">
         {/* Map through each specification field */}
         {specificationFields.map((field, index) => (
-          <div key={field.id} className="flex items-center space-x-2">
+          <div key={index} className="flex items-center space-x-2">
             <div className="flex-grow space-y-2">
               {/* Input for specification group */}
               <input

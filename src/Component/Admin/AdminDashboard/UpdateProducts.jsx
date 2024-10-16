@@ -13,15 +13,16 @@ import Specification from "./AddProduct/Specification"
 import ProductVariants from "./AddProduct/ProductVariants"
 import ShippingDetails from "./AddProduct/ShippingDetails"
 
+// Component for updating product information
 const UpdateProducts = ({ products, closeModal }) => {
-    const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
     const [updateProduct] = useUpdateProductMutation();
     const [productsData, setProductsData] = useState(null)
     const [updateError, setUpdateError] = useState(null);
     const [tags, setTags] = useState([]);
     const [input, setInput] = useState("");
     const inputRef = useRef(null);
-
+    const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
+    // Function to add a new tag
     const addTag = (e) => {
         if (e.key === "Enter" && input.trim() !== "") {
             setTags([...tags, input.trim()]);
@@ -29,36 +30,43 @@ const UpdateProducts = ({ products, closeModal }) => {
         }
     };
 
+    // Function to remove a tag
     const removeTag = (index) => {
         setTags(tags.filter((_, i) => i !== index));
     };
 
+    // Effect to focus on the input field after adding a tag
     useEffect(() => {
         if (inputRef.current) { 
             inputRef.current.focus();
         }
     }, [tags]);
 
+    // Effect to initialize form with existing product data
     useEffect(() => {
         if (products) {
             setProductsData(products);
             setTags(products.tags || []);
-            // Pre-fill the form with existing product data
             Object.entries(products).forEach(([key, value]) => {
                 setValue(key, value);
             });
         }
     }, [products, setValue]);
 
+    // Function to handle form submission
     const onSubmit = async (data) => {
         try {
             const updatedData = { ...data, tags };
-            const result = await updateProduct({ id: products._id, ...updatedData }).unwrap();
-            if (result.error) {
-                throw new Error(result.error);
+            // Remove the _id field from updatedData
+            const { ...productToUpdate } = updatedData;
+            const result = await updateProduct({ id: products._id, ...productToUpdate }).unwrap();
+            console.log({result})
+            if (result.success) {
+                toast.success("Product updated successfully");
+                closeModal();
+            }else{
+                toast.error(result.message);
             }
-            toast.success("Product updated successfully");
-            closeModal();
         } catch (error) {
             const errorMessage = error.data?.message || error.message || "Failed to update product";
             toast.error(errorMessage);

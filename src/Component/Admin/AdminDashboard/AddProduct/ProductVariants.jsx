@@ -10,7 +10,7 @@ const ProductVariants = ({ register, variantFields, removeVariant, appendVariant
       </h2>
       <div className="space-y-4">
         {variantFields.map((field, index) => (
-          <div key={field.id} className="flex items-center space-x-2">
+          <div key={index} className="flex items-center space-x-2">
             <div className="flex-grow space-y-2">
               <input
                 {...register(`variants.${index}.name`, {

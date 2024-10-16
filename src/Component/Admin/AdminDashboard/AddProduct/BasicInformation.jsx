@@ -34,7 +34,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
         <input
           id="title"
           {...register("title", { required: "Title is required" })}
-          defaultValue={defaultValues.title}
+          // defaultValue={defaultValues.title}
           className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
           placeholder="Enter product title"
         />
@@ -84,7 +84,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
               required: "Regular price is required",
               min: { value: 0, message: "Price must be positive" }
             })}
-            defaultValue={defaultValues.price?.regular}
+            defaultValue={defaultValues?.price?.regular}
             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
             placeholder="Enter regular price"
           />
@@ -173,10 +173,11 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
             {...register("category", {
               required: "Category is required",
             })}
-            defaultValue={defaultValues.category}
+            defaultValue={defaultValues?.category}
+  
             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
           >
-            <option value="" disabled>
+            <option value="" disabled >
               Select a category
             </option>
             <option value="electronics">Electronics</option>
@@ -202,7 +203,8 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
           <input
             id="subcategory"
             {...register("subcategory")}
-            defaultValue={defaultValues.subcategory}
+            value={watch("subcategory") || defaultValues?.subcategory || ""}
+            
             className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
             placeholder="Enter subcategory"
           />
