@@ -4,6 +4,7 @@ import { FaChevronDown, FaChevronUp, FaFilter } from "react-icons/fa";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
 import ProductCard from "./ProductCard";
 import { useTheme } from "../../ThemeContext"; // Import useTheme hook
+import { useSelector } from "react-redux"; // Import useSelector
 
 const AllProducts = () => {
   const { isDarkMode } = useTheme(); // Use the useTheme hook
@@ -20,11 +21,16 @@ const AllProducts = () => {
   const [expandedFilters, setExpandedFilters] = useState({
     availability: true,
     brand: true,
+    category: true,
+    subcategory: true,
   });
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Fetching products data using Redux query
   const { data: productsData, isLoading, isError } = useGetAllProductsQuery();
+
+  // Get brand, category, and subcategory from Redux store
+  const { brand, category, subcategory } = useSelector((state) => state.product);
 
   // Effect to filter and sort products when data or filters change
   useEffect(() => {
@@ -47,12 +53,15 @@ const AllProducts = () => {
           product.price.regular > filters.priceRange.max
         )
           return false;
+        if (brand && product.brand !== brand) return false;
+        if (category && product.category !== category) return false;
+        if (subcategory && product.subcategory !== subcategory) return false;
         return true;
       });
 
       setFilteredProducts(sorted);
     }
-  }, [productsData, sortBy, filters]);
+  }, [productsData, sortBy, filters, brand, category, subcategory]);
 
   // Loading and error states
   if (isLoading)
@@ -76,9 +85,15 @@ const AllProducts = () => {
     indexOfLastProduct
   );
 
-  // Extracting unique brands for filter
+  // Extracting unique brands, categories, and subcategories for filters
   const brands = [
     ...new Set(productsData?.data.map((product) => product.brand)),
+  ];
+  const categories = [
+    ...new Set(productsData?.data.map((product) => product.category)),
+  ];
+  const subcategories = [
+    ...new Set(productsData?.data.map((product) => product.subcategory)),
   ];
 
   // Function to toggle filter expansion
@@ -210,6 +225,72 @@ const AllProducts = () => {
                   className="mr-2"
                 />
                 {brand}
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Category Filter */}
+      <div className="mb-3 border-t pt-3">
+        <div
+          className="flex justify-between items-center cursor-pointer"
+          onClick={() => toggleFilter("category")}
+        >
+          <h3 className="font-semibold text-sm">Category</h3>
+          {expandedFilters.category ? (
+            <FaChevronUp size={12} />
+          ) : (
+            <FaChevronDown size={12} />
+          )}
+        </div>
+        {expandedFilters.category && (
+          <div className="mt-1 max-h-36 overflow-y-auto">
+            {categories.map((cat) => (
+              <label key={cat} className="flex items-center mt-1 text-sm">
+                <input
+                  type="checkbox"
+                  checked={category === cat}
+                  onChange={() => {
+                    // Update category in Redux store
+                    // You'll need to dispatch an action here
+                  }}
+                  className="mr-2"
+                />
+                {cat}
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Subcategory Filter */}
+      <div className="mb-3 border-t pt-3">
+        <div
+          className="flex justify-between items-center cursor-pointer"
+          onClick={() => toggleFilter("subcategory")}
+        >
+          <h3 className="font-semibold text-sm">Subcategory</h3>
+          {expandedFilters.subcategory ? (
+            <FaChevronUp size={12} />
+          ) : (
+            <FaChevronDown size={12} />
+          )}
+        </div>
+        {expandedFilters.subcategory && (
+          <div className="mt-1 max-h-36 overflow-y-auto">
+            {subcategories.map((subcat) => (
+              <label key={subcat} className="flex items-center mt-1 text-sm">
+                <input
+                  type="checkbox"
+                  checked={subcategory === subcat}
+                  onChange={() => {
+                    // Update subcategory in Redux store
+                    // You'll need to dispatch an action here
+                  }}
+                  className="mr-2"
+                />
+                {subcat}
               </label>
             ))}
           </div>
