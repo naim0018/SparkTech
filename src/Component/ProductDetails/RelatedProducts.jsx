@@ -12,7 +12,7 @@ const RelatedProducts = ({ category, currentProductId }) => {
   useEffect(() => {
     if (productsData && productsData.data) {
       const filtered = productsData.data
-        .filter(product => product.category === category && product._id !== currentProductId)
+        .filter(product => product.category === category )
         .slice(0, 4);
       setRelatedProducts(filtered);
     }

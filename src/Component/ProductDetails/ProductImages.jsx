@@ -25,18 +25,18 @@ const ProductImages = ({ images }) => {
       if (!isZoomed || !imageRef.current) return;
       
       const { left, top, width, height } = imageRef.current.getBoundingClientRect();
+      
       const x = (e.clientX - left) / width;
       const y = (e.clientY - top) / height;
-
       imageRef.current.style.transformOrigin = `${x * 100}% ${y * 100}%`;
     };
 
     return (
-      <div className="w-full max-w-[622px] mx-auto relative h-[200px] sm:h-[300px] md:h-[400px] lg:h-[522px]">
+      <div className="w-full max-w-full mx-auto relative h-[200px] sm:h-[300px] md:h-[400px] lg:h-[522px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={selectedImage}
-            className="w-[622px] h-[200px] sm:w-[622px] sm:h-[300px] md:w-[622px] md:h-[400px] lg:w-[622px] lg:h-[522px] flex items-center justify-center overflow-hidden"
+            className="w-full h-full flex items-center justify-center overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -49,7 +49,7 @@ const ProductImages = ({ images }) => {
               ref={imageRef}
               src={selectedImage}
               alt={`Product image ${currentIndex + 1}`}
-              className={`w-full h-full object-cover rounded-lg shadow-md transition-transform duration-300 ${isZoomed ? 'scale-150' : ''}`}
+              className={`w-full h-full object-contain rounded-lg shadow-md transition-transform duration-300 ${isZoomed ? 'scale-150' : ''}`}
             />
           </motion.div>
         </AnimatePresence>
@@ -63,7 +63,7 @@ const ProductImages = ({ images }) => {
           {images.map((img, index) => (
             <motion.div
               key={index}
-              className={`w-12 h-12 sm:w-16 sm:h-16 rounded-md cursor-pointer ${index === currentIndex ? 'border-2 border-blue-500' : 'border border-gray-300'}`}
+              className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-md cursor-pointer ${index === currentIndex ? 'border-2 border-blue-500' : 'border border-gray-300'}`}
               onClick={() => setCurrentIndex(index)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
