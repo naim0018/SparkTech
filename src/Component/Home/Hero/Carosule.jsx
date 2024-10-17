@@ -5,9 +5,9 @@ const Carousel = () => {
   const [currentSlider, setCurrentSlider] = useState(0);
   const { isDarkMode } = useTheme(); // Use the useTheme hook
   const carouselImages = [
-    "https://i.imgur.com/YG0e1r8.jpg",
-    "https://i.imgur.com/0tQT1TU.jpg",
-    "https://i.imgur.com/SclS1fR.jpg",
+    "https://i.imgur.com/8JPX5tf.jpg",
+    // "https://i.imgur.com/8JPX5tf.jpg",
+    // "https://i.imgur.com/8JPX5tf.jpg",
   ];
 
   const prevSlider = useCallback(() => {

@@ -10,7 +10,7 @@ const ProductImages = ({ register, imageFields, removeImage, appendImage, defaul
         Product Images
       </h2>
       <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-        Please ensure first product image have white background for better visibility.
+        Please ensure first product image has a white background and is 500px/500px for better visibility.
       </p>
       <div className="space-y-4">
         {imageFields.map((field, index) => (

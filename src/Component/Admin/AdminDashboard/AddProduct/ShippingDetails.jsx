@@ -16,15 +16,15 @@ const ShippingDetails = ({ register, errors, defaultValues }) => {
   }, [defaultValues]);
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+    <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl shadow-sm">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Shipping Details
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="weight"
-            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+            className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
           >
             Weight
           </label>
@@ -32,11 +32,11 @@ const ShippingDetails = ({ register, errors, defaultValues }) => {
             id="weight"
             {...register("weight")}
             defaultValue={defaultValues?.weight || ''}
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
             placeholder="Enter product weight"
           />
           {errors.weight && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">
               {errors.weight.message}
             </p>
           )}
@@ -44,7 +44,7 @@ const ShippingDetails = ({ register, errors, defaultValues }) => {
         <div>
           <label
             htmlFor="estimatedDelivery"
-            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+            className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
           >
             Estimated Delivery
           </label>
@@ -52,18 +52,18 @@ const ShippingDetails = ({ register, errors, defaultValues }) => {
             id="estimatedDelivery"
             {...register("additionalInfo.estimatedDelivery")}
             defaultValue={defaultValues?.additionalInfo?.estimatedDelivery || ''}
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
             placeholder="Enter estimated delivery time"
           />
           {errors.additionalInfo?.estimatedDelivery && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">
               {errors.additionalInfo.estimatedDelivery.message}
             </p>
           )}
         </div>
       </div>
       <div>
-        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           Dimensions
         </label>
         <div className="grid grid-cols-3 gap-4">
@@ -71,7 +71,7 @@ const ShippingDetails = ({ register, errors, defaultValues }) => {
             <div key={dim}>
               <label
                 htmlFor={dim}
-                className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"
+                className="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
               >
                 {dim.charAt(0).toUpperCase() + dim.slice(1)}
               </label>
@@ -84,10 +84,10 @@ const ShippingDetails = ({ register, errors, defaultValues }) => {
                 })}
                 defaultValue={dimensions[dim]}
                 placeholder={`Enter ${dim}`}
-                className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />
               {errors.dimensions?.[dim] && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red-500 dark:text-red-400 text-sm mt-1">
                   {errors.dimensions[dim].message}
                 </p>
               )}
@@ -98,7 +98,7 @@ const ShippingDetails = ({ register, errors, defaultValues }) => {
       <div className="mt-4">
         <label
           htmlFor="dimensionsUnit"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
         >
           Dimensions Unit
         </label>
@@ -108,14 +108,14 @@ const ShippingDetails = ({ register, errors, defaultValues }) => {
             required: "Unit is required",
           })}
           defaultValue={dimensions.unit}
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
         >
           <option value="">Select unit</option>
           <option value="cm">cm</option>
           <option value="in">in</option>
         </select>
         {errors.dimensions?.unit && (
-          <p className="text-red-500 text-sm mt-1">
+          <p className="text-red-500 dark:text-red-400 text-sm mt-1">
             {errors.dimensions.unit.message}
           </p>
         )}

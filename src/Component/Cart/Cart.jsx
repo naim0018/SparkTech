@@ -9,7 +9,6 @@ const Cart = ({ toggleCart }) => {
   const cartItems = useSelector((state) => state.cart.cartItems) || [];
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme(); // Use the useTheme hook
-  console.log(cartItems)
   const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (

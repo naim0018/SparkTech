@@ -7,13 +7,12 @@ import { MdGridView } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import { PiPercentBold } from "react-icons/pi";
 import { CiSearch } from "react-icons/ci";
-import { useTheme } from "../ThemeContext";
 import { useSelector } from "react-redux";
-import { RiMoonLine, RiSunLine } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
 import Cart from "../Component/Cart/Cart";
+import DarkMode from "./DarkMode";
 
 import Search from "./Search";
 
@@ -80,21 +79,6 @@ const Logo = () => (
   </NavLink>
 );
 
-// SearchBar component for search functionality
-// const SearchBar = () => {
-//   return (
-//     <div  className="lg:w-[490px] lg:px-5 lg:border border-white rounded-full flex items-center relative">
-//       <CiSearch className="hidden lg:flex text-xl text-white" />
-//       <input
-//         type="text"
-//         placeholder="Search the products"
-//         className="hidden lg:flex outline-none py-2 bg-transparent w-full text-white font-normal px-4 placeholder:text-[#6c727f]"
-//       />
-
-//     </div>
-//   );
-// };
-
 // SaleInfo component for displaying sale information
 const SaleInfo = () => (
   <div className="hidden lg:flex items-center justify-center gap-2">
@@ -109,15 +93,9 @@ const SaleInfo = () => (
 );
 
 // UserActions component for user-related actions (theme toggle, cart, etc.)
-const UserActions = ({ isDarkMode, toggleTheme, toggleCart, cartItems, isCartOpen, cartRef }) => (
+const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => (
   <div className="lg:w-[204px] flex items-center lg:justify-between gap-[2px]">
-    <button onClick={toggleTheme} className="m-[10px]">
-      {isDarkMode ? (
-        <RiSunLine className="text-xl text-white" />
-      ) : (
-        <RiMoonLine className="text-xl text-white" />
-      )}
-    </button>
+    <DarkMode />
     <CiSearch className="lg:hidden m-[10px] text-xl text-white" />
     <NavLink to="/admin">
       <FaUserCircle className="hidden lg:flex text-xl text-white" />
@@ -157,7 +135,7 @@ const Navbar = () => {
   
   const cartRef = useRef(null);
   const cartItems = useSelector((state) => state.cart.cartItems);
-  const { isDarkMode, toggleTheme } = useTheme();
+  
 
   const toggleCart = () => setIsCartOpen(!isCartOpen);
 
@@ -219,8 +197,6 @@ const Navbar = () => {
           <Search />
           <SaleInfo />
           <UserActions
-            isDarkMode={isDarkMode}
-            toggleTheme={toggleTheme}
             toggleCart={toggleCart}
             cartItems={cartItems}
             isCartOpen={isCartOpen}
@@ -234,10 +210,7 @@ const Navbar = () => {
         <nav className="fixed top-0 left-0 right-0 bg-[#222934] shadow-md z-50 transition-all duration-300">
           <div className="container mx-auto flex items-center justify-between px-5 py-3">
             <Logo />
-            {/* <SearchBar /> */}
             <UserActions
-              isDarkMode={isDarkMode}
-              toggleTheme={toggleTheme}
               toggleCart={toggleCart}
               cartItems={cartItems}
               isCartOpen={isCartOpen}

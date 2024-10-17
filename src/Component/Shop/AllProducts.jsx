@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { FaChevronDown, FaChevronUp, FaFilter } from "react-icons/fa";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
 import ProductCard from "./ProductCard";
-import { useTheme } from "../../ThemeContext"; // Import useTheme hook
-import { useSelector } from "react-redux"; // Import useSelector
+import { useTheme } from "../../ThemeContext"; // Import useTheme hook for dark mode
+import { useSelector } from "react-redux"; // Import useSelector for accessing Redux store
 
 const AllProducts = () => {
-  const { isDarkMode } = useTheme(); // Use the useTheme hook
+  // Use the useTheme hook to access dark mode state
+  const { isDarkMode } = useTheme();
+
   // State variables for pagination, sorting, filtering, and UI control
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(20);
@@ -31,19 +33,19 @@ const AllProducts = () => {
 
   // Get brand, category, and subcategory from Redux store
   const { brand, category, subcategory } = useSelector((state) => state.product);
-
+  console.log({brand,category,subcategory})
   // Effect to filter and sort products when data or filters change
   useEffect(() => {
     if (productsData?.data) {
       let sorted = [...productsData.data];
-      // Sorting logic
+      // Sorting logic based on price
       if (sortBy === "price-low-high") {
         sorted.sort((a, b) => a.price.regular - b.price.regular);
       } else if (sortBy === "price-high-low") {
         sorted.sort((a, b) => b.price.regular - a.price.regular);
       }
 
-      // Filtering logic
+      // Filtering logic based on various criteria
       sorted = sorted.filter((product) => {
         if (filters.inStock && product.stockStatus !== "In Stock") return false;
         if (filters.brands.length && !filters.brands.includes(product.brand))

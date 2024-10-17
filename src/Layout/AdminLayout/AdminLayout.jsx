@@ -2,18 +2,20 @@
 // Import necessary dependencies and components
 import { useState, useEffect } from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { FiMenu, FiX, FiHome, FiUser, FiLogOut, FiSun, FiMoon } from 'react-icons/fi'
+import { FiMenu, FiX, FiHome, FiUser, FiLogOut } from 'react-icons/fi'
 import { navbarGenerator } from '../../utils/navbarGenerator'
 import { adminRoute } from '../../Router/AdminRoute'
+import { useTheme } from '../../ThemeContext'
+import DarkMode from '../DarkMode'
 
 // AdminLayout component for the admin dashboard
 const AdminLayout = () => {
-  // State for sidebar visibility, screen size, and theme
+  // State for sidebar visibility and screen size
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isLargeScreen, setIsLargeScreen] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
   // Generate sidebar items from admin routes
   const sidebarItems = navbarGenerator(adminRoute)
+  const { isDarkMode } = useTheme()
 
   // Effect to handle screen resize and sidebar visibility
   useEffect(() => {
@@ -28,32 +30,18 @@ const AdminLayout = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Effect to handle theme changes
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  }, [isDarkMode])
-
   // Function to toggle sidebar visibility
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
   }
 
-  // Function to toggle theme
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode)
-  }
-
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className={`flex h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
       {/* Sidebar */}
       <aside
-        className={`bg-emerald-700 dark:bg-emerald-900 text-white w-64 min-h-screen p-4 ${
+        className={`${isDarkMode ? 'bg-emerald-900' : 'bg-emerald-700'} text-white w-64 min-h-screen p-4 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } transition-transform duration-300 ease-in-out xl:translate-x-0 fixed xl:static z-30 hover:bg-emerald-600 dark:hover:bg-emerald-800`}
+        } transition-transform duration-300 ease-in-out xl:translate-x-0 fixed xl:static z-30 ${isDarkMode ? 'hover:bg-emerald-800' : 'hover:bg-emerald-600'}`}
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold">Admin Panel</h2>
@@ -68,7 +56,7 @@ const AdminLayout = () => {
               to={path}
               className={({ isActive }) =>
                 `flex items-center space-x-2 mb-4 px-4 py-2 rounded transition-colors ${
-                  isActive ? 'bg-emerald-800 dark:bg-emerald-700' : 'hover:bg-emerald-600 dark:hover:bg-emerald-800'
+                  isActive ? (isDarkMode ? 'bg-emerald-700' : 'bg-emerald-800') : (isDarkMode ? 'hover:bg-emerald-800' : 'hover:bg-emerald-600')
                 }`
               }
             >
@@ -82,39 +70,34 @@ const AdminLayout = () => {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top navbar */}
-        <header className="bg-white dark:bg-gray-800 shadow-md p-4">
+        <header className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md p-4`}>
           <div className="flex items-center justify-between">
             <button
               onClick={toggleSidebar}
-              className="text-gray-500 dark:text-gray-300 focus:outline-none xl:hidden"
+              className={`${isDarkMode ? 'text-gray-300' : 'text-gray-500'} focus:outline-none xl:hidden`}
             >
               <FiMenu size={24} />
             </button>
             <div className="flex items-center space-x-4">
-              <NavLink to="/" className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+              <NavLink to="/" className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <FiHome />
                 <span>Home</span>
               </NavLink>
-              <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+              <button className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <FiUser />
                 <span>Profile</span>
               </button>
-              <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+              <button className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <FiLogOut />
                 <span>Logout</span>
               </button>
-              <button
-                onClick={toggleTheme}
-                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300"
-              >
-                {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
-              </button>
+              <DarkMode />
             </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 dark:bg-gray-700 p-6">
+        <main className={`flex-1 overflow-x-hidden overflow-y-auto ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} p-6`}>
           <Outlet />
         </main>
       </div>

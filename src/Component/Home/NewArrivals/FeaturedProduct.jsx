@@ -11,9 +11,9 @@ const FeaturedProduct = () => {
       <AnimatePresence>
         <motion.img
           key="featured-image"
-          src="https://i.imgur.com/vZLZS8L.png"
+          src="https://i.imgur.com/RRiXXWS.jpg"
           alt="Featured Product"
-          className="w-full h-full object-contain rounded-lg"
+          className="w-full h-full object-fill rounded-lg"
           loading="lazy"
           decoding="async"
           initial={{ y: 20 }}

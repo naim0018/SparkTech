@@ -1,16 +1,16 @@
 /* eslint-disable react/prop-types */
 const ProductTags = ({ tags, removeTag, inputRef, input, setInput, addTag }) => {
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+    <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl shadow-sm">
+                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
                     Product Tags
                   </h2>
                   <div className="relative">
-                    <div className="flex flex-wrap items-center gap-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus-within:ring-2 focus-within:ring-gray-500 dark:focus-within:ring-gray-400 focus-within:border-gray-500 dark:focus-within:border-gray-400 bg-white dark:bg-gray-700">
+                    <div className="flex flex-wrap items-center gap-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus-within:ring-2 focus-within:ring-gray-500 dark:focus-within:ring-gray-300 focus-within:border-gray-500 dark:focus-within:border-gray-300 bg-white dark:bg-gray-800">
                       {tags.slice(0, 10).map((tag, index) => (
                         <div
                           key={index}
-                          className="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm flex items-center space-x-2"
+                          className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm flex items-center space-x-2"
                         >
                           <span>{tag}</span>
                           <button
@@ -50,13 +50,13 @@ const ProductTags = ({ tags, removeTag, inputRef, input, setInput, addTag }) => 
                               ? "Type a tag and press Enter"
                               : ""
                           }
-                          className="flex-grow outline-none text-sm bg-transparent text-gray-800 dark:text-gray-200"
+                          className="flex-grow outline-none text-sm bg-transparent text-gray-800 dark:text-gray-100"
                         />
                       )}
                     </div>
                   </div>
                   {tags.length > 0 && (
-                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
                       {tags.length} tag{tags.length !== 1 ? "s" : ""} added
                       {tags.length === 10 && " (Maximum reached)"}
                     </p>

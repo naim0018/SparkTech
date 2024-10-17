@@ -6,8 +6,8 @@ import { BsPlusCircle } from "react-icons/bs";
 // It allows users to add, remove, and edit product specifications
 const Specification = ({ register, specificationFields, removeSpecification, appendSpecification, errors, defaultValues }) => {
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+    <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl shadow-sm">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Specifications
       </h2>
       <div className="space-y-4">
@@ -22,10 +22,10 @@ const Specification = ({ register, specificationFields, removeSpecification, app
                 })}
                 defaultValue={defaultValues?.specifications?.[index]?.group}
                 placeholder="Specification Group"
-                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
               />
               {errors.specifications?.[index]?.group && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red-500 dark:text-red-400 text-sm mt-1">
                   {errors.specifications[index].group.message}
                 </p>
               )}
@@ -39,10 +39,10 @@ const Specification = ({ register, specificationFields, removeSpecification, app
                     )}
                     defaultValue={defaultValues?.specifications?.[index]?.items?.[0]?.name}
                     placeholder="Name"
-                    className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                    className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
                   />
                   {errors.specifications?.[index]?.items?.[0]?.name && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">
                       {errors.specifications[index].items[0].name.message}
                     </p>
                   )}
@@ -56,10 +56,10 @@ const Specification = ({ register, specificationFields, removeSpecification, app
                     )}
                     defaultValue={defaultValues?.specifications?.[index]?.items?.[0]?.value}
                     placeholder="Value"
-                    className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                    className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
                   />
                   {errors.specifications?.[index]?.items?.[0]?.value && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p className="text-red-500 dark:text-red-400 text-sm mt-1">
                       {errors.specifications[index].items[0].value.message}
                     </p>
                   )}

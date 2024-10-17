@@ -2,8 +2,8 @@
 
 const AdditionalOptions = ({ register, errors, defaultValues }) => {
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+    <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl shadow-sm">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Additional Options
       </h2>
       <div className="flex flex-wrap items-center gap-6">
@@ -13,11 +13,11 @@ const AdditionalOptions = ({ register, errors, defaultValues }) => {
             type="checkbox"
             {...register("additionalInfo.freeShipping")}
             defaultChecked={defaultValues?.additionalInfo?.freeShipping || false}
-            className="w-5 h-5 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 rounded focus:ring-gray-500 dark:focus:ring-gray-400"
+            className="w-5 h-5 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700 rounded focus:ring-gray-500 dark:focus:ring-gray-400"
           />
           <label
             htmlFor="freeShipping"
-            className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            className="text-sm font-medium text-gray-700 dark:text-gray-200"
           >
             Free Shipping
           </label>
@@ -28,11 +28,11 @@ const AdditionalOptions = ({ register, errors, defaultValues }) => {
             type="checkbox"
             {...register("isFeatured")}
             defaultChecked={defaultValues?.isFeatured || false}
-            className="w-5 h-5 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 rounded focus:ring-gray-500 dark:focus:ring-gray-400"
+            className="w-5 h-5 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700 rounded focus:ring-gray-500 dark:focus:ring-gray-400"
           />
           <label
             htmlFor="isFeatured"
-            className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            className="text-sm font-medium text-gray-700 dark:text-gray-200"
           >
             Featured Product
           </label>
@@ -43,11 +43,11 @@ const AdditionalOptions = ({ register, errors, defaultValues }) => {
             type="checkbox"
             {...register("isOnSale")}
             defaultChecked={defaultValues?.isOnSale || false}
-            className="w-5 h-5 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 rounded focus:ring-gray-500 dark:focus:ring-gray-400"
+            className="w-5 h-5 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700 rounded focus:ring-gray-500 dark:focus:ring-gray-400"
           />
           <label
             htmlFor="isOnSale"
-            className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            className="text-sm font-medium text-gray-700 dark:text-gray-200"
           >
             On Sale
           </label>
@@ -56,7 +56,7 @@ const AdditionalOptions = ({ register, errors, defaultValues }) => {
       <div className="mt-4">
         <label
           htmlFor="estimatedDelivery"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
         >
           Estimated Delivery
         </label>
@@ -64,17 +64,17 @@ const AdditionalOptions = ({ register, errors, defaultValues }) => {
           id="estimatedDelivery"
           {...register("additionalInfo.estimatedDelivery")}
           defaultValue={defaultValues?.additionalInfo?.estimatedDelivery || ''}
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
           placeholder="Enter estimated delivery time"
         />
         {errors.additionalInfo?.estimatedDelivery && (
-          <p className="text-red-500 text-sm mt-1">{errors.additionalInfo.estimatedDelivery.message}</p>
+          <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.additionalInfo.estimatedDelivery.message}</p>
         )}
       </div>
       <div className="mt-4">
         <label
           htmlFor="returnPolicy"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
         >
           Return Policy
         </label>
@@ -82,17 +82,17 @@ const AdditionalOptions = ({ register, errors, defaultValues }) => {
           id="returnPolicy"
           {...register("additionalInfo.returnPolicy")}
           defaultValue={defaultValues?.additionalInfo?.returnPolicy || ''}
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
           placeholder="Enter return policy details"
         />
         {errors.additionalInfo?.returnPolicy && (
-          <p className="text-red-500 text-sm mt-1">{errors.additionalInfo.returnPolicy.message}</p>
+          <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.additionalInfo.returnPolicy.message}</p>
         )}
       </div>
       <div className="mt-4">
         <label
           htmlFor="warranty"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
         >
           Warranty
         </label>
@@ -100,11 +100,11 @@ const AdditionalOptions = ({ register, errors, defaultValues }) => {
           id="warranty"
           {...register("additionalInfo.warranty")}
           defaultValue={defaultValues?.additionalInfo?.warranty || ''}
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
           placeholder="Enter warranty information"
         />
         {errors.additionalInfo?.warranty && (
-          <p className="text-red-500 text-sm mt-1">{errors.additionalInfo.warranty.message}</p>
+          <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.additionalInfo.warranty.message}</p>
         )}
       </div>
     </div>
