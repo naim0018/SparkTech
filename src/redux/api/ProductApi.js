@@ -60,7 +60,7 @@ export const productApi = baseApi.injectEndpoints({
     }),
     updateProduct: builder.mutation({
       query: ({ id, ...product }) => ({
-        url: `/product/${id}/update`,
+        url: `/product/${id}/update-product`,
         method: "PATCH",
         body: product,
       }),

@@ -25,6 +25,7 @@ const UpdateProducts = ({ products, closeModal }) => {
     // Function to add a new tag
     const addTag = (e) => {
         if (e.key === "Enter" && input.trim() !== "") {
+            e.preventDefault(); // Prevent form submission
             setTags([...tags, input.trim()]);
             setInput("");
         }
@@ -91,7 +92,7 @@ const UpdateProducts = ({ products, closeModal }) => {
                         <span className="block sm:inline">{updateError}</span>
                     </div>
                 )}
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" onKeyPress={(e) => { if (e.key === 'Enter') e.preventDefault(); }}>
                     {productsData ? (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div className="space-y-8">
