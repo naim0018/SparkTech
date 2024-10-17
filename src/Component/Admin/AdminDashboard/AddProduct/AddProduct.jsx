@@ -1,4 +1,3 @@
-// Import necessary dependencies and icons
 import { useEffect, useRef, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -12,13 +11,10 @@ import Specification from "./Specification";
 import ProductImages from "./ProductImages";
 
 export default function AddProductForm() {
-  // State for form submission and input focus
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRef = useRef(null);
   const [discountedPercentage, setDiscountedPercentage] = useState(0);
 
-
-  // Initialize react-hook-form
   const {
     register,
     control,
@@ -37,11 +33,9 @@ export default function AddProductForm() {
     },
   });
 
-  // State for managing tags
   const [tags, setTags] = useState([]);
   const [input, setInput] = useState("");
 
-  // Function to add a new tag
   const addTag = (e) => {
     if (e.key === "Enter" && input.trim() !== "") {
       setTags([...tags, input.trim()]);
@@ -49,19 +43,16 @@ export default function AddProductForm() {
     }
   };
 
-  // Function to remove a tag
   const removeTag = (index) => {
     setTags(tags.filter((_, i) => i !== index));
   };
 
-  // Effect to focus on input after adding a tag
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, [tags]);
 
-  // Setup field arrays for dynamic form fields
   const {
     fields: imageFields,
     append: appendImage,
@@ -89,14 +80,11 @@ export default function AddProductForm() {
     name: "specifications",
   });
 
-  // Use the mutation hook
   const [addProduct, { isLoading }] = useAddProductMutation();
 
-  // Watch for changes in regular and discounted prices
   const regularPrice = watch("price.regular");
   const discountedPrice = watch("price.discounted");
 
-  // Calculate savings percentage when prices change
   useEffect(() => {
     if (regularPrice && discountedPrice) {
       const regular = parseFloat(regularPrice);
@@ -110,11 +98,9 @@ export default function AddProductForm() {
     }
   }, [regularPrice, discountedPrice]);
 
-  // Function to handle form submission
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      // Prepare the data
       const productData = {
         ...data,
         tags,
@@ -139,23 +125,18 @@ export default function AddProductForm() {
         },
       };
 
-      // Validate image URL
       if (productData.images[0].url && !isValidUrl(productData.images[0].url)) {
         throw new Error("Invalid image URL");
       }
 
-      // Send the data using productsapi
       const response = await addProduct(productData).unwrap();
       console.log(response);
 
-      // Reset the form
       reset();
       setTags([]);
 
-      // Show success message
       toast.success("Product added successfully!");
     } catch (error) {
-      // Handle error
       toast.error("Failed to add product. Please check all fields and try again.");
       console.error("Error adding product:", error);
     } finally {
@@ -163,53 +144,36 @@ export default function AddProductForm() {
     }
   };
 
-  // Function to validate URL
   const isValidUrl = (string) => {
     try {
       new URL(string);
       return true;
     } catch (error) {
-      // Log the error for debugging purposes
       console.error("URL validation error:", error);
       return false;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full mx-auto bg-gray-800 shadow-lg rounded-xl overflow-hidden border border-gray-700">
-        <div className="px-4 sm:px-6 lg:px-8 py-10">
-          <h1 className="text-3xl font-bold text-gray-100 mb-8">
-            Add New Product
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-gray-900">
+      <div className="max-w-9xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
+        <div className="px-6 py-8 sm:px-10 sm:py-12">
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-8 text-center">
+            Create New Product
           </h1>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-              }
-            }}
-            className="space-y-8"
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="space-y-8">
-                {/* Basic Information */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <div className="space-y-10">
                 <BasicInformation 
                   register={register} 
                   errors={errors} 
                   watch={watch}
                   savingsPercentage={discountedPercentage}
                 />
-
-                {/* Shipping Details */}
                 <ShippingDetails register={register} errors={errors} />
-
-                {/* Additional Options */}
                 <AdditionalOptions register={register} errors={errors} />
               </div>
-
-              <div className="space-y-8">
-                {/* Product Tags */}
+              <div className="space-y-10">
                 <ProductTags
                   tags={tags}
                   removeTag={removeTag}
@@ -218,16 +182,12 @@ export default function AddProductForm() {
                   setInput={setInput}
                   addTag={addTag}
                 />
-
-                {/* Product Images */}
                 <ProductImages
                   register={register}
                   imageFields={imageFields}
                   removeImage={removeImage}
                   appendImage={appendImage}
                 />
-
-                {/* Specifications */}
                 <Specification
                   register={register}
                   specificationFields={specificationFields}
@@ -235,25 +195,30 @@ export default function AddProductForm() {
                   appendSpecification={appendSpecification}
                   errors={errors}
                 />
-
-                {/* Product Variants */}
                 <ProductVariants
                   register={register}
                   variantFields={variantFields}
                   removeVariant={removeVariant}
                   appendVariant={appendVariant}
-                  
                 />
               </div>
             </div>
-
-            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gray-700 text-white p-4 rounded-lg font-semibold text-lg hover:bg-gray-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4 px-6 rounded-lg font-bold text-lg hover:from-blue-600 hover:to-indigo-700 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed dark:from-blue-600 dark:to-indigo-700 dark:hover:from-blue-700 dark:hover:to-indigo-800"
               disabled={isSubmitting || isLoading}
             >
-              {isSubmitting || isLoading ? "Processing..." : "Add Product"}
+              {isSubmitting || isLoading ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processing...
+                </span>
+              ) : (
+                "Add Product"
+              )}
             </button>
           </form>
         </div>

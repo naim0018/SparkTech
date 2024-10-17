@@ -19,15 +19,15 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
   }, [regularPrice, discountedPrice, register]);
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+    <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl shadow-sm">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Basic Information
       </h2>
       {/* Product Title */}
       <div className="mb-4">
         <label
           htmlFor="title"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
         >
           Product Title
         </label>
@@ -35,11 +35,11 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
           id="title"
           {...register("title", { required: "Title is required" })}
           // defaultValue={defaultValues.title}
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
           placeholder="Enter product title"
         />
         {errors.title && (
-          <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+          <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.title.message}</p>
         )}
       </div>
 
@@ -47,7 +47,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
       <div className="mb-4">
         <label
           htmlFor="description"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
         >
           Description
         </label>
@@ -57,11 +57,11 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
             required: "Description is required",
           })}
           defaultValue={defaultValues.description}
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200 h-32"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200 h-32"
           placeholder="Enter product description"
         />
         {errors.description && (
-          <p className="text-red-500 text-sm mt-1">
+          <p className="text-red-500 dark:text-red-400 text-sm mt-1">
             {errors.description.message}
           </p>
         )}
@@ -72,7 +72,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
         <div>
           <label
             htmlFor="regularPrice"
-            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+            className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
           >
             Regular Price
           </label>
@@ -85,11 +85,11 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
               min: { value: 0, message: "Price must be positive" }
             })}
             defaultValue={defaultValues?.price?.regular}
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
             placeholder="Enter regular price"
           />
           {errors.price?.regular && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">
               {errors.price.regular.message}
             </p>
           )}
@@ -97,7 +97,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
         <div>
           <label
             htmlFor="discountedPrice"
-            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+            className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
           >
             Discounted Price (optional)
           </label>
@@ -112,11 +112,11 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
                 "Discounted price must be less than or equal to regular price"
             })}
             defaultValue={defaultValues.price?.discounted}
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
             placeholder="Enter discounted price (if any)"
           />
           {errors.price?.discounted && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">
               {errors.price.discounted.message}
             </p>
           )}
@@ -125,7 +125,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
 
       {/* Savings Percentage */}
       <div className="mt-2">
-        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
           Discount Percentage: {savingsPercentage}%
         </p>
         <input
@@ -139,7 +139,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
       <div className="mt-4">
         <label
           htmlFor="productCode"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
         >
           Product Code
         </label>
@@ -149,11 +149,11 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
             required: "Product Code is required",
           })}
           defaultValue={defaultValues.productCode}
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
           placeholder="Enter product code"
         />
         {errors.productCode && (
-          <p className="text-red-500 text-sm mt-1">
+          <p className="text-red-500 dark:text-red-400 text-sm mt-1">
             {errors.productCode.message}
           </p>
         )}
@@ -164,7 +164,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
         <div>
           <label
             htmlFor="category"
-            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+            className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
           >
             Category
           </label>
@@ -175,7 +175,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
             })}
             defaultValue={defaultValues?.category}
   
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
           >
             <option value="" disabled >
               Select a category
@@ -188,7 +188,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
             <option value="kitchen">Kitchen</option>
           </select>
           {errors.category && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">
               {errors.category.message}
             </p>
           )}
@@ -196,7 +196,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
         <div>
           <label
             htmlFor="subcategory"
-            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+            className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
           >
             Subcategory
           </label>
@@ -205,7 +205,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
             {...register("subcategory")}
             value={watch("subcategory") || defaultValues?.subcategory || ""}
             
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
             placeholder="Enter subcategory"
           />
         </div>
@@ -215,7 +215,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
       <div className="mt-4">
         <label
           htmlFor="stockQuantity"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
         >
           Stock Quantity
         </label>
@@ -227,11 +227,11 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
             min: { value: 0, message: "Stock quantity must be non-negative" }
           })}
           defaultValue={defaultValues.stockQuantity}
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
           placeholder="Enter stock quantity"
         />
         {errors.stockQuantity && (
-          <p className="text-red-500 text-sm mt-1">
+          <p className="text-red-500 dark:text-red-400 text-sm mt-1">
             {errors.stockQuantity.message}
           </p>
         )}
@@ -241,7 +241,7 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
       <div className="mt-4">
         <label
           htmlFor="brand"
-          className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1"
         >
           Brand
         </label>
@@ -249,11 +249,11 @@ const BasicInformation = ({ register, errors, defaultValues = {}, watch, savings
           id="brand"
           {...register("brand", { required: "Brand is required" })}
           defaultValue={defaultValues.brand}
-          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition duration-200"
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:border-transparent transition duration-200"
           placeholder="Enter brand name"
         />
         {errors.brand && (
-          <p className="text-red-500 text-sm mt-1">{errors.brand.message}</p>
+          <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.brand.message}</p>
         )}
       </div>
     </div>

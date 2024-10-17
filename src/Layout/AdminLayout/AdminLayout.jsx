@@ -2,15 +2,16 @@
 // Import necessary dependencies and components
 import { useState, useEffect } from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
-import { FiMenu, FiX, FiHome, FiUser, FiLogOut } from 'react-icons/fi'
+import { FiMenu, FiX, FiHome, FiUser, FiLogOut, FiSun, FiMoon } from 'react-icons/fi'
 import { navbarGenerator } from '../../utils/navbarGenerator'
 import { adminRoute } from '../../Router/AdminRoute'
 
 // AdminLayout component for the admin dashboard
 const AdminLayout = () => {
-  // State for sidebar visibility and screen size
+  // State for sidebar visibility, screen size, and theme
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isLargeScreen, setIsLargeScreen] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
   // Generate sidebar items from admin routes
   const sidebarItems = navbarGenerator(adminRoute)
 
@@ -27,9 +28,23 @@ const AdminLayout = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  // Effect to handle theme changes
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [isDarkMode])
+
   // Function to toggle sidebar visibility
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
+  }
+
+  // Function to toggle theme
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode)
   }
 
   return (
@@ -87,6 +102,12 @@ const AdminLayout = () => {
               <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
                 <FiLogOut />
                 <span>Logout</span>
+              </button>
+              <button
+                onClick={toggleTheme}
+                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300"
+              >
+                {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
               </button>
             </div>
           </div>
