@@ -1,5 +1,5 @@
 // Import necessary dependencies and components
-import  { useState, useEffect } from 'react';
+import  { useState } from 'react';
 import { useGetAllProductsQuery, useDeleteProductMutation } from '../../../../redux/api/ProductApi';
 import { toast } from 'react-toastify';
 import UpdateProducts from '../UpdateProducts';
@@ -7,6 +7,7 @@ import UpdateProducts from '../UpdateProducts';
 import FilterOptions from '../../../Shop/FilterOptions';
 import ProductTable from './ProductTable';
 import { Link, useLocation } from 'react-router-dom';
+import SearchAndAddProduct from './SearchAndAddProduct';
 
 const Products = () => {
   const location = useLocation();
@@ -29,12 +30,12 @@ const Products = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  useEffect(() => {
-    setQueryOptions(prev => ({
-      ...prev,
-      search: searchParams.get('search') || '',
-    }));
-  }, [location.search]);
+  // useEffect(() => {
+  //   setQueryOptions(prev => ({
+  //     ...prev,
+  //     search: searchParams.get('search') || '',
+  //   }));
+  // }, [location.search]);
 
   const handleSearch = (searchTerm) => {
     setQueryOptions(prev => ({ ...prev, search: searchTerm, page: 1 }));
@@ -64,7 +65,7 @@ const Products = () => {
       try {
         await deleteProduct(id).unwrap();
         toast.success('Product deleted successfully');
-      } catch (error) {
+      } catch {
         toast.error('Failed to delete product');
       }
     }
@@ -79,7 +80,7 @@ const Products = () => {
         
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-            <SearchBar onSearch={handleSearch} initialSearch={queryOptions.search} />
+            <SearchAndAddProduct handleSearch={handleSearch} searchTerm={queryOptions.search} />
             <Link to="/admin/add-product" className="mt-4 md:mt-0 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
               Add New Product
             </Link>
