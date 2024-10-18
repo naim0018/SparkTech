@@ -2,36 +2,17 @@ import { baseApi } from "./baseApi";
 
 // Helper function to build query string
 const buildQuery = (options) => {
-  const {
-    search,
-    sort,
-    page,
-    limit,
-    fields,
-    category,
-    brand,
-    minPrice,
-    maxPrice,
-    ...otherFilters
-  } = options;
-
   const queryParams = new URLSearchParams();
 
-  if (search) queryParams.append('search', search);
-  if (sort) queryParams.append('sort', sort);
-  if (page) queryParams.append('page', page);
-  if (limit) queryParams.append('limit', limit);
-  if (fields) queryParams.append('fields', fields);
-  
-  // Add filter parameters
-  if (category) queryParams.append('category', category);
-  if (brand) queryParams.append('brand', brand);
-  if (minPrice) queryParams.append('price[gte]', minPrice);
-  if (maxPrice) queryParams.append('price[lte]', maxPrice);
-
-  // Add any other filters
-  Object.entries(otherFilters).forEach(([key, value]) => {
-    queryParams.append(key, value);
+  Object.entries(options).forEach(([key, value]) => {
+    if (value !== '' && value !== undefined) {
+      if (key === 'tags') {
+        // Keep tags as a comma-separated string
+        queryParams.append('tags', value);
+      } else {
+        queryParams.append(key, value);
+      }
+    }
   });
 
   return queryParams.toString();
@@ -40,10 +21,13 @@ const buildQuery = (options) => {
 export const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query({
-      query: (options = {}) => ({
-        url: `/product?${buildQuery(options)}`,
-        method: "GET",
-      }),
+      query: (options = {}) => {
+        const queryString = buildQuery(options);
+        return {
+          url: `/product?${queryString}`,
+          method: "GET",
+        };
+      },
       providesTags: ["Product"],
     }),
     getProductById: builder.query({
@@ -74,6 +58,7 @@ export const productApi = baseApi.injectEndpoints({
       invalidatesTags: ["Product"],
     }),
   }),
+
 });
 
 export const {

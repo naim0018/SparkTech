@@ -60,7 +60,7 @@ const UpdateProducts = ({ products, closeModal }) => {
             const updatedData = { ...data, tags };
             // Remove the _id field from updatedData
             const { ...productToUpdate } = updatedData;
-            const result = await updateProduct({ id: products._id, ...productToUpdate }).unwrap();
+            const result = await updateProduct({ id: products?._id, ...productToUpdate }).unwrap();
             console.log({result})
             if (result.success) {
                 toast.success("Product updated successfully");
@@ -75,6 +75,7 @@ const UpdateProducts = ({ products, closeModal }) => {
             console.error("Update failed:", error);
         }
     }
+    console.log({products})
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full dark:bg-gray-800 dark:bg-opacity-75">

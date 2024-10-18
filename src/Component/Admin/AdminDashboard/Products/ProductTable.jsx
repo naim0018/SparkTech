@@ -3,21 +3,23 @@ import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useState } from 'react';
 
-// ProductTable component for displaying a table of products with expandable rows
-const ProductTable = ({ products, currentPage, openUpdateModal, handleDelete }) => {
-  // State to track which product is currently expanded
+const ProductTable = ({ products, currentPage, totalPages, onPageChange, openUpdateModal, handleDelete, isLoading }) => {
   const [expandedProduct, setExpandedProduct] = useState(null);
 
-  // Function to toggle the expansion of a product row
   const toggleProductExpansion = (productId) => {
     setExpandedProduct(expandedProduct === productId ? null : productId);
   };
 
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+      <p className="text-gray-500 dark:text-gray-400 text-lg text-center">Loading...</p>
+    </div>;
+  }
+  console.log(products);
   return (
     <div className="w-full overflow-x-auto">
       {products?.length > 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
-          {/* Table header for all screen sizes */}
           <div className="grid grid-cols-12 gap-4 mb-4 font-medium text-sm text-gray-700 dark:text-gray-300 uppercase border-b border-gray-200 dark:border-gray-700 pb-2 text-center">
             <div className="col-span-3 lg:col-span-1">Image</div>
             <div className="col-span-5 lg:col-span-2">Title</div>
@@ -31,10 +33,8 @@ const ProductTable = ({ products, currentPage, openUpdateModal, handleDelete }) 
             <div className="hidden lg:block lg:col-span-1">On Sale</div>
             <div className="col-span-3 lg:block lg:col-span-1 ">Actions</div>
           </div>
-          {/* Map through products and display each product */}
-          {products.slice((currentPage - 1) * 10, currentPage * 10).map((product) => (
+          {products.map((product) => (
             <div key={product._id} className="mb-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
-              {/* Mobile view: Collapsed product information */}
               <div className="grid grid-cols-12 gap-4 items-center py-4 cursor-pointer lg:hidden" onClick={() => toggleProductExpansion(product._id)}>
                 <div className="col-span-2">
                   <img src={product.images && product.images[0]?.url} alt={product.images && product.images[0]?.alt} className="h-12 w-12 rounded-full object-cover mx-auto" />
@@ -58,7 +58,6 @@ const ProductTable = ({ products, currentPage, openUpdateModal, handleDelete }) 
                   {expandedProduct === product._id ? <FaChevronUp className='w-3 h-3'/> : <FaChevronDown className='w-3 h-3'/>}
                 </div>
               </div>
-              {/* Expanded view for mobile */}
               {expandedProduct === product._id && (
                 <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-inner lg:hidden">
                   <div className="grid grid-cols-1 gap-3">
@@ -95,7 +94,6 @@ const ProductTable = ({ products, currentPage, openUpdateModal, handleDelete }) 
                   </div>
                 </div>
               )}
-              {/* Desktop view: Full product information */}
               <div className="hidden lg:grid lg:grid-cols-12 lg:gap-4 lg:py-4 lg:items-center lg:hover:bg-gray-50 lg:dark:hover:bg-gray-700 lg:text-center">
                 <div className="lg:col-span-1">
                   <img src={product.images && product.images[0]?.url} alt={product.images && product.images[0]?.alt} className="h-12 w-12 rounded-full object-cover mx-auto" />
@@ -154,16 +152,29 @@ const ProductTable = ({ products, currentPage, openUpdateModal, handleDelete }) 
           ))}
         </div>
       ) : (
-        // Display message when no products are found
         <div className="flex justify-center items-center h-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
           <p className="text-gray-500 dark:text-gray-400 text-lg text-center">No products found</p>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="mt-4 flex justify-center">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              className={`mx-1 px-3 py-1 rounded ${
+                currentPage === page
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
         </div>
       )}
     </div>
   );
 };
 
-// This component renders a table of products with expandable rows for mobile view
-// It displays product information such as image, title, brand, category, price, stock status, etc.
-// The component also provides options to edit, delete, and view individual products
 export default ProductTable;

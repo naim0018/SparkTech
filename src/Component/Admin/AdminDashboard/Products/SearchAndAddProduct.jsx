@@ -1,6 +1,4 @@
 /* eslint-disable react/prop-types */
-
-import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 
 const SearchAndAddProduct = ({ handleSearch, handleSearchBlur, searchTerm }) => {
@@ -17,9 +15,7 @@ const SearchAndAddProduct = ({ handleSearch, handleSearchBlur, searchTerm }) => 
         />
         <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" />
       </div>
-      <Link to="/admin/add-product" className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-        Add New Product
-      </Link>
+     
     </div>
   );
 };
