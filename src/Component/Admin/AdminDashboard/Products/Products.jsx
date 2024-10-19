@@ -50,9 +50,9 @@ const Products = () => {
 
   // Effect to update all categories and brands when data changes
   useEffect(() => {
-    if (data?.data?.data) {
-      setAllCategories([...new Set(data.data.data.map(product => product.category))]);
-      setAllBrands([...new Set(data.data.data.map(product => product.brand))]);
+    if (data?.data) {
+      setAllCategories([...new Set(data.data.map(product => product.category))]);
+      setAllBrands([...new Set(data.data.map(product => product.brand))]);
     }
   }, [data]);
 

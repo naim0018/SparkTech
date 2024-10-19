@@ -1,10 +1,10 @@
 // Importing necessary dependencies and components
 import { useState, useEffect } from "react";
-import { FaChevronDown, FaChevronUp, FaFilter } from "react-icons/fa";
+import { FaFilter } from "react-icons/fa";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
 import ProductCard from "./ProductCard";
 import { useTheme } from "../../ThemeContext"; // Import useTheme hook for dark mode
-import { useSelector } from "react-redux"; // Import useSelector for accessing Redux store
+import FilterOptions from "./FilterOptions";
 
 const AllProducts = () => {
   // Use the useTheme hook to access dark mode state
@@ -15,55 +15,43 @@ const AllProducts = () => {
   const [productsPerPage, setProductsPerPage] = useState(20);
   const [sortBy, setSortBy] = useState("default");
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [filters, setFilters] = useState({
-    inStock: false,
-    brands: [],
-    priceRange: { min: 0, max: 20000 },
-  });
-  const [expandedFilters, setExpandedFilters] = useState({
-    availability: true,
-    brand: true,
-    category: true,
-    subcategory: true,
-  });
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  const [filterOptions, setFilterOptions] = useState({
+    category: '',
+    brand: '',
+    minPrice: '',
+    maxPrice: '',
+    sort: 'default'
+  });
 
   // Fetching products data using Redux query
   const { data: productsData, isLoading, isError } = useGetAllProductsQuery();
 
-  // Get brand, category, and subcategory from Redux store
-  const { brand, category, subcategory } = useSelector((state) => state.product);
-  console.log({brand,category,subcategory})
   // Effect to filter and sort products when data or filters change
   useEffect(() => {
     if (productsData?.data) {
       let sorted = [...productsData.data];
-      // Sorting logic based on price
-      if (sortBy === "price-low-high") {
-        sorted.sort((a, b) => a.price.regular - b.price.regular);
-      } else if (sortBy === "price-high-low") {
-        sorted.sort((a, b) => b.price.regular - a.price.regular);
-      }
-
-      // Filtering logic based on various criteria
-      sorted = sorted.filter((product) => {
-        if (filters.inStock && product.stockStatus !== "In Stock") return false;
-        if (filters.brands.length && !filters.brands.includes(product.brand))
-          return false;
-        if (
-          product.price.regular < filters.priceRange.min ||
-          product.price.regular > filters.priceRange.max
-        )
-          return false;
-        if (brand && product.brand !== brand) return false;
-        if (category && product.category !== category) return false;
-        if (subcategory && product.subcategory !== subcategory) return false;
+      
+      // Apply filters
+      sorted = sorted.filter(product => {
+        if (filterOptions.category && product.category !== filterOptions.category) return false;
+        if (filterOptions.brand && product.brand !== filterOptions.brand) return false;
+        if (filterOptions.minPrice && product.price.regular < Number(filterOptions.minPrice)) return false;
+        if (filterOptions.maxPrice && product.price.regular > Number(filterOptions.maxPrice)) return false;
         return true;
       });
 
+      // Apply sorting
+      if (filterOptions.sort === "price-low-high") {
+        sorted.sort((a, b) => a.price.regular - b.price.regular);
+      } else if (filterOptions.sort === "price-high-low") {
+        sorted.sort((a, b) => b.price.regular - a.price.regular);
+      }
+
       setFilteredProducts(sorted);
     }
-  }, [productsData, sortBy, filters, brand, category, subcategory]);
+  }, [productsData, filterOptions]);
 
   // Loading and error states
   if (isLoading)
@@ -87,219 +75,20 @@ const AllProducts = () => {
     indexOfLastProduct
   );
 
-  // Extracting unique brands, categories, and subcategories for filters
-  const brands = [
-    ...new Set(productsData?.data.map((product) => product.brand)),
-  ];
-  const categories = [
-    ...new Set(productsData?.data.map((product) => product.category)),
-  ];
-  const subcategories = [
-    ...new Set(productsData?.data.map((product) => product.subcategory)),
-  ];
-
-  // Function to toggle filter expansion
-  const toggleFilter = (filterName) => {
-    setExpandedFilters((prev) => ({
-      ...prev,
-      [filterName]: !prev[filterName],
-    }));
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'reset') {
+      setFilterOptions({
+        category: '',
+        brand: '',
+        minPrice: '',
+        maxPrice: '',
+        sort: 'default'
+      });
+    } else {
+      setFilterOptions(prev => ({ ...prev, [name]: value }));
+    }
   };
-
-  // Filters component
-  const Filters = () => (
-    <div className={`${isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'} border rounded-lg shadow-md p-3`}>
-      <h2 className="text-lg font-bold mb-3">Filters</h2>
-
-      {/* Price Range Filter */}
-      <div className="mb-4">
-        <h3 className="font-semibold mb-1 text-sm">Price Range</h3>
-        <div className="flex flex-col space-y-1">
-          <input
-            type="range"
-            min="0"
-            max="20000"
-            value={filters.priceRange.max}
-            onChange={(e) =>
-              setFilters({
-                ...filters,
-                priceRange: {
-                  ...filters.priceRange,
-                  max: Number(e.target.value),
-                },
-              })
-            }
-            className="w-full"
-          />
-          <div className="flex justify-between">
-            <input
-              type="number"
-              value={filters.priceRange.min}
-              onChange={(e) =>
-                setFilters({
-                  ...filters,
-                  priceRange: {
-                    ...filters.priceRange,
-                    min: Number(e.target.value),
-                  },
-                })
-              }
-              className={`w-16 p-1 border rounded text-center text-sm ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'}`}
-              placeholder="Min"
-            />
-            <input
-              type="number"
-              value={filters.priceRange.max}
-              onChange={(e) =>
-                setFilters({
-                  ...filters,
-                  priceRange: {
-                    ...filters.priceRange,
-                    max: Number(e.target.value),
-                  },
-                })
-              }
-              className={`w-16 p-1 border rounded text-center text-sm ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'}`}
-              placeholder="Max"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Availability Filter */}
-      <div className="mb-3 border-t pt-3">
-        <div
-          className="flex justify-between items-center cursor-pointer"
-          onClick={() => toggleFilter("availability")}
-        >
-          <h3 className="font-semibold text-sm">Availability</h3>
-          {expandedFilters.availability ? (
-            <FaChevronUp size={12} />
-          ) : (
-            <FaChevronDown size={12} />
-          )}
-        </div>
-        {expandedFilters.availability && (
-          <div className="mt-1">
-            {["In Stock", "Pre Order", "Up Coming"].map((status) => (
-              <label key={status} className="flex items-center mt-1 text-sm">
-                <input
-                  type="checkbox"
-                  checked={filters.availability === status}
-                  onChange={() =>
-                    setFilters({ ...filters, availability: status })
-                  }
-                  className="mr-2"
-                />
-                {status}
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Brand Filter */}
-      <div className="mb-3 border-t pt-3">
-        <div
-          className="flex justify-between items-center cursor-pointer"
-          onClick={() => toggleFilter("brand")}
-        >
-          <h3 className="font-semibold text-sm">Brand</h3>
-          {expandedFilters.brand ? (
-            <FaChevronUp size={12} />
-          ) : (
-            <FaChevronDown size={12} />
-          )}
-        </div>
-        {expandedFilters.brand && (
-          <div className="mt-1 max-h-36 overflow-y-auto">
-            {brands.map((brand) => (
-              <label key={brand} className="flex items-center mt-1 text-sm">
-                <input
-                  type="checkbox"
-                  checked={filters.brands.includes(brand)}
-                  onChange={(e) => {
-                    const updatedBrands = e.target.checked
-                      ? [...filters.brands, brand]
-                      : filters.brands.filter((b) => b !== brand);
-                    setFilters({ ...filters, brands: updatedBrands });
-                  }}
-                  className="mr-2"
-                />
-                {brand}
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Category Filter */}
-      <div className="mb-3 border-t pt-3">
-        <div
-          className="flex justify-between items-center cursor-pointer"
-          onClick={() => toggleFilter("category")}
-        >
-          <h3 className="font-semibold text-sm">Category</h3>
-          {expandedFilters.category ? (
-            <FaChevronUp size={12} />
-          ) : (
-            <FaChevronDown size={12} />
-          )}
-        </div>
-        {expandedFilters.category && (
-          <div className="mt-1 max-h-36 overflow-y-auto">
-            {categories.map((cat) => (
-              <label key={cat} className="flex items-center mt-1 text-sm">
-                <input
-                  type="checkbox"
-                  checked={category === cat}
-                  onChange={() => {
-                    // Update category in Redux store
-                    // You'll need to dispatch an action here
-                  }}
-                  className="mr-2"
-                />
-                {cat}
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Subcategory Filter */}
-      <div className="mb-3 border-t pt-3">
-        <div
-          className="flex justify-between items-center cursor-pointer"
-          onClick={() => toggleFilter("subcategory")}
-        >
-          <h3 className="font-semibold text-sm">Subcategory</h3>
-          {expandedFilters.subcategory ? (
-            <FaChevronUp size={12} />
-          ) : (
-            <FaChevronDown size={12} />
-          )}
-        </div>
-        {expandedFilters.subcategory && (
-          <div className="mt-1 max-h-36 overflow-y-auto">
-            {subcategories.map((subcat) => (
-              <label key={subcat} className="flex items-center mt-1 text-sm">
-                <input
-                  type="checkbox"
-                  checked={subcategory === subcat}
-                  onChange={() => {
-                    // Update subcategory in Redux store
-                    // You'll need to dispatch an action here
-                  }}
-                  className="mr-2"
-                />
-                {subcat}
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <div className={`max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 ${isDarkMode ? 'bg-gray-900 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
@@ -364,7 +153,10 @@ const AllProducts = () => {
                 showMobileFilters ? "block" : "hidden lg:block"
               }`}
             >
-              <Filters />
+              <FilterOptions
+                filterOptions={filterOptions}
+                handleFilterChange={handleFilterChange}
+              />
             </div>
             {/* Product grid */}
             <div className="w-full lg:w-3/4 xl:w-4/5">

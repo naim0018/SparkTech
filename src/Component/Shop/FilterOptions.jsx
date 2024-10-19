@@ -1,100 +1,118 @@
 /* eslint-disable react/prop-types */
+import { useState, useEffect } from 'react';
+import { useGetAllBrandsAndCategoriesQuery } from '../../redux/api/ProductApi';
+import { useTheme } from '../../ThemeContext';
+import { FaFilter, FaTags, FaIndustry, FaCheckCircle } from 'react-icons/fa';
 
+const FilterOptions = ({ filterOptions, handleFilterChange }) => {
+  const { isDarkMode } = useTheme();
+  const { data: brandsAndCategories } = useGetAllBrandsAndCategoriesQuery();
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-const FilterOptions = ({ filterOptions, handleFilterChange, categories, brands }) => {
+  useEffect(() => {
+    if (brandsAndCategories) {
+      setBrands(brandsAndCategories.brands);
+      setCategories(brandsAndCategories.categories);
+    }
+  }, [brandsAndCategories]);
+
+  const resetFilters = () => {
+    handleFilterChange({
+      target: {
+        name: 'reset',
+        value: ''
+      }
+    });
+  };
+
+  const renderSection = (title, content, icon) => (
+    <div className={`mb-6 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'} rounded-lg p-4`}>
+      <div className="flex items-center mb-2">
+        {icon}
+        <h3 className="font-semibold ml-2">{title}</h3>
+      </div>
+      <div className="mt-2">
+        {content}
+      </div>
+    </div>
+  );
+
+  const handleCheckboxChange = (name, value) => {
+    handleFilterChange({
+      target: {
+        name,
+        value: filterOptions[name].includes(value)
+          ? filterOptions[name].filter(item => item !== value)
+          : [...filterOptions[name], value]
+      }
+    });
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-      {/* Category Filter */}
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Category
-        </label>
-        <select
-          id="category"
-          name="category"
-          value={filterOptions.category}
-          onChange={handleFilterChange}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        >
-          <option value="">All Categories</option>
+    <div className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} p-6 rounded-lg shadow-lg`}>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold">Filters</h2>
+        <FaFilter className="text-2xl text-blue-500" />
+      </div>
+
+      {renderSection("Category", (
+        <div className="space-y-2">
           {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
+            <label key={category} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={filterOptions.category.includes(category)}
+                onChange={() => handleCheckboxChange('category', category)}
+                className="mr-2"
+              />
+              <span>{category}</span>
+            </label>
           ))}
-        </select>
-      </div>
+        </div>
+      ), <FaTags className="text-blue-500" />)}
 
-      {/* Brand Filter */}
-      <div>
-        <label htmlFor="brand" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Brand
-        </label>
-        <select
-          id="brand"
-          name="brand"
-          value={filterOptions.brand}
-          onChange={handleFilterChange}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        >
-          <option value="">All Brands</option>
+      {renderSection("Brand", (
+        <div className="space-y-2">
           {brands.map((brand) => (
-            <option key={brand} value={brand}>
-              {brand}
-            </option>
+            <label key={brand} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={filterOptions.brand.includes(brand)}
+                onChange={() => handleCheckboxChange('brand', brand)}
+                className="mr-2"
+              />
+              <span>{brand}</span>
+            </label>
           ))}
-        </select>
-      </div>
+        </div>
+      ), <FaIndustry className="text-blue-500" />)}
 
-      {/* Price Range Filter */}
-      <div>
-        <label htmlFor="minPrice" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Min Price
-        </label>
-        <input
-          type="number"
-          id="minPrice"
-          name="minPrice"
-          value={filterOptions.minPrice}
-          onChange={handleFilterChange}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          placeholder="Min Price"
-        />
-      </div>
+      {renderSection("Availability", (
+        <div className="space-y-2">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={filterOptions.inStock}
+              onChange={() => handleFilterChange({
+                target: {
+                  name: 'inStock',
+                  value: !filterOptions.inStock
+                }
+              })}
+              className="mr-2"
+            />
+            <span>In Stock</span>
+          </label>
+        </div>
+      ), <FaCheckCircle className="text-blue-500" />)}
 
-      <div>
-        <label htmlFor="maxPrice" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Max Price
-        </label>
-        <input
-          type="number"
-          id="maxPrice"
-          name="maxPrice"
-          value={filterOptions.maxPrice}
-          onChange={handleFilterChange}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          placeholder="Max Price"
-        />
-      </div>
-
-      {/* Sort Option */}
-      <div>
-        <label htmlFor="sort" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Sort By
-        </label>
-        <select
-          id="sort"
-          name="sort"
-          value={filterOptions.sort}
-          onChange={handleFilterChange}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        >
-          <option value="-createdAt">Newest</option>
-          <option value="createdAt">Oldest</option>
-          <option value="-price">Price: High to Low</option>
-          <option value="price">Price: Low to High</option>
-        </select>
-      </div>
+      <button
+        onClick={resetFilters}
+        className={`w-full p-3 rounded-lg ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} text-white transition duration-300 mt-6 font-semibold`}
+      >
+        Reset Filters
+      </button>
     </div>
   );
 };
