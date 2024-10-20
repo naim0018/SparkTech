@@ -35,7 +35,7 @@ export const productApi = baseApi.injectEndpoints({
         url: '/product',
         method: "GET",
       }),
-      providesTags: ["Product"],
+      invalidatesTags: ["Product"],
       transformResponse: (response) => {
         const brands = [...new Set(response.data.map(product => product.brand))];
         const categories = [...new Set(response.data.map(product => product.category))];
