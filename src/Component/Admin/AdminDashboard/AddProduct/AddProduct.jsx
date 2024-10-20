@@ -1,12 +1,18 @@
+// Import necessary dependencies
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useAddProductMutation } from "../../../../redux/api/ProductApi";
 
+// Define the AddProduct component
 export default function AddProduct() {
+  // State to manage form submission
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register, control, handleSubmit } = useForm({
+
+  // Initialize react-hook-form
+  const { register, control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
+      // Define default values for the form fields
       basicInfo: {
         productCode: "",
         title: "",
@@ -27,15 +33,13 @@ export default function AddProduct() {
       variants: [{ name: "", value: "", price: 0 }],
       specifications: [{ group: "", items: [{ name: "", value: "" }] }],
       tags: [""],
-      dimensions: {
+      shippingDetails: {
         length: 0,
         width: 0,
         height: 0,
-        unit: "cm"
-      },
-      shipping: {
-        shippingWeight: 0,
-        shippingWeightUnit: "kg"
+        weight: 0,
+        dimensionUnit: "cm",
+        weightUnit: "kg"
       },
       additionalInfo: {
         freeShipping: false,
@@ -53,6 +57,7 @@ export default function AddProduct() {
     }
   });
 
+  // Initialize useFieldArray for dynamic form fields
   const { fields: keyFeatureFields, append: appendKeyFeature, remove: removeKeyFeature } = useFieldArray({
     control,
     name: "basicInfo.keyFeatures"
@@ -78,52 +83,85 @@ export default function AddProduct() {
     name: "tags"
   });
 
+  // Initialize the addProduct mutation
   const [addProduct] = useAddProductMutation();
 
+  // Handle form submission
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
+      // Prepare product data
       const productData = {
         ...data,
+        price: {
+          ...data.price,
+          regular: Number(data.price.regular),
+          discounted: Number(data.price.discounted)
+        },
+        stockQuantity: Number(data.stockQuantity),
+        shippingDetails: {
+          ...data.shippingDetails,
+          length: Number(data.shippingDetails.length),
+          width: Number(data.shippingDetails.width),
+          height: Number(data.shippingDetails.height),
+          weight: Number(data.shippingDetails.weight)
+        },
+        variants: data.variants.map(variant => ({
+          ...variant,
+          price: Number(variant.price)
+        })),
         sold: 0,
         reviews: [],
         rating: { average: 0, count: 0 },
         relatedProducts: []
       };
-      await addProduct(productData).unwrap();
-      toast.success("Product added successfully!");
+      console.log("productData:", productData);
+      // Call the addProduct mutation
+      const result = await addProduct(productData).unwrap();
+      console.log("result:", result);
+      if (result.success) {
+        toast.success("Product added successfully!");
+      } else {
+        toast.error("Failed to add product: " + result.message);
+      }
     } catch (error) {
-      toast.error("Failed to add product");
+      toast.error("Failed to add product: " + error.message);
       console.error(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Render the form
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-7xl mx-auto p-8 bg-white shadow-2xl rounded-2xl">
       <h1 className="text-4xl font-extrabold mb-10 text-center text-gray-800">Add New Product</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div>
+          {/* Basic Information Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">Basic Information</h2>
             <div className="space-y-4">
               <label className="block">
                 <span className="text-gray-700">Product Code</span>
                 <input {...register("basicInfo.productCode", { required: "Product Code is required" })} placeholder="Enter product code" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.basicInfo?.productCode && <span className="text-red-500">{errors.basicInfo.productCode.message}</span>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Title</span>
                 <input {...register("basicInfo.title", { required: "Title is required" })} placeholder="Enter product title" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.basicInfo?.title && <span className="text-red-500">{errors.basicInfo.title.message}</span>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Brand</span>
                 <input {...register("basicInfo.brand", { required: "Brand is required" })} placeholder="Enter brand name" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.basicInfo?.brand && <span className="text-red-500">{errors.basicInfo.brand.message}</span>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Category</span>
                 <input {...register("basicInfo.category", { required: "Category is required" })} placeholder="Enter product category" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.basicInfo?.category && <span className="text-red-500">{errors.basicInfo.category.message}</span>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Subcategory</span>
@@ -133,8 +171,10 @@ export default function AddProduct() {
             <label className="block mt-4">
               <span className="text-gray-700">Description</span>
               <textarea {...register("basicInfo.description", { required: "Description is required" })} placeholder="Enter product description" className="w-full p-3 border-2 border-gray-300 rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent" rows="4" />
+              {errors.basicInfo?.description && <span className="text-red-500">{errors.basicInfo.description.message}</span>}
             </label>
             
+            {/* Key Features Section */}
             <div className="mt-6">
               <h3 className="text-2xl font-semibold mb-4 text-gray-700">Key Features</h3>
               {keyFeatureFields.map((field, index) => (
@@ -143,20 +183,24 @@ export default function AddProduct() {
                   <button type="button" onClick={() => removeKeyFeature(index)} className="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 shadow-md">Remove</button>
                 </div>
               ))}
+              {errors.basicInfo?.keyFeatures && <span className="text-red-500">{errors.basicInfo.keyFeatures.message}</span>}
               <button type="button" onClick={() => appendKeyFeature("")} className="mt-2 p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 shadow-md">Add Key Feature</button>
             </div>
           </div>
 
+          {/* Price Information Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">Price Information</h2>
             <div className="space-y-4">
               <label className="block">
                 <span className="text-gray-700">Regular Price</span>
-                <input {...register("price.regular", { required: "Regular price is required", min: 0 })} type="number" placeholder="Enter regular price" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                <input {...register("price.regular", { required: "Regular price is required", min: 0, valueAsNumber: true })} type="number" placeholder="Enter regular price" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.price?.regular && <span className="text-red-500">{errors.price.regular.message}</span>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Discounted Price</span>
-                <input {...register("price.discounted", { min: 0 })} type="number" placeholder="Enter discounted price" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                <input {...register("price.discounted", { min: 0, valueAsNumber: true })} type="number" placeholder="Enter discounted price" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.price?.discounted && <span className="text-red-500">{errors.price.discounted.message}</span>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Selected Variant</span>
@@ -165,6 +209,7 @@ export default function AddProduct() {
             </div>
           </div>
 
+          {/* Stock Information Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">Stock Information</h2>
             <div className="space-y-4">
@@ -173,60 +218,59 @@ export default function AddProduct() {
                 <select {...register("stockStatus")} className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1">
                   <option value="In Stock">In Stock</option>
                   <option value="Out of Stock">Out of Stock</option>
-                  <option value="Back Order">Back Order</option>
+                  <option value="Pre-order">Pre-order</option>
                 </select>
               </label>
               <label className="block">
                 <span className="text-gray-700">Stock Quantity</span>
-                <input {...register("stockQuantity", { min: 0 })} type="number" placeholder="Enter stock quantity" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                <input {...register("stockQuantity", { min: 0, valueAsNumber: true })} type="number" placeholder="Enter stock quantity" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.stockQuantity && <span className="text-red-500">{errors.stockQuantity.message}</span>}
               </label>
             </div>
           </div>
 
+          {/* Shipping Details Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-3xl font-bold mb-6 text-gray-700">Dimensions</h2>
+            <h2 className="text-3xl font-bold mb-6 text-gray-700">Shipping Details</h2>
             <div className="grid grid-cols-2 gap-4">
               <label className="block">
                 <span className="text-gray-700">Length</span>
-                <input {...register("dimensions.length", { min: 0 })} type="number" placeholder="Enter length" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                <input {...register("shippingDetails.length", { min: 0, valueAsNumber: true })} type="number" placeholder="Enter length" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.shippingDetails?.length && <span className="text-red-500">{errors.shippingDetails.length.message}</span>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Width</span>
-                <input {...register("dimensions.width", { min: 0 })} type="number" placeholder="Enter width" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                <input {...register("shippingDetails.width", { min: 0, valueAsNumber: true })} type="number" placeholder="Enter width" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.shippingDetails?.width && <span className="text-red-500">{errors.shippingDetails.width.message}</span>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Height</span>
-                <input {...register("dimensions.height", { min: 0 })} type="number" placeholder="Enter height" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                <input {...register("shippingDetails.height", { min: 0, valueAsNumber: true })} type="number" placeholder="Enter height" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.shippingDetails?.height && <span className="text-red-500">{errors.shippingDetails.height.message}</span>}
               </label>
               <label className="block">
-                <span className="text-gray-700">Unit</span>
-                <select {...register("dimensions.unit")} className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1">
+                <span className="text-gray-700">Weight</span>
+                <input {...register("shippingDetails.weight", { min: 0, valueAsNumber: true })} type="number" placeholder="Enter weight" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                {errors.shippingDetails?.weight && <span className="text-red-500">{errors.shippingDetails.weight.message}</span>}
+              </label>
+              <label className="block">
+                <span className="text-gray-700">Dimension Unit</span>
+                <select {...register("shippingDetails.dimensionUnit")} className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1">
                   <option value="cm">cm</option>
                   <option value="in">in</option>
-                  <option value="mm">mm</option>
                 </select>
               </label>
-            </div>
-          </div>
-
-          <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-3xl font-bold mb-6 text-gray-700">Shipping</h2>
-            <div className="grid grid-cols-2 gap-4">
               <label className="block">
-                <span className="text-gray-700">Shipping Weight</span>
-                <input {...register("shipping.shippingWeight", { min: 0 })} type="number" placeholder="Enter shipping weight" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
-              </label>
-              <label className="block">
-                <span className="text-gray-700">Shipping Weight Unit</span>
-                <select {...register("shipping.shippingWeightUnit")} className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1">
+                <span className="text-gray-700">Weight Unit</span>
+                <select {...register("shippingDetails.weightUnit")} className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1">
                   <option value="kg">kg</option>
                   <option value="lb">lb</option>
-                  <option value="oz">oz</option>
                 </select>
               </label>
             </div>
           </div>
 
+          {/* Additional Information Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">Additional Information</h2>
             <div className="space-y-4">
@@ -257,24 +301,29 @@ export default function AddProduct() {
             </label>
           </div>
 
+          {/* SEO Information Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">SEO Information</h2>
             <label className="block mb-2">
               <span className="text-gray-700">Meta Title</span>
-              <input {...register("seo.metaTitle")} placeholder="Enter meta title" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+              <input {...register("seo.metaTitle", { required: "Meta Title is required" })} placeholder="Enter meta title" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+              {errors.seo?.metaTitle && <span className="text-red-500">{errors.seo.metaTitle.message}</span>}
             </label>
             <label className="block mb-2">
               <span className="text-gray-700">Meta Description</span>
-              <textarea {...register("seo.metaDescription")} placeholder="Enter meta description" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" rows="3" />
+              <textarea {...register("seo.metaDescription", { required: "Meta Description is required" })} placeholder="Enter meta description" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" rows="3" />
+              {errors.seo?.metaDescription && <span className="text-red-500">{errors.seo.metaDescription.message}</span>}
             </label>
             <label className="block">
               <span className="text-gray-700">Slug</span>
-              <input {...register("seo.slug")} placeholder="Enter slug" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+              <input {...register("seo.slug", { required: "Slug is required" })} placeholder="Enter slug" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+              {errors.seo?.slug && <span className="text-red-500">{errors.seo.slug.message}</span>}
             </label>
           </div>
         </div>
 
         <div>
+          {/* Tags Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">Tags</h2>
             {tagFields.map((field, index) => (
@@ -282,6 +331,7 @@ export default function AddProduct() {
                 <label className="flex-grow">
                   <span className="text-gray-700">Tag</span>
                   <input {...register(`tags.${index}`, { required: "Tag is required" })} placeholder="Enter tag" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                  {errors.tags?.[index] && <span className="text-red-500">{errors.tags[index].message}</span>}
                 </label>
                 <button type="button" onClick={() => removeTag(index)} className="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 shadow-md">Remove</button>
               </div>
@@ -289,6 +339,7 @@ export default function AddProduct() {
             <button type="button" onClick={() => appendTag("")} className="mt-2 p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 shadow-md">Add Tag</button>
           </div>
 
+          {/* Images Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">Images</h2>
             {imageFields.map((field, index) => (
@@ -296,10 +347,12 @@ export default function AddProduct() {
                 <label className="block mb-2">
                   <span className="text-gray-700">Image URL</span>
                   <input {...register(`images.${index}.url`, { required: "Image URL is required" })} placeholder="Enter image URL" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                  {errors.images?.[index]?.url && <span className="text-red-500">{errors.images[index].url.message}</span>}
                 </label>
                 <label className="block mb-2">
                   <span className="text-gray-700">Image Alt Text</span>
-                  <input {...register(`images.${index}.alt`)} placeholder="Enter image alt text" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                  <input {...register(`images.${index}.alt`, { required: "Image Alt Text is required" })} placeholder="Enter image alt text" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                  {errors.images?.[index]?.alt && <span className="text-red-500">{errors.images[index].alt.message}</span>}
                 </label>
                 <button type="button" onClick={() => removeImage(index)} className="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 shadow-md">Remove Image</button>
               </div>
@@ -307,6 +360,7 @@ export default function AddProduct() {
             <button type="button" onClick={() => appendImage({ url: "", alt: "" })} className="p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 shadow-md">Add Image</button>
           </div>
 
+          {/* Variants Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">Variants</h2>
             {variantFields.map((field, index) => (
@@ -314,14 +368,17 @@ export default function AddProduct() {
                 <label className="block mb-2">
                   <span className="text-gray-700">Variant Name</span>
                   <input {...register(`variants.${index}.name`, { required: "Variant name is required" })} placeholder="Enter variant name" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                  {errors.variants?.[index]?.name && <span className="text-red-500">{errors.variants[index].name.message}</span>}
                 </label>
                 <label className="block mb-2">
                   <span className="text-gray-700">Variant Value</span>
                   <input {...register(`variants.${index}.value`, { required: "Variant value is required" })} placeholder="Enter variant value" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                  {errors.variants?.[index]?.value && <span className="text-red-500">{errors.variants[index].value.message}</span>}
                 </label>
                 <label className="block mb-2">
                   <span className="text-gray-700">Variant Price</span>
-                  <input {...register(`variants.${index}.price`, { required: "Variant price is required", min: 0 })} type="number" placeholder="Enter variant price" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                  <input {...register(`variants.${index}.price`, { required: "Variant price is required", min: 0, valueAsNumber: true })} type="number" placeholder="Enter variant price" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                  {errors.variants?.[index]?.price && <span className="text-red-500">{errors.variants[index].price.message}</span>}
                 </label>
                 <button type="button" onClick={() => removeVariant(index)} className="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 shadow-md">Remove Variant</button>
               </div>
@@ -329,6 +386,7 @@ export default function AddProduct() {
             <button type="button" onClick={() => appendVariant({ name: "", value: "", price: 0 })} className="p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 shadow-md">Add Variant</button>
           </div>
 
+          {/* Specifications Section */}
           <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
             <h2 className="text-3xl font-bold mb-6 text-gray-700">Specifications</h2>
             {specificationFields.map((field, index) => (
@@ -336,16 +394,19 @@ export default function AddProduct() {
                 <label className="block mb-2">
                   <span className="text-gray-700">Specification Group</span>
                   <input {...register(`specifications.${index}.group`, { required: "Specification group is required" })} placeholder="Enter specification group" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                  {errors.specifications?.[index]?.group && <span className="text-red-500">{errors.specifications[index].group.message}</span>}
                 </label>
                 {field.items.map((item, itemIndex) => (
                   <div key={item.id} className="flex items-center space-x-2 mb-2">
                     <label className="flex-grow">
                       <span className="text-gray-700">Specification Name</span>
                       <input {...register(`specifications.${index}.items.${itemIndex}.name`, { required: "Specification name is required" })} placeholder="Enter specification name" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                      {errors.specifications?.[index]?.items?.[itemIndex]?.name && <span className="text-red-500">{errors.specifications[index].items[itemIndex].name.message}</span>}
                     </label>
                     <label className="flex-grow">
                       <span className="text-gray-700">Specification Value</span>
                       <input {...register(`specifications.${index}.items.${itemIndex}.value`, { required: "Specification value is required" })} placeholder="Enter specification value" className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1" />
+                      {errors.specifications?.[index]?.items?.[itemIndex]?.value && <span className="text-red-500">{errors.specifications[index].items[itemIndex].value.message}</span>}
                     </label>
                     <button type="button" onClick={() => removeSpecification(index)} className="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 shadow-md">Remove</button>
                   </div>
@@ -358,6 +419,7 @@ export default function AddProduct() {
         </div>
       </div>
 
+      {/* Submit Button */}
       <button type="submit" disabled={isSubmitting} className="w-full p-4 bg-blue-500 text-white rounded-xl text-xl font-bold hover:bg-blue-600 transition duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
         {isSubmitting ? "Adding Product..." : "Add Product"}
       </button>

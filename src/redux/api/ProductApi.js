@@ -50,11 +50,14 @@ export const productApi = baseApi.injectEndpoints({
       providesTags: ["Product"],
     }),
     addProduct: builder.mutation({
-      query: (product) => ({
-        url: `/product/add-product`,
-        method: "POST",
-        body: product,
-      }),
+      query: (product) => {
+        console.log('Adding product:', product);
+        return {
+          url: `/product/add-product`,
+          method: "POST",
+          body: product,
+        };
+      },
       invalidatesTags: ["Product"],
     }),
     updateProduct: builder.mutation({
