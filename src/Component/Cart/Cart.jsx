@@ -4,12 +4,16 @@ import { IoMdClose } from 'react-icons/io';
 import { FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
 import { incrementQuantity, decrementQuantity, removeFromCart } from '../../redux/features/CartSlice';
 import { useTheme } from '../../ThemeContext'; // Import useTheme hook
-
+import Checkout from '../Checkout/Checkout';
+import { Link } from 'react-router-dom';
 const Cart = ({ toggleCart }) => {
   const cartItems = useSelector((state) => state.cart.cartItems) || [];
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme(); // Use the useTheme hook
   const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+ 
+
+
 
   return (
     <div className={`fixed top-0 right-0 h-full w-full sm:w-96 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg z-50 flex flex-col`}>
@@ -65,9 +69,13 @@ const Cart = ({ toggleCart }) => {
           <span className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Total:</span>
           <span className="text-xl font-bold text-blue-400">${total.toFixed(2)}</span>
         </div>
-        <button className={`w-full ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-800 hover:bg-gray-700'} text-white py-3 px-4 rounded-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-lg font-semibold`}>
+        <Link to="/checkout">
+          <button
+            className={`w-full ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-800 hover:bg-gray-700'} text-white py-3 px-4 rounded-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 text-lg font-semibold`}
+        >
           Proceed to Checkout
         </button>
+        </Link>
       </div>
     </div>
   );

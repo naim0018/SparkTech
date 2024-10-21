@@ -8,7 +8,7 @@ import AdminDashboard from "../Component/Admin/AdminDashboard/AdminDashboard";
 import AdminLayout from "../Layout/AdminLayout/AdminLayout";
 import { adminRoute } from "./AdminRoute";
 import ProductDetails from "../Component/ProductDetails/ProductDetails";
-
+import Checkout from "../Component/Checkout/Checkout";
 
 
 export const router = createBrowserRouter([
@@ -24,6 +24,10 @@ export const router = createBrowserRouter([
             {
                 path: 'product/:productId',
                 element: <ProductDetails/>
+            },
+            {
+                path: 'checkout',
+                element: <Checkout/>
             },
             ...routeGenerator(navbarRoute)
         ],
