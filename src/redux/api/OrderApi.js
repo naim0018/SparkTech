@@ -1,40 +1,40 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { baseApi } from "./baseApi";
 
-export const orderApi = createApi({
-  reducerPath: 'orderApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://spark-tech-server.vercel.app/api/v1' }),
-  tagTypes: ['Order'],
+export const orderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createOrder: builder.mutation({
-      query: (orderData) => ({
-        url: '/orders/create-order',
-        method: 'POST',
-        body: orderData,
-      }),
-      invalidatesTags: ['Order'],
+      query: (orderData) => {
+        console.log("orderData", orderData)
+        return {
+          url: '/order/create-order',
+          method: 'POST',
+          body: orderData,
+        }
+      },
+      invalidatesTags: ['Orders'],
     }),
     getOrderById: builder.query({
-      query: (id) => `/orders/${id}`,
-      providesTags: ['Order'],
+      query: (id) => `/order/${id}`,
+      providesTags: ['Orders'],
     }),
     updateOrder: builder.mutation({
       query: ({ id, ...updateData }) => ({
-        url: `/orders/${id}/update-order`,
+        url: `/order/${id}/update-order`,
         method: 'PATCH',
         body: updateData,
       }),
-      invalidatesTags: ['Order'],
+      invalidatesTags: ['Orders'],
     }),
     deleteOrder: builder.mutation({
       query: (id) => ({
-        url: `/orders/${id}/delete-order`,
+        url: `/order/${id}/delete-order`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Order'],
+      invalidatesTags: ['Orders'],
     }),
     getAllOrders: builder.query({
-      query: () => '/orders',
-      providesTags: ['Order'],
+      query: () => '/order',
+      providesTags: ['Orders'],
     }),
   }),
 });
