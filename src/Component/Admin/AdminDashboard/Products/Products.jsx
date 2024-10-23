@@ -7,7 +7,7 @@
  * - Adding new products
  * - Updating existing products
  * - Deleting products
- * - Filtering products by category, price, stock, and brand
+ * - Filtering products by category, subcategory, price, stock, and brand
  * 
  * It uses RTK Query for data fetching and mutation, and React state for local UI management.
  */
@@ -27,20 +27,16 @@ const Products = () => {
     page: 1,
     limit: 10,
     sort: '-createdAt',
-    category: '',
-    brand: '',
-    minPrice: '',
-    maxPrice: '',
-    stockStatus: '',
   });
 
-  // State for storing all categories and brands
+  // State for storing all categories, subcategories, and brands
   const [allCategories, setAllCategories] = useState([]);
+  const [allSubcategories, setAllSubcategories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
 
   // Fetch products data based on query options
-  const { data, isLoading, isFetching } = useGetAllProductsQuery(queryOptions);
-  
+  const { data, isLoading, isFetching } = useGetAllProductsQuery();
+  console.log(data?.data);
   // Mutation hook for deleting products
   const [deleteProduct] = useDeleteProductMutation();
 
@@ -48,11 +44,12 @@ const Products = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Effect to update all categories and brands when data changes
+  // Effect to update all categories, subcategories, and brands when data changes
   useEffect(() => {
     if (data?.data) {
-      setAllCategories([...new Set(data.data.map(product => product.category))]);
-      setAllBrands([...new Set(data.data.map(product => product.brand))]);
+      setAllCategories([...new Set(data.data.map(product => product.basicInfo?.category))]);
+      setAllSubcategories([...new Set(data.data.map(product => product.basicInfo?.subcategory))]);
+      setAllBrands([...new Set(data.data.map(product => product.basicInfo?.brand))]);
     }
   }, [data]);
 
@@ -64,7 +61,21 @@ const Products = () => {
   // Handler for filter changes
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setQueryOptions(prev => ({ ...prev, [name]: value, page: 1 }));
+    if (name === 'price.regular.min' || name === 'price.regular.max') {
+      setQueryOptions(prev => ({
+        ...prev,
+        price: {
+          ...prev.price,
+          regular: {
+            ...prev.price.regular,
+            [name.split('.')[2]]: value
+          }
+        },
+        page: 1
+      }));
+    } else {
+      setQueryOptions(prev => ({ ...prev, [name]: value, page: 1 }));
+    }
   };
 
   // Handlers for update modal
@@ -91,7 +102,11 @@ const Products = () => {
   };
 
   // Show loading state while fetching initial data
-  if (isLoading) return <div className="flex justify-center items-center h-screen dark:text-gray-200">Loading...</div>;
+  if (isLoading) return (
+    <div className="flex justify-center items-center h-screen dark:text-gray-200">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+  );
 
   return (
     <div className="bg-gray-100 dark:bg-gray-900 min-h-screen p-4 sm:p-6 md:p-8 overflow-x-hidden">
@@ -108,20 +123,27 @@ const Products = () => {
             filterOptions={queryOptions}
             handleFilterChange={handleFilterChange}
             categories={allCategories}
+            subcategories={allSubcategories}
             brands={allBrands}
           />
         </div>
 
         <div className="overflow-x-auto">
-          <ProductTable 
-            products={data?.data?.data || []}
-            currentPage={queryOptions.page}
-            totalPages={data?.data?.meta?.totalPages || 1}
-            onPageChange={handlePageChange}
-            openUpdateModal={openUpdateModal}
-            handleDelete={handleDelete}
-            isLoading={isFetching}
-          />
+          {isFetching ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
+            <ProductTable 
+              products={data?.data|| []}
+              currentPage={queryOptions.page}
+              totalPages={data?.meta?.totalPages || 1}
+              onPageChange={handlePageChange}
+              openUpdateModal={openUpdateModal}
+              handleDelete={handleDelete}
+              isLoading={isFetching}
+            />
+          )}
         </div>
       </div>
 

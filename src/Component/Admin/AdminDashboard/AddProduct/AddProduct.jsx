@@ -17,7 +17,6 @@ export default function AddProduct() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      // Define default values for the form fields
       basicInfo: {
         productCode: "",
         title: "",
@@ -37,6 +36,12 @@ export default function AddProduct() {
       images: [{ url: "", alt: "" }],
       variants: [{ name: "", value: "", price: 0 }],
       specifications: [{ group: "", items: [{ name: "", value: "" }] }],
+      reviews: [],
+      rating: {
+        average: 0,
+        count: 0,
+      },
+      relatedProducts: [],
       tags: [""],
       shippingDetails: {
         length: 0,
@@ -114,31 +119,72 @@ export default function AddProduct() {
   // Handle form submission
   const onSubmit = async (data) => {
     setIsSubmitting(true);
+    console.log(data);
     try {
       // Prepare product data
       const productData = {
-        ...data,
+        basicInfo: {
+          productCode: data.basicInfo.productCode,
+          title: data.basicInfo.title,
+          brand: data.basicInfo.brand,
+          category: data.basicInfo.category,
+          subcategory: data.basicInfo.subcategory,
+          description: data.basicInfo.description,
+          keyFeatures: data.basicInfo.keyFeatures,
+        },
         price: {
-          ...data.price,
           regular: Number(data.price.regular),
           discounted: Number(data.price.discounted),
+          
+          selectedVariant: data.price.selectedVariant,
         },
+        stockStatus: data.stockStatus,
         stockQuantity: Number(data.stockQuantity),
+        sold: 0,
+        images: data.images.map(image => ({
+          url: image.url,
+          alt: image.alt,
+        })),
+        variants: data.variants.map(variant => ({
+          name: variant.name,
+          value: variant.value,
+          price: Number(variant.price),
+        })),
+        specifications: data.specifications.map(spec => ({
+          group: spec.group,
+          items: spec.items.map(item => ({
+            name: item.name,
+            value: item.value,
+          })),
+        })),
+        reviews: [],
+        rating: {
+          average: 0,
+          count: 0,
+        },
+        relatedProducts: [],
+        tags: data.tags,
         shippingDetails: {
-          ...data.shippingDetails,
           length: Number(data.shippingDetails.length),
           width: Number(data.shippingDetails.width),
           height: Number(data.shippingDetails.height),
           weight: Number(data.shippingDetails.weight),
+          dimensionUnit: data.shippingDetails.dimensionUnit,
+          weightUnit: data.shippingDetails.weightUnit,
         },
-        variants: data.variants.map((variant) => ({
-          ...variant,
-          price: Number(variant.price),
-        })),
-        sold: 0,
-        reviews: [],
-        rating: { average: 0, count: 0 },
-        relatedProducts: [],
+        additionalInfo: {
+          freeShipping: data.additionalInfo.freeShipping,
+          isFeatured: data.additionalInfo.isFeatured,
+          isOnSale: data.additionalInfo.isOnSale,
+          estimatedDelivery: data.additionalInfo.estimatedDelivery,
+          returnPolicy: data.additionalInfo.returnPolicy,
+          warranty: data.additionalInfo.warranty,
+        },
+        seo: {
+          metaTitle: data.seo.metaTitle,
+          metaDescription: data.seo.metaDescription,
+          slug: data.seo.slug,
+        },
       };
       console.log("productData:", productData);
       // Call the addProduct mutation
@@ -147,10 +193,18 @@ export default function AddProduct() {
       if (result.success) {
         toast.success("Product added successfully!");
       } else {
-        toast.error("Failed to add product: " + result.message);
+        if (result.message === "Invalid ID") {
+          toast.error("Failed to add product: Product Code is required and must be unique.");
+        } else {
+          toast.error("Failed to add product: " + result.message);
+        }
       }
     } catch (error) {
-      toast.error("Failed to add product: " + error.message);
+      if (error.status === 400 && error.data && error.data.code === 11000) {
+        toast.error("Failed to add product: Product Code must be unique.");
+      } else {
+        toast.error("Failed to add product: " + (error.data?.message || error.message || "Unknown error"));
+      }
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -178,12 +232,11 @@ export default function AddProduct() {
               <label className="block">
                 <span className="text-gray-700">Product Code</span>
                 <input
-                  {...register("basicInfo.productCode", {
-                    required: "Product Code is required",
-                  })}
+                  {...register("basicInfo.productCode")}
                   placeholder="Enter product code"
                   className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
                 />
+                <p className="text-sm text-gray-500 mt-1">Leave blank for auto-generated code</p>
                 {errors.basicInfo?.productCode && (
                   <span className="text-red-500">
                     {errors.basicInfo.productCode.message}
@@ -784,7 +837,7 @@ export default function AddProduct() {
             </h2>
             {specificationFields.map((field, index) => (
               <div
-                key={field.id}
+                key={index}
                 className="mb-4 p-4 border-2 border-gray-300 rounded-lg"
               >
                 <label className="block mb-2">

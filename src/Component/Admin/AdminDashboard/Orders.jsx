@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react'
 import { useGetAllOrdersQuery, useUpdateOrderMutation, useDeleteOrderMutation } from '../../../redux/api/OrderApi';
 import { FiSearch, FiCalendar, FiFilter, FiChevronDown, FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
@@ -187,27 +188,57 @@ const Orders = () => {
                   <tr key={order._id} className="hover:bg-gray-50 transition-colors duration-150">
                     <td className="px-6 py-4 truncate">
                       <div className="flex items-center">
-                        <span title="Click to copy" className="cursor-pointer" onClick={() => copyToClipboard(order._id)}>{order._id}</span>
+                        <span 
+                          className="cursor-pointer" 
+                          onClick={() => copyToClipboard(order._id)}
+                          title="Click to copy"
+                        >
+                          {order._id}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 truncate">
                       <div className="flex items-center">
-                        <span title="Click to copy" className="cursor-pointer" onClick={() => copyToClipboard(`${order.billingInformation.firstName} ${order.billingInformation.lastName}`)}>{`${order.billingInformation.firstName} ${order.billingInformation.lastName}`}</span>
+                        <span 
+                          className="cursor-pointer" 
+                          onClick={() => copyToClipboard(`${order.billingInformation.firstName} ${order.billingInformation.lastName}`)}
+                          title="Click to copy"
+                        >
+                          {`${order.billingInformation.firstName} ${order.billingInformation.lastName}`}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 truncate">
                       <div className="flex items-center">
-                        <span title="Click to copy" className="cursor-pointer" onClick={() => copyToClipboard(order.billingInformation.email)}>{order.billingInformation.email}</span>
+                        <span 
+                          className="cursor-pointer" 
+                          onClick={() => copyToClipboard(order.billingInformation.email)}
+                          title="Click to copy"
+                        >
+                          {order.billingInformation.email}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 truncate">
                       <div className="flex items-center">
-                        <span title="Click to copy" className="cursor-pointer" onClick={() => copyToClipboard(order.billingInformation.phone)}>{order.billingInformation.phone}</span>
+                        <span 
+                          className="cursor-pointer" 
+                          onClick={() => copyToClipboard(order.billingInformation.phone)}
+                          title="Click to copy"
+                        >
+                          {order.billingInformation.phone}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 truncate">
                       <div className="flex items-center">
-                        <span title="Click to copy" className="cursor-pointer" onClick={() => copyToClipboard(order.billingInformation.city)}>{order.billingInformation.city}</span>
+                        <span 
+                          className="cursor-pointer" 
+                          onClick={() => copyToClipboard(order.billingInformation.city)}
+                          title="Click to copy"
+                        >
+                          {order.billingInformation.city}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 truncate">${order.totalAmount.toFixed(2)}</td>
@@ -221,6 +252,7 @@ const Orders = () => {
                       <button 
                         className="text-blue-600 hover:text-blue-900 mr-3"
                         onClick={() => setSelectedOrder(order)}
+                        title="View Details"
                       >
                         <FiEye />
                       </button>
@@ -228,12 +260,14 @@ const Orders = () => {
                         className="text-indigo-600 hover:text-indigo-900 mr-3"
                         onClick={() => handleUpdateOrder(order._id, 'Processing')}
                         disabled={isUpdating && updatingOrderId === order._id}
+                        title="Update Status"
                       >
                         {isUpdating && updatingOrderId === order._id ? 'Updating...' : <FiEdit />}
                       </button>
                       <button 
                         className="text-red-600 hover:text-red-900"
                         onClick={() => handleDeleteOrder(order._id)}
+                        title="Delete Order"
                       >
                         <FiTrash2 />
                       </button>

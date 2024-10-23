@@ -30,21 +30,7 @@ export const productApi = baseApi.injectEndpoints({
       },
       providesTags: ["Product"],
     }),
-    getAllBrandsAndCategories: builder.query({
-      query: () => ({
-        url: '/product',
-        method: "GET",
-      }),
-      invalidatesTags: ["Product"],
-      transformResponse: (response) => {
-        const brands = [...new Set(response.data.map(product => product.brand))];
-        const categories = [...new Set(response.data.map(product => product.category))];
-        return {
-          brands,
-          categories,
-        };
-      },
-    }),
+    
     getProductById: builder.query({
       query: (id) => `/product/${id}`,
       providesTags: ["Product"],

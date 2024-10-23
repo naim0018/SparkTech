@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState} from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaShoppingCart, FaHeart, FaStar, FaExclamationTriangle, FaSearch } from 'react-icons/fa';
 import { useGetProductByIdQuery } from '../../redux/api/ProductApi';
@@ -16,6 +17,7 @@ const ProductView = () => {
   const { data: productResponse, isLoading, isError } = useGetProductByIdQuery(productId);
   const product = productResponse?.data;
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState(null);
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
 
@@ -27,12 +29,14 @@ const ProductView = () => {
   const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
 
   const handleAddToCart = () => {
+    const price = selectedVariant ? selectedVariant.price : (product.price.discounted || product.price.regular);
     dispatch(addToCart({
       id: product._id,
-      name: product.title,
-      price: product.price.discounted || product.price.regular,
+      name: product.basicInfo.title,
+      price: price,
       image: product.images[0].url,
-      quantity: quantity
+      quantity: quantity,
+      variant: selectedVariant ? selectedVariant.value : null
     }));
     toast.success('Product added to cart!', {
       position: "bottom-right",
@@ -55,7 +59,7 @@ const ProductView = () => {
           className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-4 md:p-8 mb-8`}
         >
           <div className="flex flex-col lg:flex-row gap-8">
-            <div className=" w-full lg:w-1/2 h-[250px] sm:h-[350px] md:h-[500px] lg:h-[622px]">
+            <div className="w-full lg:w-1/2 h-[250px] sm:h-[350px] md:h-[500px] lg:h-[622px]">
               <ProductImages images={product.images} />
             </div>
             <div className="w-full lg:w-1/2">
@@ -65,6 +69,8 @@ const ProductView = () => {
                 incrementQuantity={incrementQuantity}
                 decrementQuantity={decrementQuantity}
                 handleAddToCart={handleAddToCart}
+                selectedVariant={selectedVariant}
+                setSelectedVariant={setSelectedVariant}
               />
             </div>
           </div>
@@ -82,7 +88,7 @@ const ProductView = () => {
               <AdditionalInfo product={product} />
             </div>
             <div className="w-full lg:w-1/4">
-              <RelatedProducts category={product.category} currentProductId={product._id} />
+              <RelatedProducts relatedProducts={product.relatedProducts} currentProductId={product._id} />
             </div>
           </div>
         </motion.div>
@@ -111,78 +117,85 @@ const NotFoundState = () => (
   </div>
 );
 
-const ProductInfo = ({ product, quantity, incrementQuantity, decrementQuantity, handleAddToCart }) => (
+const ProductInfo = ({ product, quantity, incrementQuantity, decrementQuantity, handleAddToCart, selectedVariant, setSelectedVariant }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{product.title}</h1>
-    <Rating />
+    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{product.basicInfo.title}</h1>
+    <Rating rating={product.rating} />
     <ProductDetails product={product} />
-    <PriceInfo product={product} />
+    <PriceInfo product={product} selectedVariant={selectedVariant} />
     <KeyFeatures product={product} />
-    <ProductVariants product={product} />
+    <ProductVariants product={product} selectedVariant={selectedVariant} setSelectedVariant={setSelectedVariant} />
     <QuantitySelector 
       quantity={quantity}
       incrementQuantity={incrementQuantity}
       decrementQuantity={decrementQuantity}
     />
     <ActionButtons handleAddToCart={handleAddToCart} />
-    <AdditionalNotes />
+    <AdditionalNotes product={product} />
   </motion.div>
 );
 
-const Rating = () => (
+const Rating = ({ rating }) => (
   <div className="flex items-center mb-4">
     <div className="flex text-yellow-400 mr-2">
       {[...Array(5)].map((_, i) => (
-        <FaStar key={i} className="text-lg sm:text-xl" />
+        <FaStar key={i} className={`text-lg sm:text-xl ${i < Math.round(rating.average) ? 'text-yellow-400' : 'text-gray-300'}`} />
       ))}
     </div>
-    <span className="text-gray-600 text-xs sm:text-sm">(50 reviews)</span>
+    <span className="text-gray-600 text-xs sm:text-sm">({rating.count} reviews)</span>
   </div>
 );
 
 const ProductDetails = ({ product }) => (
   <div className="mb-4 text-xs sm:text-sm">
-    <p className="mb-1"><span className="font-semibold">Brand:</span> {product.brand}</p>
-    <p className="mb-1"><span className="font-semibold">Product Code:</span> {product.productCode}</p>
+    <p className="mb-1"><span className="font-semibold">Brand:</span> {product.basicInfo.brand}</p>
+    <p className="mb-1"><span className="font-semibold">Product Code:</span> {product.basicInfo.productCode}</p>
     <p><span className="font-semibold">Availability:</span> {product.stockStatus}</p>
   </div>
 );
 
-const PriceInfo = ({ product }) => (
-  <div className="mb-4">
-    <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-      Tk {product.price.discounted || product.price.regular}
-    </p>
-    {product.price.discounted && (
-      <p className="text-xs sm:text-sm text-gray-500">
-        Regular Price: <span className="line-through">Tk {product.price.regular}</span>
-        {' '}(Save: Tk {product.price.savings} - {product.price.savingsPercentage}%)
+const PriceInfo = ({ product, selectedVariant }) => {
+  const price = selectedVariant ? selectedVariant.price : product.price;
+  return (
+    <div className="mb-4">
+      <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600 mb-2">
+        Tk {price.discounted || price.regular}
       </p>
-    )}
-  </div>
-);
+      {price.discounted && (
+        <p className="text-xs sm:text-sm text-gray-500">
+          Regular Price: <span className="line-through">Tk {price.regular}</span>
+          {' '}(Save: Tk {price.savings} - {price.savingsPercentage.toFixed(2)}%)
+        </p>
+      )}
+    </div>
+  );
+};
 
 const KeyFeatures = ({ product }) => (
   <div className="mb-4">
     <h2 className="text-lg sm:text-xl font-bold mb-2">Key Features</h2>
     <ul className="list-disc list-inside text-xs sm:text-sm">
-      {product.keyFeatures.map((feature, index) => (
+      {product.basicInfo.keyFeatures.map((feature, index) => (
         <li key={index} className="mb-1">{feature}</li>
       ))}
     </ul>
   </div>
 );
 
-const ProductVariants = ({ product }) => (
-  product.variants && (
+const ProductVariants = ({ product, selectedVariant, setSelectedVariant }) => (
+  product.variants && product.variants.length > 0 && (
     <div className="mb-4">
       {product.variants.map((variant, index) => (
         <div key={index} className="mb-2">
           <label className="block mb-1 font-semibold text-xs sm:text-sm">{variant.name}:</label>
-          <select className="w-full p-2 border border-gray-300 bg-white text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm">
-            {variant.value.split(',').map((option, optionIndex) => (
-              <option key={optionIndex} value={option.trim()}>{option.trim()}</option>
-            ))}
+          <select 
+            className="w-full p-2 border border-gray-300 bg-white text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm"
+            value={selectedVariant && selectedVariant.value === variant.value ? variant.value : ''}
+            
+            onChange={(e) => setSelectedVariant(variant)}
+          >
+            <option value="">Select {variant.name}</option>
+            <option value={variant.value}>{variant.value}</option>
           </select>
         </div>
       ))}
@@ -239,10 +252,15 @@ const ActionButtons = ({ handleAddToCart }) => (
   </div>
 );
 
-const AdditionalNotes = () => (
+const AdditionalNotes = ({ product }) => (
   <div>
     <p className="text-red-600 text-xs sm:text-sm mb-1">* PLEASE CHECK THE PRODUCT IN FRONT OF THE DELIVERY PERSON</p>
-    <p className="text-blue-600 text-xs sm:text-sm">* FREE SHIPPING with bKash Cashback T&C</p>
+    {product.additionalInfo.freeShipping && (
+      <p className="text-blue-600 text-xs sm:text-sm">* FREE SHIPPING</p>
+    )}
+    {product.additionalInfo.estimatedDelivery && (
+      <p className="text-green-600 text-xs sm:text-sm">* Estimated Delivery: {product.additionalInfo.estimatedDelivery}</p>
+    )}
   </div>
 );
 
@@ -280,7 +298,7 @@ const AdditionalInfo = ({ product }) => (
               {key}
             </div>
             <div className="w-2/3 p-2 sm:p-3 text-gray-600 text-xs sm:text-sm">
-              {value}
+              {value.toString()}
             </div>
           </div>
         ))}
