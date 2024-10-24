@@ -33,7 +33,7 @@ const Offers = () => {
 
   return (
     <motion.div 
-      className={`py-8 sm:py-12 md:py-16 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}
+      className={`py-8 sm:py-12 md:py-16 ${isDarkMode ? 'bg-gray-900' : ''}`}
       initial="hidden"
       animate="visible"
       variants={containerVariants}

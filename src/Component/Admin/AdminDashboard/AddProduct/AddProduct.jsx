@@ -28,7 +28,7 @@ export default function AddProduct() {
       },
       price: {
         regular: 0,
-        discounted: 0,
+        discounted: "",
         selectedVariant: "",
       },
       stockStatus: "In Stock",
@@ -134,8 +134,7 @@ export default function AddProduct() {
         },
         price: {
           regular: Number(data.price.regular),
-          discounted: Number(data.price.discounted),
-          
+          discounted: data.price.discounted ? Number(data.price.discounted) : undefined,
           selectedVariant: data.price.selectedVariant,
         },
         stockStatus: data.stockStatus,
@@ -387,7 +386,7 @@ export default function AddProduct() {
                 )}
               </label>
               <label className="block">
-                <span className="text-gray-700">Discounted Price</span>
+                <span className="text-gray-700">Discounted Price (Optional)</span>
                 <input
                   {...register("price.discounted", {
                     min: 0,

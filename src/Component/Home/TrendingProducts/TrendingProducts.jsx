@@ -52,7 +52,7 @@ const FeaturedProducts = () => {
     <div
       ref={ref}
       className={`container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 ${
-        isDarkMode ? "bg-gray-900" : "bg-gray-100"
+        isDarkMode ? "bg-gray-900" : ""
       }`}
     >
       <Title title="Featured Products" className="mb-8 text-center text-2xl sm:text-3xl lg:text-4xl" />

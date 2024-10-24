@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Products component for managing product listings in the admin dashboard
  * 
@@ -20,6 +21,8 @@ import UpdateProducts from '../UpdateProducts';
 import ProductTable from './ProductTable';
 import FilterOptions from './FilterOptions';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+
 
 const Products = () => {
   // State for query options, used for pagination and filtering
@@ -90,15 +93,33 @@ const Products = () => {
   };
 
   // Handler for deleting a product
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await deleteProduct(id).unwrap();
-        toast.success('Product deleted successfully');
-      } catch {
-        toast.error('Failed to delete product');
+  const handleDelete = async (productId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won&apos;t be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deleteProduct(productId).unwrap();
+          Swal.fire({
+            title: "Deleted!",
+            text: "The product has been deleted.",
+            icon: "success"
+          });
+        } catch (error) {
+          Swal.fire({
+            title: "Error!",
+            text: "Failed to delete the product.",
+            icon: "error"
+          });
+        }
       }
-    }
+    });
   };
 
   // Show loading state while fetching initial data
