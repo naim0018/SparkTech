@@ -1,11 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Link } from 'react-router-dom';
 import { motion, useSpring, useAnimation } from 'framer-motion';
-import { FaStar } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
-import { useTheme } from '../../../ThemeContext'; // Import useTheme hook
+import { useTheme } from '../../../ThemeContext';
 
-// ProductCard component for displaying individual product information
 const ProductCard = ({ product, isInView }) => {
   const [isHovered, setIsHovered] = useState(false);
   const imageSpring = useSpring(1, {
@@ -14,9 +12,8 @@ const ProductCard = ({ product, isInView }) => {
   });
 
   const controls = useAnimation();
-  const { isDarkMode } = useTheme(); // Use the useTheme hook
+  const { isDarkMode } = useTheme();
 
-  // Effect to control animation based on view status
   useEffect(() => {
     if (isInView) {
       controls.start({ opacity: 1, y: 0 });
@@ -25,22 +22,19 @@ const ProductCard = ({ product, isInView }) => {
     }
   }, [isInView, controls]);
 
-  // Handler for mouse hover start
   const handleHover = () => {
     setIsHovered(true);
     imageSpring.set(1.1);
   };
 
-  // Handler for mouse hover end
   const handleHoverEnd = () => {
     setIsHovered(false);
     imageSpring.set(1);
   };
 
   return (
-   // Individual product card component
    <motion.div 
-     initial={{  y: 50 }}
+     initial={{ y: 50 }}
      animate={controls}
      transition={{ duration: 0.5 }}
    >
@@ -50,7 +44,6 @@ const ProductCard = ({ product, isInView }) => {
       onHoverStart={handleHover}
       onHoverEnd={handleHoverEnd}
       >
-        {/* Product image container */}
         <motion.div
           className="w-28 h-28 rounded-lg flex-shrink-0 overflow-hidden"
           style={{ scale: imageSpring }}
@@ -58,7 +51,7 @@ const ProductCard = ({ product, isInView }) => {
           {product.images && product.images.length > 0 && (
             <motion.img
               src={product.images[0].url}
-              alt={product.images[0].alt || product.title}
+              alt={product.images[0].alt || product.basicInfo.title}
               className="w-full h-full object-contain bg-white rounded-lg"
               loading="lazy"
               onError={(e) => {
@@ -70,7 +63,6 @@ const ProductCard = ({ product, isInView }) => {
             />
           )}
         </motion.div>
-        {/* Product details container */}
         <motion.div 
           className="flex-grow"
           whileHover={{ 
@@ -80,15 +72,19 @@ const ProductCard = ({ product, isInView }) => {
           animate={{ scale: isHovered ? 1.05 : 1 }}
           transition={{ duration: 0.3 }}
         >
-          {/* Product title */}
           <motion.h3 
             className={`font-semibold text-sm mb-2 line-clamp-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
           >
-            {product.title}
+            {product.basicInfo.title}
           </motion.h3>
-          {/* Product rating */}
-          {product?.rating && <RatingStars rating={product.rating.average} count={product.rating.count} isDarkMode={isDarkMode} />}
-          {/* Product price */}
+          <motion.div className="flex gap-5 items-center mt-2">
+            <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <strong>Category:</strong> {product.basicInfo.category}
+            </span>
+            <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <strong>Brand:</strong> {product.basicInfo.brand}
+            </span>
+          </motion.div>
           <motion.div 
             className="mt-3 flex flex-wrap items-center"
             whileHover={{ y: -2 }}
@@ -99,9 +95,9 @@ const ProductCard = ({ product, isInView }) => {
               whileHover={{ scale: 1.1 }}
               animate={{ scale: isHovered ? 1.1 : 1 }}
             >
-              ${product.price?.discounted || product.price?.regular || 'N/A'}
+              ${product.price.discounted || product.price.regular || 'N/A'}
             </motion.span>
-            {product.price?.discounted && product.price?.regular && (
+            {product.price.discounted && product.price.regular && (
               <motion.span 
                 className={`ml-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} line-through`}
                 whileHover={{ opacity: 0.7 }}
@@ -114,26 +110,8 @@ const ProductCard = ({ product, isInView }) => {
         </motion.div>
       </motion.div>
     </Link>
-  
    </motion.div>
   )
 }
-
-// RatingStars component for displaying product ratings
-const RatingStars = ({ rating, count, isDarkMode }) => (
-    <div className="flex items-center">
-      {[...Array(5)].map((_, i) => (
-        <FaStar
-          key={i}
-          className={`w-3 h-3 ${
-            i < Math.round(rating) ? "text-yellow-400" : isDarkMode ? "text-gray-600" : "text-gray-300"
-          }`}
-        />
-      ))}
-      <span className={`ml-1 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-        {rating ? `(${rating.toFixed(1)})` : ''} {count} reviews
-      </span>
-    </div>
-  );
 
 export default ProductCard

@@ -14,20 +14,22 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../../redux/features/CartSlice';
 import { toast } from 'react-toastify';
-import { useTheme } from '../../../ThemeContext'; // Import useTheme hook
+import { useTheme } from '../../../ThemeContext';
 
 const SpecialOffers = () => {
   const { data, isLoading } = useGetAllProductsQuery({
-    isOnSale: true
+    'additionalInfo.isOnSale': true
   });
   const [products, setProducts] = useState([]);
   const [swiper, setSwiper] = useState(null);
   const dispatch = useDispatch();
-  const { isDarkMode } = useTheme(); // Use the useTheme hook
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     if (data?.data) {
-      setProducts(data.data.slice(0, 8));
+      // Ensure we only show 8 products that are on sale
+      const onSaleProducts = data.data.filter(product => product.additionalInfo.isOnSale);
+      setProducts(onSaleProducts.slice(0, 8));
     }
   }, [data]);
 
@@ -46,7 +48,7 @@ const SpecialOffers = () => {
   const handleAddToCart = (product) => {
     dispatch(addToCart({
       id: product._id,
-      name: product.title,
+      name: product.basicInfo.title,
       price: product.price.discounted || product.price.regular,
       image: product.images[0].url,
       quantity: 1
@@ -79,7 +81,11 @@ const SpecialOffers = () => {
               nextEl: '.swiper-button-next',
               prevEl: '.swiper-button-prev',
             }}
-            pagination={{ clickable: true, el: '.swiper-pagination' }}
+            pagination={{ 
+              clickable: true, 
+              el: '.swiper-pagination',
+              type: 'bullets',
+            }}
             autoplay={{
               delay: 2000,
               disableOnInteraction: false,
@@ -99,7 +105,7 @@ const SpecialOffers = () => {
                   <Link to={`/product/${product._id}`} className="w-full flex flex-col items-center">
                     <img
                       src={product.images[0]?.url}
-                      alt={product.images[0]?.alt || product.title}
+                      alt={product.images[0]?.alt || product.basicInfo.title}
                       className="size-72 object-contain bg-white rounded-lg p-6 transition duration-300 ease-in-out group-hover:scale-105"
                     />
                     <div className="flex items-center my-2 mt-3">
@@ -113,7 +119,7 @@ const SpecialOffers = () => {
                       ))}
                     </div>
                     <h2 className={`text-sm font-medium mb-3 mt-2 overflow-hidden text-ellipsis h-10 ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
-                      {product.title}
+                      {product.basicInfo.title}
                     </h2>
                     <div className="flex items-center justify-between w-full px-2">
                       <div className="flex items-center mb-2">
@@ -134,11 +140,11 @@ const SpecialOffers = () => {
                         <MdOutlineShoppingCart className="size-[20px]" />
                       </button>
                     </div>
-                    <div className="w-full px-2 my-2">
+                    <div className="w-full px-2 my-2 h-[60px]">
                       <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>
                         Status: <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-900'} font-semibold`}>{product.stockStatus}</span>
                       </p>
-                      {product.stockStatus === 'In Stock' && product.stockQuantity && (
+                      {product.stockStatus === 'In Stock' && product.stockQuantity ? (
                         <>
                           <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>
                             Available: <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-900'} font-semibold`}>{product.stockQuantity}</span>
@@ -150,46 +156,34 @@ const SpecialOffers = () => {
                             ></div>
                           </div>
                         </>
+                      ) : (
+                        <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>
+                          Available: <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-900'} font-semibold`}>Out of Stock</span>
+                        </p>
                       )}
                     </div>
                   </Link>
                 </div>
               </SwiperSlide>
             ))}
-            <div className="swiper-button-next"></div>
-            <div className="swiper-button-prev"></div>
+            <div className="swiper-pagination"></div>
           </Swiper>
         </div>
       )}
-      <style >{`
-        .special-offers-swiper .swiper-button-next,
-        .special-offers-swiper .swiper-button-prev {
-          color: ${isDarkMode ? '#e2e8f0' : '#222934'};
-          width: 35px;
-          height: 35px;
-          border-radius: 50%;
-          transition: all 0.5s ease;
-          margin: 0 0px;
-          padding-left: 5px;
-          font-weight: bold;
+      <style>{`
+        .special-offers-swiper .swiper-pagination-bullet {
+          width: 10px;
+          height: 10px;
+          background: ${isDarkMode ? '#e2e8f0' : '#222934'};
+          opacity: 0.5;
+          transition: all 0.3s ease;
         }
-          .special-offers-swiper .swiper-button-prev{
-            padding-left: 0px;
-            padding-right: 5px;
-          }
-
-        .special-offers-swiper .swiper-button-next:after,
-        .special-offers-swiper .swiper-button-prev:after {
-          font-size: 20px;
-          font-weight: bold;
+        .special-offers-swiper .swiper-pagination-bullet-active {
+          opacity: 1;
+          background: ${isDarkMode ? '#e2e8f0' : '#222934'};
         }
-
-        .special-offers-swiper .swiper-button-next {
-          right: 10px;
-        }
-
-        .special-offers-swiper .swiper-button-prev {
-          left: 10px;
+        .special-offers-swiper .swiper-pagination {
+          bottom: 10px;
         }
       `}</style>
     </div>

@@ -1,15 +1,12 @@
-// Import necessary dependencies
 import { useState, useEffect } from 'react';
-import { FaGift } from 'react-icons/fa';
-import { useTheme } from '../../../ThemeContext'; // Import useTheme hook
+import { FaGift, FaClock, FaShoppingCart } from 'react-icons/fa';
+import { useTheme } from '../../../ThemeContext';
+import { motion } from 'framer-motion';
 
-// Offers component for displaying seasonal sale information and countdown timer
 const Offers = () => {
-  // State to hold the time left for the sale
   const [timeLeft, setTimeLeft] = useState({});
-  const { isDarkMode } = useTheme(); // Use the useTheme hook
+  const { isDarkMode } = useTheme();
 
-  // Effect to update the countdown timer every second
   useEffect(() => {
     const timer = setInterval(() => {
       const difference = +new Date("2024-12-31") - +new Date();
@@ -21,48 +18,93 @@ const Offers = () => {
       });
     }, 1000);
 
-    // Clean up the interval on component unmount
     return () => clearInterval(timer);
   }, []);
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
   return (
-    <div className={`py-12 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <motion.div 
+      className={`py-8 sm:py-12 md:py-16 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       <div className="container mx-auto px-4">
-        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg overflow-hidden`}>
-          <div className="grid grid-cols-1 md:grid-cols-2" style={{backgroundImage: "url('https://i.imgur.com/gsT43Ib.png')", backgroundSize: 'cover', backgroundPosition: 'center'}}>
-            {/* Left side: Sale information */}
-            <div className="p-8 pr-2">
-              <div className={`${isDarkMode ? 'bg-gray-700 bg-opacity-80' : 'bg-white bg-opacity-80'} p-6 rounded-lg h-full`}>
-                <h2 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Seasonal Sale 2024</h2>
-                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-6`}>Use code <span className="font-semibold text-indigo-400">SALE2024</span> to get 20% off on all items!</p>
-                <div className="flex items-center mb-6">
-                  <FaGift className="text-2xl text-indigo-400 mr-3" />
-                  <span className="text-2xl font-bold text-indigo-400">20% OFF</span>
-                </div>
-                <button className="bg-indigo-600 text-white py-2 px-6 rounded-full hover:bg-indigo-700 transition duration-300">Shop Now</button>
-              </div>
+        <motion.div 
+          className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg sm:shadow-xl md:shadow-2xl overflow-hidden`}
+          variants={itemVariants}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2">
+            <div className="p-6 sm:p-8 md:p-10 lg:p-12">
+              <motion.h2 
+                className={`text-2xl sm:text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-indigo-300' : 'text-indigo-600'} mb-4 sm:mb-6`}
+                variants={itemVariants}
+              >
+                Exclusive Holiday Deals
+              </motion.h2>
+              <motion.p 
+                className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-base sm:text-lg mb-6 sm:mb-8`}
+                variants={itemVariants}
+              >
+                Unwrap savings with code <span className="font-semibold text-indigo-400">HOLIDAY2024</span> for an incredible 30% off storewide!
+              </motion.p>
+              <motion.div 
+                className="flex items-center mb-6 sm:mb-8"
+                variants={itemVariants}
+              >
+                <FaGift className="text-2xl sm:text-3xl text-indigo-400 mr-3 sm:mr-4" />
+                <span className="text-2xl sm:text-3xl font-bold text-indigo-400">30% OFF</span>
+              </motion.div>
+              <motion.button 
+                className="bg-indigo-600 text-white py-2 px-6 sm:py-3 sm:px-8 rounded-full text-base sm:text-lg font-semibold hover:bg-indigo-700 transition duration-300 flex items-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FaShoppingCart className="mr-2" />
+                Shop Now
+              </motion.button>
             </div>
-            {/* Right side: Countdown timer */}
-            <div className="p-8 pl-2">
-              <div className={`${isDarkMode ? 'bg-gray-700 bg-opacity-80' : 'bg-white bg-opacity-80'} p-6 rounded-lg h-full flex flex-col justify-center`}>
-                <h3 className={`text-2xl font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4 text-center`}>Sale Ends In:</h3>
-                <div className="flex space-x-4 justify-center">
-                  {/* Display countdown timer for each time unit */}
-                  {Object.entries(timeLeft).map(([unit, value]) => (
-                    <div key={unit} className="text-center">
-                      <div className={`${isDarkMode ? 'bg-gray-600' : 'bg-white'} rounded-lg shadow p-3 mb-2`}>
-                        <span className="text-2xl font-bold text-indigo-400">{value}</span>
-                      </div>
-                      <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} capitalize`}>{unit}</span>
+            <div className="bg-indigo-600 p-6 sm:p-8 md:p-10 lg:p-12 flex flex-col justify-center items-center">
+              <motion.h3 
+                className="text-xl sm:text-2xl md:text-3xl font-semibold text-white mb-6 sm:mb-8 text-center"
+                variants={itemVariants}
+              >
+                Limited Time Offer
+              </motion.h3>
+              <motion.div 
+                className="flex flex-wrap justify-center gap-4 sm:gap-6"
+                variants={itemVariants}
+              >
+                {Object.entries(timeLeft).map(([unit, value]) => (
+                  <div key={unit} className="text-center">
+                    <div className="bg-white rounded-lg shadow-lg p-3 sm:p-4 mb-2 w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center">
+                      <span className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-600">{value}</span>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <span className="text-xs sm:text-sm text-indigo-200 capitalize">{unit}</span>
+                  </div>
+                ))}
+              </motion.div>
+              <motion.div 
+                className="mt-6 sm:mt-8 flex items-center text-white"
+                variants={itemVariants}
+              >
+                <FaClock className="mr-2" />
+                <span className="text-sm sm:text-base">Hurry! Offer ends soon</span>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

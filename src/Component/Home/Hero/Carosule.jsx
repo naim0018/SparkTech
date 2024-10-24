@@ -6,7 +6,7 @@ const Carousel = () => {
   const { isDarkMode } = useTheme(); // Use the useTheme hook
   const carouselImages = [
     "https://i.imgur.com/8JPX5tf.jpg",
-    // "https://i.imgur.com/8JPX5tf.jpg",
+    "https://i.imgur.com/8JPX5tf.jpg",
     // "https://i.imgur.com/8JPX5tf.jpg",
   ];
 

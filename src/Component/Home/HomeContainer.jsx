@@ -1,5 +1,4 @@
 import Benefits from './Benefits/Benefits'
-import Brands from './Brands/Brands'
 // import CustomerReviews from './CustomerReviews/CustomerReviews'
 import HeroContainer from './Hero/HeroContainer'
 import NewArrivals from './NewArrivals/NewArrivals'
@@ -17,7 +16,7 @@ const HomeContainer = () => {
         <TrendingProducts/>
         <Offers/>
         <SpecialOffers/>
-        <Brands/>
+        {/* <Brands/> */}
         {/* <CustomerReviews/> */}
         </div>
     </div>
