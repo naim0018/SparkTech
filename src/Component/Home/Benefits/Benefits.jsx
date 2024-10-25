@@ -19,9 +19,10 @@ const Benefits = () => {
       icon: <FaShippingFast className="text-xl sm:text-2xl md:text-3xl text-blue-500" />,
       title: "Swift Delivery",
       description: (
-        <>
-          Free for orders above 2000 <TbCurrencyTaka className="inline" />
-        </>
+        <div className="flex items-center justify-center">
+          <p className="">Free for orders above 2000</p>
+          <TbCurrencyTaka className="" />
+        </div>
       ),
     },
     {

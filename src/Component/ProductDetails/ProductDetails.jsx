@@ -120,7 +120,7 @@ const NotFoundState = () => (
 const ProductInfo = ({ product, quantity, incrementQuantity, decrementQuantity, handleAddToCart, selectedVariant, setSelectedVariant }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
     <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{product.basicInfo.title}</h1>
-    <Rating rating={product.rating} />
+    {product.rating && product.rating.count > 0 && <Rating rating={product.rating} />}
     <ProductDetails product={product} />
     <PriceInfo product={product} selectedVariant={selectedVariant} />
     <KeyFeatures product={product} />
@@ -150,7 +150,21 @@ const ProductDetails = ({ product }) => (
   <div className="mb-4 text-xs sm:text-sm">
     <p className="mb-1"><span className="font-semibold">Brand:</span> {product.basicInfo.brand}</p>
     <p className="mb-1"><span className="font-semibold">Product Code:</span> {product.basicInfo.productCode}</p>
-    <p><span className="font-semibold">Availability:</span> {product.stockStatus}</p>
+    <p className="mb-1"><span className="font-semibold">Availability:</span> {product.stockStatus}</p>
+    <p className="mb-1 uppercase"><span className="font-semibold capitalize">Category:</span> {product.basicInfo.category}</p>
+    <p className="mb-1"><span className="font-semibold">Subcategory:</span> {product.basicInfo.subcategory}</p>
+    {product.basicInfo.model && (
+      <p className="mb-1"><span className="font-semibold">Model:</span> {product.basicInfo.model}</p>
+    )}
+    {product.basicInfo.warranty && (
+      <p className="mb-1"><span className="font-semibold">Warranty:</span> {product.basicInfo.warranty}</p>
+    )}
+    {product.stockQuantity && (
+      <p className="mb-1"><span className="font-semibold">In Stock:</span> {product.stockQuantity} units</p>
+    )}
+    {product.additionalInfo && product.additionalInfo.isOnSale && (
+      <p className="mb-1 text-green-600 font-semibold">On Sale</p>
+    )}
   </div>
 );
 

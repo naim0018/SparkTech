@@ -3,6 +3,7 @@ import { useGetAllProductsQuery } from "../../../redux/api/ProductApi";
 import Title from "../../../UI/Title";
 import { FaStar } from "react-icons/fa";
 import { MdOutlineShoppingCart } from "react-icons/md";
+import { TbCurrencyTaka } from "react-icons/tb";
 import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -123,10 +124,12 @@ const SpecialOffers = () => {
                     </h2>
                     <div className="flex items-center justify-between w-full px-2">
                       <div className="flex items-center mb-2">
-                        <span className={`text-xl font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>${product.price.discounted || product.price.regular}</span>
+                        <span className={`text-xl font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-900'} flex items-center`}>
+                          <TbCurrencyTaka />{product.price.discounted || product.price.regular}
+                        </span>
                         {product.price.discounted && (
-                          <span className={`${isDarkMode ? 'text-gray-500' : 'text-gray-500'} line-through ml-2`}>
-                            ${product.price.regular}
+                          <span className={`${isDarkMode ? 'text-gray-500' : 'text-gray-500'} line-through ml-2 flex items-center`}>
+                            <TbCurrencyTaka />{product.price.regular}
                           </span>
                         )}
                       </div>

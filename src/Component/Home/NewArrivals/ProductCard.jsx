@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useSpring, useAnimation } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useTheme } from '../../../ThemeContext';
+import { TbCurrencyTaka } from "react-icons/tb";
 
 const ProductCard = ({ product, isInView }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -91,19 +92,19 @@ const ProductCard = ({ product, isInView }) => {
             animate={{ y: isHovered ? -2 : 0 }}
           >
             <motion.span 
-              className={`font-bold text-base ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+              className={`font-bold text-base ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} flex items-center`}
               whileHover={{ scale: 1.1 }}
               animate={{ scale: isHovered ? 1.1 : 1 }}
             >
-              ${product.price.discounted || product.price.regular || 'N/A'}
+              <TbCurrencyTaka />{product.price.discounted || product.price.regular || 'N/A'}
             </motion.span>
             {product.price.discounted && product.price.regular && (
               <motion.span 
-                className={`ml-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} line-through`}
+                className={`ml-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} line-through flex items-center`}
                 whileHover={{ opacity: 0.7 }}
                 animate={{ opacity: isHovered ? 0.7 : 1 }}
               >
-                ${product.price.regular}
+                <TbCurrencyTaka />{product.price.regular}
               </motion.span>
             )}
           </motion.div>

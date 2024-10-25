@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { FaStar, FaShoppingCart, FaHeart } from 'react-icons/fa';
+import { TbCurrencyTaka } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../redux/features/CartSlice';
@@ -9,7 +10,6 @@ import { useTheme } from '../../ThemeContext';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
-  console.log(product);
   const { isDarkMode } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -52,6 +52,11 @@ const ProductCard = ({ product }) => {
               Save {product.price.savingsPercentage.toFixed(2)}%
             </div>
           )}
+          {product.additionalInfo && product.additionalInfo.isOnSale && (
+            <div className="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
+              On Sale
+            </div>
+          )}
         </div>
         <div className="p-4">
           <div className="relative">
@@ -76,16 +81,21 @@ const ProductCard = ({ product }) => {
               ))}
             </div>
             <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>({product.rating.count})</span>
+            {product.sold > 0 && (
+              <span className={`text-sm ml-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Sold: {product.sold}
+              </span>
+            )}
           </div>
           <div className="flex items-center justify-between mb-2">
             <div>
               {product.price.discounted ? (
                 <>
-                  <span className={`text-lg font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>${product.price.discounted.toFixed(2)}</span>
-                  <span className={`text-sm line-through ml-2 ${isDarkMode ? 'text-red-400' : 'text-red-500'}`}>${product.price.regular.toFixed(2)}</span>
+                  <span className={`text-lg font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} flex items-center`}><TbCurrencyTaka />{product.price.discounted.toFixed(2)}</span>
+                  <span className={`text-sm line-through ml-2 ${isDarkMode ? 'text-red-400' : 'text-red-500'} flex items-center`}><TbCurrencyTaka />{product.price.regular.toFixed(2)}</span>
                 </>
               ) : (
-                <span className={`text-lg font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>${product.price.regular.toFixed(2)}</span>
+                <span className={`text-lg font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} flex items-center`}><TbCurrencyTaka />{product.price.regular.toFixed(2)}</span>
               )}
             </div>
             <span className={`text-sm font-semibold ${product.stockStatus === 'In Stock' ? 'text-green-500' : 'text-red-500'}`}>

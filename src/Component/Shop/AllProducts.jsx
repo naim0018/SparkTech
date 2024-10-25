@@ -1,36 +1,102 @@
+'use client'
+
+// Importing necessary dependencies and components
 import { useState, useEffect } from "react";
-import { FaSearch, FaFilter } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { FaSearch, FaFilter, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import ProductCard from "./ProductCard";
 import { useTheme } from "../../ThemeContext";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
 
+
+// Main component for displaying all products
 const AllProducts = () => {
+  // Using the theme context to determine if dark mode is active
   const { isDarkMode } = useTheme();
-  // const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(10);
+
+  // State variables for pagination, filtering, and product display
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage, setProductsPerPage] = useState(12);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  // const [paginationInfo, setPaginationInfo] = useState({});
+  const [paginationInfo, setPaginationInfo] = useState({});
+  const [filters, setFilters] = useState({
+    priceRange: [0, 200000],
+    stockStatus: 'all',
+    category: 'all',
+    subcategory: 'all',
+    brand: 'all',
+    sort: '-createdAt'
+  });
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [brands, setBrands] = useState([]);
 
-  const { data: productsData, isLoading, isError } = useGetAllProductsQuery();
-  console.log(productsData.data);
+  // Constructing query parameters for the API call
+  const queryParams = {
+    page: currentPage,
+    limit: productsPerPage,
+    search: searchTerm,
+    category: filters.category !== 'all' ? filters.category : undefined,
+    subcategory: filters.subcategory !== 'all' ? filters.subcategory : undefined,
+    brand: filters.brand !== 'all' ? filters.brand : undefined,
+    minPrice: filters.priceRange[0],
+    maxPrice: filters.priceRange[1],
+    stockStatus: filters.stockStatus !== 'all' ? filters.stockStatus : undefined,
+    sort: filters.sort
+  };
+
+  // Fetching products data using the custom hook
+  const { data: productsData, isLoading, isError } = useGetAllProductsQuery(queryParams);
+console.log(productsData)
+  // Effect hook to update state when product data changes
   useEffect(() => {
     if (productsData) {
-      setFilteredProducts(productsData?.data);
-      // setPaginationInfo(productsData.pagination);
+      setFilteredProducts(productsData.products);
+      setPaginationInfo(productsData.pagination);
+      console.log(productsData)
+
+      // Extracting unique categories, subcategories, and brands
+      const uniqueCategories = [...new Set(productsData.products.map(product => product.basicInfo.category))];
+      setCategories(uniqueCategories);
+
+      const uniqueSubcategories = [...new Set(productsData.products.map(product => product.basicInfo.subcategory))];
+      setSubcategories(uniqueSubcategories);
+
+      const uniqueBrands = [...new Set(productsData.products.map(product => product.basicInfo.brand))];
+      setBrands(uniqueBrands);
     }
   }, [productsData]);
 
+  // Handler for filter changes
+  const handleFilterChange = (name, value) => {
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setCurrentPage(1);
+  };
+
+  // Function to clear all filters
+  const clearFilters = () => {
+    setFilters({
+      priceRange: [0, 20000],
+      stockStatus: 'all',
+      category: 'all',
+      subcategory: 'all',
+      brand: 'all',
+      sort: '-createdAt'
+    });
+    setCurrentPage(1);
+  };
+
+  // Loading state
   if (isLoading) return (
     <div className={`flex justify-center items-center h-screen ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
       <motion.div
         animate={{
-          scale: [1, 2, 2, 1, 1],
-          rotate: [0, 0, 270, 270, 0],
-          borderRadius: ["20%", "20%", "50%", "50%", "20%"],
+          scale: [1, 1.2, 1.2, 1, 1],
+          rotate: [0, 180, 180, 0, 0],
+          borderRadius: ["25%", "25%", "50%", "50%", "25%"],
         }}
         transition={{
           duration: 2,
@@ -43,42 +109,177 @@ const AllProducts = () => {
       />
     </div>
   );
+
+  // Error state
   if (isError) return <div className={`flex justify-center items-center h-screen ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Error loading products</div>;
 
-  const FilterOptions = () => (
-    <div className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} p-6 rounded-lg`}>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">RefineResults</h2>
-        <button
-          className={`text-sm px-4 py-2 rounded-full ${isDarkMode ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'} text-white transition duration-300 font-semibold flex items-center`}
-        >
-          <FaFilter className="mr-2" />
-          ClearAll
-        </button>
-      </div>
+  // Component for filter options
+  const FilterOptions = () => {
+    return (
+      <div className={`w-full max-w-md mx-auto p-6 ${isDarkMode ? 'bg-gray-800 text-white' : ' text-gray-800'} rounded-lg `}>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Filters</h2>
+          <button
+            onClick={clearFilters}
+            className={`px-4 py-2 rounded-full ${isDarkMode ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'} text-white transition duration-300 font-semibold flex items-center`}
+          >
+            <FaFilter className="mr-2" />
+            Reset Filters
+          </button>
+        </div>
 
-      <div className="space-y-6">
-        {/* Filter options content remains the same */}
-      </div>
-    </div>
-  );
+        <div className="space-y-6">
+          {/* Price Range Filter */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Price Range</h3>
+            <input
+              type="range"
+              min="0"
+              max="20000"
+              step="1000"
+              value={filters.priceRange[1]}
+              onChange={(e) => handleFilterChange('priceRange', [0, Number(e.target.value)])}
+              className="w-full mb-2"
+            />
+            <div className="flex justify-between text-sm">
+              <span>${filters.priceRange[0]}</span>
+              <span>${filters.priceRange[1]}</span>
+            </div>
+          </div>
 
+          <div className="border-t border-gray-300 my-4"></div>
+
+          {/* Availability Filter */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Availability</h3>
+            <div className="space-y-2">
+              {['all', 'In Stock', 'Out of Stock'].map((status) => (
+                <label key={status} className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={filters.stockStatus === status}
+                    onChange={() => handleFilterChange('stockStatus', status)}
+                    className="mr-2"
+                  />
+                  {status === 'all' ? 'All' : status}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-gray-300 my-4"></div>
+
+          {/* Category Filter */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Category</h3>
+            <div className="space-y-2">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  checked={filters.category === 'all'}
+                  onChange={() => handleFilterChange('category', 'all')}
+                  className="mr-2"
+                />
+                All Categories
+              </label>
+              {categories.map((category) => (
+                <label key={category} className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={filters.category === category}
+                    onChange={() => handleFilterChange('category', category)}
+                    className="mr-2"
+                  />
+                  {category}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-gray-300 my-4"></div>
+
+          {/* Subcategory Filter */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Subcategory</h3>
+            <div className="pr-2">
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={filters.subcategory === 'all'}
+                    onChange={() => handleFilterChange('subcategory', 'all')}
+                    className="mr-2"
+                  />
+                  All Subcategories
+                </label>
+                {subcategories.map((subcategory) => (
+                  <label key={subcategory} className="flex items-center">
+                    <input
+                      type="radio"
+                      checked={filters.subcategory === subcategory}
+                      onChange={() => handleFilterChange('subcategory', subcategory)}
+                      className="mr-2"
+                    />
+                    {subcategory}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-300 my-4"></div>
+
+          {/* Brand Filter */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Brand</h3>
+            <div className="pr-2">
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={filters.brand === 'all'}
+                    onChange={() => handleFilterChange('brand', 'all')}
+                    className="mr-2"
+                  />
+                  All Brands
+                </label>
+                {brands.map((brand) => (
+                  <label key={brand} className="flex items-center">
+                    <input
+                      type="radio"
+                      checked={filters.brand === brand}
+                      onChange={() => handleFilterChange('brand', brand)}
+                      className="mr-2"
+                    />
+                    {brand}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Main component return
   return (
     <div className={`max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 ${isDarkMode ? 'bg-gray-900 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
       <div className="py-8">
         <h1 className="text-4xl font-bold mb-8 text-center">Our Products</h1>
         
-        <div className="flex flex-col lg:flex-row">
-          {/* Filter sidebar */}
-          <div className={`lg:w-80 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded-lg shadow-lg mb-4 lg:mb-0 lg:mr-6`}>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Filter sidebar for desktop */}
+          <div className={`lg:col-span-1 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded-lg shadow-lg mb-4 lg:mb-0 hidden lg:block`}>
             <FilterOptions />
           </div>
           
-          {/* Main content */}
-          <div className="flex-grow">
-            {/* Search and sort */}
+          {/* Main content area */}
+          <div className="lg:col-span-4">
+            {/* Search and sort options */}
             <div className={`mb-5 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} px-4 sm:px-6 py-5 rounded-lg shadow-md`}>
               <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+                {/* Search input */}
                 <div className="relative w-full sm:w-1/2">
                   <input
                     type="text"
@@ -86,7 +287,7 @@ const AllProducts = () => {
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
-                      // setCurrentPage(1);
+                      setCurrentPage(1);
                     }}
                     className={`w-full p-3 pl-10 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-blue-500 ${
                       isDarkMode ? 'bg-gray-700 text-white placeholder-gray-400' : 'bg-white text-gray-800 placeholder-gray-500'
@@ -94,18 +295,24 @@ const AllProducts = () => {
                   />
                   <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 </div>
+                {/* Sort and display options */}
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center">
                     <label htmlFor="sortBy" className={`mr-2 font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Sort by:</label>
                     <select
                       id="sortBy"
+                      name="sort"
+                      value={filters.sort}
+                      onChange={(e) => handleFilterChange('sort', e.target.value)}
                       className={`p-2 rounded-lg shadow-sm cursor-pointer transition-all duration-300 ${
                         isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'
                       }`}
                     >
-                      <option value="default">Default</option>
-                      <option value="lowToHigh">Price: Low to High</option>
-                      <option value="highToLow">Price: High to Low</option>
+                      <option value="-createdAt">Newest</option>
+                      <option value="createdAt">Oldest</option>
+                      <option value="price">Price: Low to High</option>
+                      <option value="-price">Price: High to Low</option>
+                      <option value="-rating">Highest Rated</option>
                     </select>
                   </div>
                   <div className="flex items-center">
@@ -117,14 +324,15 @@ const AllProducts = () => {
                       }`}
                       value={productsPerPage}
                       onChange={(e) => {
-                        setProductsPerPage(Number(e.target.value));
-                        // setCurrentPage(1);
+                        const newLimit = Number(e.target.value);
+                        setProductsPerPage(newLimit);
+                        setCurrentPage(1);
                       }}
                     >
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                      <option value={30}>30</option>
-                      <option value={40}>40</option>
+                      <option value={12}>12</option>
+                      <option value={24}>24</option>
+                      <option value={36}>36</option>
+                      <option value={48}>48</option>
                     </select>
                   </div>
                 </div>
@@ -133,31 +341,59 @@ const AllProducts = () => {
             
             {/* Product grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts?.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
+              <AnimatePresence>
+                {isLoading ? (
+                  // Loading skeleton
+                  Array.from({ length: productsPerPage }).map((_, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded-lg shadow-md`}
+                    >
+                      <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} h-48 mb-4 rounded animate-pulse`}></div>
+                      <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} h-4 w-3/4 mb-2 rounded animate-pulse`}></div>
+                      <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} h-4 w-1/2 rounded animate-pulse`}></div>
+                    </motion.div>
+                  ))
+                ) : (
+                  // Actual product cards
+                  filteredProducts?.map((product) => (
+                    <motion.div
+                      key={product._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ProductCard product={product} />
+                    </motion.div>
+                  ))
+                )}
+              </AnimatePresence>
             </div>
             
-            {/* Pagination */}
-            {/* <div className="mt-8 flex justify-center">
+            {/* Pagination controls */}
+            <div className="mt-8 flex justify-center items-center">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className={`px-4 py-2 rounded-l-md ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'}`}
+                disabled={currentPage === 1 || isLoading}
+                className={`px-4 py-2 rounded-l-md ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                Previous
+                <FaChevronLeft className="mr-2" /> Previous
               </button>
               <span className={`px-4 py-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-                Page {currentPage} of {paginationInfo.totalPage || 1}
+                Page {currentPage} of {paginationInfo.totalPages || 1}
               </span>
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, paginationInfo.totalPage || 1))}
-                disabled={currentPage === (paginationInfo.totalPage || 1)}
-                className={`px-4 py-2 rounded-r-md ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'}`}
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, paginationInfo.totalPages || 1))}
+                disabled={currentPage === (paginationInfo.totalPages || 1) || isLoading}
+                className={`px-4 py-2 rounded-r-md ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                Next
+                Next <FaChevronRight className="ml-2" />
               </button>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
@@ -171,12 +407,22 @@ const AllProducts = () => {
       </button>
       
       {/* Mobile filter sidebar */}
-      <div className={`fixed inset-0 z-50 lg:hidden ${showMobileFilters ? 'block' : 'hidden'}`}>
-        <div className="absolute inset-0 bg-black opacity-50" onClick={() => setShowMobileFilters(false)}></div>
-        <div className={`absolute right-0 top-0 bottom-0 w-64 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 overflow-y-auto`}>
-          <FilterOptions />
-        </div>
-      </div>
+      <AnimatePresence>
+        {showMobileFilters && (
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.3 }}
+            className="fixed inset-0 z-50 lg:hidden"
+          >
+            <div className="absolute inset-0 bg-black opacity-50" onClick={() => setShowMobileFilters(false)}></div>
+            <div className={`absolute right-0 top-0 bottom-0 w-80 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 overflow-y-auto`}>
+              <FilterOptions />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
