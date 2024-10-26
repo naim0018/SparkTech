@@ -23,7 +23,7 @@ const AllProducts = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paginationInfo, setPaginationInfo] = useState({});
   const [filters, setFilters] = useState({
-    priceRange: [0, 200000],
+    priceRange: [0, 20000],
     stockStatus: 'all',
     category: 'all',
     subcategory: 'all',

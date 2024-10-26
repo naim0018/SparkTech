@@ -8,13 +8,14 @@ import ProductCard from "./ProductCard";
 
 const NewArrivals = () => {
   const { data, isLoading } = useGetAllProductsQuery({});
+  
   const [products, setProducts] = useState([]);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false });
 
   useEffect(() => {
-    if (data?.data) {
-      setProducts(data.data.slice(0, 8));
+    if (data?.products) {
+      setProducts(data.products.slice(0, 8));
     }
   }, [data]);
 

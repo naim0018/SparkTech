@@ -27,9 +27,9 @@ const SpecialOffers = () => {
   const { isDarkMode } = useTheme();
 
   useEffect(() => {
-    if (data?.data) {
+    if (data?.products) {
       // Ensure we only show 8 products that are on sale
-      const onSaleProducts = data.data.filter(product => product.additionalInfo.isOnSale);
+      const onSaleProducts = data.products.filter(product => product.additionalInfo.isOnSale);
       setProducts(onSaleProducts.slice(0, 8));
     }
   }, [data]);
