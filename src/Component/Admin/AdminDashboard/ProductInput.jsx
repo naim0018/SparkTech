@@ -322,6 +322,95 @@ const ProductInput = ({ product, closeModal }) => {
               </label>
             </div>
           </div>
+
+          {/* Additional Information Section */}
+          <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
+            <h2 className="text-3xl font-bold mb-6 text-gray-700">Additional Information</h2>
+            <div className="space-y-4">
+              <label className="block">
+                <span className="text-gray-700">Free Shipping</span>
+                <input
+                  {...register("additionalInfo.freeShipping")}
+                  type="checkbox"
+                  className="ml-2"
+                />
+              </label>
+              <label className="block">
+                <span className="text-gray-700">Is Featured</span>
+                <input
+                  {...register("additionalInfo.isFeatured")}
+                  type="checkbox"
+                  className="ml-2"
+                />
+              </label>
+              <label className="block">
+                <span className="text-gray-700">Is On Sale</span>
+                <input
+                  {...register("additionalInfo.isOnSale")}
+                  type="checkbox"
+                  className="ml-2"
+                />
+              </label>
+              <label className="block">
+                <span className="text-gray-700">Estimated Delivery</span>
+                <input
+                  {...register("additionalInfo.estimatedDelivery")}
+                  placeholder="Enter estimated delivery"
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
+                />
+              </label>
+              <label className="block">
+                <span className="text-gray-700">Return Policy</span>
+                <textarea
+                  {...register("additionalInfo.returnPolicy")}
+                  placeholder="Enter return policy"
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
+                  rows="3"
+                ></textarea>
+              </label>
+              <label className="block">
+                <span className="text-gray-700">Warranty</span>
+                <textarea
+                  {...register("additionalInfo.warranty")}
+                  placeholder="Enter warranty information"
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
+                  rows="3"
+                ></textarea>
+              </label>
+            </div>
+          </div>
+
+          {/* SEO Information Section */}
+          <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
+            <h2 className="text-3xl font-bold mb-6 text-gray-700">SEO Information</h2>
+            <div className="space-y-4">
+              <label className="block">
+                <span className="text-gray-700">Meta Title</span>
+                <input
+                  {...register("seo.metaTitle")}
+                  placeholder="Enter meta title"
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
+                />
+              </label>
+              <label className="block">
+                <span className="text-gray-700">Meta Description</span>
+                <textarea
+                  {...register("seo.metaDescription")}
+                  placeholder="Enter meta description"
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
+                  rows="3"
+                ></textarea>
+              </label>
+              <label className="block">
+                <span className="text-gray-700">Slug</span>
+                <input
+                  {...register("seo.slug")}
+                  placeholder="Enter slug"
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
+                />
+              </label>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -490,95 +579,6 @@ const ProductInput = ({ product, closeModal }) => {
             >
               Add Specification Group
             </button>
-          </div>
-
-          {/* Additional Information Section */}
-          <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-3xl font-bold mb-6 text-gray-700">Additional Information</h2>
-            <div className="space-y-4">
-              <label className="block">
-                <span className="text-gray-700">Free Shipping</span>
-                <input
-                  {...register("additionalInfo.freeShipping")}
-                  type="checkbox"
-                  className="ml-2"
-                />
-              </label>
-              <label className="block">
-                <span className="text-gray-700">Is Featured</span>
-                <input
-                  {...register("additionalInfo.isFeatured")}
-                  type="checkbox"
-                  className="ml-2"
-                />
-              </label>
-              <label className="block">
-                <span className="text-gray-700">Is On Sale</span>
-                <input
-                  {...register("additionalInfo.isOnSale")}
-                  type="checkbox"
-                  className="ml-2"
-                />
-              </label>
-              <label className="block">
-                <span className="text-gray-700">Estimated Delivery</span>
-                <input
-                  {...register("additionalInfo.estimatedDelivery")}
-                  placeholder="Enter estimated delivery"
-                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
-                />
-              </label>
-              <label className="block">
-                <span className="text-gray-700">Return Policy</span>
-                <textarea
-                  {...register("additionalInfo.returnPolicy")}
-                  placeholder="Enter return policy"
-                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
-                  rows="3"
-                ></textarea>
-              </label>
-              <label className="block">
-                <span className="text-gray-700">Warranty</span>
-                <textarea
-                  {...register("additionalInfo.warranty")}
-                  placeholder="Enter warranty information"
-                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
-                  rows="3"
-                ></textarea>
-              </label>
-            </div>
-          </div>
-
-          {/* SEO Information Section */}
-          <div className="mb-10 bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-3xl font-bold mb-6 text-gray-700">SEO Information</h2>
-            <div className="space-y-4">
-              <label className="block">
-                <span className="text-gray-700">Meta Title</span>
-                <input
-                  {...register("seo.metaTitle")}
-                  placeholder="Enter meta title"
-                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
-                />
-              </label>
-              <label className="block">
-                <span className="text-gray-700">Meta Description</span>
-                <textarea
-                  {...register("seo.metaDescription")}
-                  placeholder="Enter meta description"
-                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
-                  rows="3"
-                ></textarea>
-              </label>
-              <label className="block">
-                <span className="text-gray-700">Slug</span>
-                <input
-                  {...register("seo.slug")}
-                  placeholder="Enter slug"
-                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
-                />
-              </label>
-            </div>
           </div>
         </div>
       </div>

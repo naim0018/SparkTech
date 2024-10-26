@@ -17,11 +17,11 @@
 import { useState, useEffect } from 'react';
 import { useGetAllProductsQuery, useDeleteProductMutation } from '../../../../redux/api/ProductApi';
 import { toast } from 'react-toastify';
-import UpdateProducts from '../UpdateProducts';
 import ProductTable from './ProductTable';
 import FilterOptions from './FilterOptions';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import ProductInput from '../ProductInput';
 
 
 const Products = () => {
@@ -171,7 +171,7 @@ const Products = () => {
       {isUpdateModalOpen && selectedProduct && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-50 overflow-y-auto h-full w-full z-50">
           <div className="relative mx-auto p-4 sm:p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white dark:bg-gray-800">  
-            <UpdateProducts product={selectedProduct} closeModal={closeUpdateModal} />
+            <ProductInput product={selectedProduct} closeModal={closeUpdateModal} />
           </div>
         </div>
       )}
