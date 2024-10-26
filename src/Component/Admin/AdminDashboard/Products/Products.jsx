@@ -39,7 +39,7 @@ const Products = () => {
 
   // Fetch products data based on query options
   const { data, isLoading, isFetching } = useGetAllProductsQuery();
-  console.log(data?.data);
+  console.log(data?.products);
   // Mutation hook for deleting products
   const [deleteProduct] = useDeleteProductMutation();
 
@@ -49,10 +49,10 @@ const Products = () => {
 
   // Effect to update all categories, subcategories, and brands when data changes
   useEffect(() => {
-    if (data?.data) {
-      setAllCategories([...new Set(data.data.map(product => product.basicInfo?.category))]);
-      setAllSubcategories([...new Set(data.data.map(product => product.basicInfo?.subcategory))]);
-      setAllBrands([...new Set(data.data.map(product => product.basicInfo?.brand))]);
+    if (data?.products) {
+      setAllCategories([...new Set(data.products.map(product => product.basicInfo?.category))]);
+      setAllSubcategories([...new Set(data.products.map(product => product.basicInfo?.subcategory))]);
+      setAllBrands([...new Set(data.products.map(product => product.basicInfo?.brand))]);
     }
   }, [data]);
 
@@ -156,7 +156,7 @@ const Products = () => {
             </div>
           ) : (
             <ProductTable 
-              products={data?.data|| []}
+              products={data?.products || []}
               currentPage={queryOptions.page}
               totalPages={data?.meta?.totalPages || 1}
               onPageChange={handlePageChange}

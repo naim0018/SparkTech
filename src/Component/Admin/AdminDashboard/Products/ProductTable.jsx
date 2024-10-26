@@ -2,11 +2,25 @@
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useState } from 'react';
+import ProductInput from '../ProductInput';
 
-const ProductTable = ({ products, currentPage, totalPages, onPageChange, openUpdateModal, handleDelete, isLoading }) => {
+const ProductTable = ({ products, currentPage, totalPages, onPageChange, handleDelete, isLoading }) => {
   const [expandedProduct, setExpandedProduct] = useState(null);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   const toggleProductExpansion = (productId) => {
     setExpandedProduct(expandedProduct === productId ? null : productId);
+  };
+
+  const openUpdateModal = (product) => {
+    setSelectedProduct(product);
+    setIsUpdateModalOpen(true);
+  };
+
+  const closeUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+    setSelectedProduct(null);
   };
 
   if (isLoading) {
@@ -174,6 +188,13 @@ const ProductTable = ({ products, currentPage, totalPages, onPageChange, openUpd
           </div>
         )}
       </div>
+      {isUpdateModalOpen && selectedProduct && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-9/12 shadow-lg rounded-md bg-white">
+            <ProductInput product={selectedProduct} closeModal={closeUpdateModal} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
