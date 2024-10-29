@@ -55,6 +55,7 @@ export const productApi = baseApi.injectEndpoints({
       },
       transformResponse: (response) => {
         // Assuming the backend returns { data: [...], meta: {...} }
+        console.log(response.meta);
         return {
           products: response.data,
           pagination: response.meta,

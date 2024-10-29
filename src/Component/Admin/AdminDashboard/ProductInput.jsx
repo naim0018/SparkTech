@@ -82,11 +82,11 @@ const ProductInput = ({ product, closeModal }) => {
       if (product) {
         await updateProduct({ id: product._id, ...data }).unwrap();
         toast.success('Product updated successfully');
+        closeModal(); // Close the modal after successful update
       } else {
         await addProduct(data).unwrap();
         toast.success('Product added successfully');
       }
-      if (closeModal) closeModal();
     } catch (error) {
       toast.error('Error processing product: ' + (error.data?.message || error.message || "Unknown error"));
     } finally {
@@ -294,11 +294,17 @@ const ProductInput = ({ product, closeModal }) => {
               <label className="block">
                 <span className="text-gray-700">Weight</span>
                 <input
-                  {...register("shippingDetails.weight", { min: 0, valueAsNumber: true })}
+                  {...register("shippingDetails.weight", { 
+                    min: 0, 
+                    valueAsNumber: true,
+                    validate: value => value >= 0 || "Weight must be a positive number"
+                  })}
                   type="number"
+                  step="0.01"
                   placeholder="Enter weight"
                   className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
                 />
+                {errors.shippingDetails?.weight && <span className="text-red-500">{errors.shippingDetails.weight.message}</span>}
               </label>
               <label className="block">
                 <span className="text-gray-700">Dimension Unit</span>

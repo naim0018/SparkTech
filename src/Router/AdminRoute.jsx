@@ -7,6 +7,8 @@ import LogIn from "../Component/SignUpAndLogin/LogIn";
 import { FaSignInAlt} from "react-icons/fa";
 
 export const adminRoute = [
+    
+
     {
         icon:<BiPackage/>,
         name:'Add Product',

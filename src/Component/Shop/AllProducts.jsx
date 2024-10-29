@@ -1,14 +1,13 @@
-'use client'
+
 
 // Importing necessary dependencies and components
 import { useState, useEffect } from "react";
-import { FaSearch, FaFilter, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaSearch, FaFilter } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import ProductCard from "./ProductCard";
 import { useTheme } from "../../ThemeContext";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
-
 
 // Main component for displaying all products
 const AllProducts = () => {
@@ -21,7 +20,7 @@ const AllProducts = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [paginationInfo, setPaginationInfo] = useState({});
+  
   const [filters, setFilters] = useState({
     priceRange: [0, 20000],
     stockStatus: 'all',
@@ -42,34 +41,32 @@ const AllProducts = () => {
     category: filters.category !== 'all' ? filters.category : undefined,
     subcategory: filters.subcategory !== 'all' ? filters.subcategory : undefined,
     brand: filters.brand !== 'all' ? filters.brand : undefined,
-    minPrice: filters.priceRange[0],
-    maxPrice: filters.priceRange[1],
+    priceRange: filters.priceRange,
     stockStatus: filters.stockStatus !== 'all' ? filters.stockStatus : undefined,
-    sort: filters.sort
+    sort: filters.sort,
+    
   };
 
-  // Fetching products data using the custom hook
   const { data: productsData, isLoading, isError } = useGetAllProductsQuery(queryParams);
-console.log(productsData)
+  // Fetching products data using the custom hook
+  
+
   // Effect hook to update state when product data changes
   useEffect(() => {
     if (productsData) {
-      setFilteredProducts(productsData.products);
-      setPaginationInfo(productsData.pagination);
-      console.log(productsData)
-
+      setFilteredProducts(productsData?.products);
+ 
       // Extracting unique categories, subcategories, and brands
-      const uniqueCategories = [...new Set(productsData.products.map(product => product.basicInfo.category))];
+      const uniqueCategories = [...new Set(productsData?.products.map(product => product.basicInfo.category))];
       setCategories(uniqueCategories);
-
-      const uniqueSubcategories = [...new Set(productsData.products.map(product => product.basicInfo.subcategory))];
+      
+      const uniqueSubcategories = [...new Set(productsData?.products.map(product => product.basicInfo.subcategory))];
       setSubcategories(uniqueSubcategories);
-
-      const uniqueBrands = [...new Set(productsData.products.map(product => product.basicInfo.brand))];
+      
+      const uniqueBrands = [...new Set(productsData?.products.map(product => product.basicInfo.brand))];
       setBrands(uniqueBrands);
     }
   }, [productsData]);
-
   // Handler for filter changes
   const handleFilterChange = (name, value) => {
     setFilters(prev => ({ ...prev, [name]: value }));
@@ -153,7 +150,7 @@ console.log(productsData)
           <div>
             <h3 className="text-lg font-semibold mb-2">Availability</h3>
             <div className="space-y-2">
-              {['all', 'In Stock', 'Out of Stock'].map((status) => (
+              {['all', 'In Stock', 'Out of Stock', 'Pre-order'].map((status) => (
                 <label key={status} className="flex items-center">
                   <input
                     type="radio"
@@ -310,9 +307,9 @@ console.log(productsData)
                     >
                       <option value="-createdAt">Newest</option>
                       <option value="createdAt">Oldest</option>
-                      <option value="price">Price: Low to High</option>
-                      <option value="-price">Price: High to Low</option>
-                      <option value="-rating">Highest Rated</option>
+                      <option value="price.regular">Price: Low to High</option>
+                      <option value="-price.regular">Price: High to Low</option>
+                      <option value="-stockQuantity">Stock: High to Low</option>
                     </select>
                   </div>
                   <div className="flex items-center">
@@ -340,7 +337,7 @@ console.log(productsData)
             </div>
             
             {/* Product grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[800px]">
               <AnimatePresence>
                 {isLoading ? (
                   // Loading skeleton
@@ -375,24 +372,30 @@ console.log(productsData)
             </div>
             
             {/* Pagination controls */}
-            <div className="mt-8 flex justify-center items-center">
-              <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1 || isLoading}
-                className={`px-4 py-2 rounded-l-md ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                <FaChevronLeft className="mr-2" /> Previous
-              </button>
-              <span className={`px-4 py-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-                Page {currentPage} of {paginationInfo.totalPages || 1}
-              </span>
-              <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, paginationInfo.totalPages || 1))}
-                disabled={currentPage === (paginationInfo.totalPages || 1) || isLoading}
-                className={`px-4 py-2 rounded-r-md ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} flex items-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                Next <FaChevronRight className="ml-2" />
-              </button>
+            <div className="mt-10 flex justify-center items-center space-x-4">
+             
+              {[...Array(productsData?.pagination.totalPage || 1)].map((_, idx) => {
+                const pageNumber = idx + 1;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentPage(pageNumber)}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      pageNumber === currentPage
+                        ? isDarkMode
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-blue-500 text-white'
+                        : isDarkMode
+                        ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                        : 'bg-white text-gray-700 hover:bg-gray-100'
+                    } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''} border ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              })}
+             
+              
             </div>
           </div>
         </div>

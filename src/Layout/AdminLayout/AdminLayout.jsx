@@ -1,12 +1,13 @@
 /* eslint-disable no-unused-vars */
 // Import necessary dependencies and components
 import { useState, useEffect } from 'react'
-import { Outlet, NavLink } from 'react-router-dom'
+import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { FiMenu, FiX, FiHome, FiUser, FiLogOut } from 'react-icons/fi'
 import { navbarGenerator } from '../../utils/navbarGenerator'
 import { adminRoute } from '../../Router/AdminRoute'
 import { useTheme } from '../../ThemeContext'
 import DarkMode from '../DarkMode'
+import { BiHome } from 'react-icons/bi'
 
 // AdminLayout component for the admin dashboard
 const AdminLayout = () => {
@@ -16,6 +17,7 @@ const AdminLayout = () => {
   // Generate sidebar items from admin routes
   const sidebarItems = navbarGenerator(adminRoute)
   const { isDarkMode } = useTheme()
+  const location = useLocation()
 
   // Effect to handle screen resize and sidebar visibility
   useEffect(() => {
@@ -50,6 +52,15 @@ const AdminLayout = () => {
           </button>
         </div>
         <nav>
+          <NavLink to="/admin" end className={({ isActive }) =>
+                `flex items-center space-x-2 mb-4 px-4 py-2 rounded transition-colors ${
+                  isActive ? (isDarkMode ? 'bg-emerald-700' : 'bg-emerald-800') : (isDarkMode ? 'hover:bg-emerald-800' : 'hover:bg-emerald-600')
+                }`
+              }
+            >
+              <BiHome />
+              <span>Dashboard</span>
+          </NavLink>
           {sidebarItems.map(({ name, path, icon }) => (
             <NavLink
               key={name}

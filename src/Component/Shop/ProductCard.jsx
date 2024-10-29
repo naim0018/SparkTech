@@ -35,17 +35,17 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Link to={`/product/${product._id}`} className="block">
-      <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-white border text-gray-800'} border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300`}>
+    <Link to={`/product/${product._id}`} className="block h-[500px]">
+      <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-white border text-gray-800'} border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full`}>
         <div 
-          className="relative overflow-hidden pt-2"
+          className="relative overflow-hidden pt-2 flex-shrink-0 h-48"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
           <img 
             src={product.images[0].url} 
             alt={product.images[0].alt} 
-            className={`w-full h-48 object-contain ${isDarkMode ? 'bg-gray-700' : 'bg-white'} rounded-lg transition-transform duration-300 ${isHovered ? 'scale-110' : 'scale-100'}`}
+            className={`w-full h-full object-contain ${isDarkMode ? 'bg-gray-700' : 'bg-white'} rounded-lg transition-transform duration-300 ${isHovered ? 'scale-110' : 'scale-100'}`}
           />
           {product.price.discounted && product.price.savingsPercentage > 0 && (
             <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
@@ -58,10 +58,10 @@ const ProductCard = ({ product }) => {
             </div>
           )}
         </div>
-        <div className="p-4">
-          <div className="relative">
+        <div className="p-4 flex-grow flex flex-col">
+          <div className="relative mb-2">
             <h2 
-              className={`text-lg font-semibold mb-2 truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+              className={`text-lg font-semibold truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
             >
@@ -74,13 +74,19 @@ const ProductCard = ({ product }) => {
             )}
           </div>
           <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{product.basicInfo.brand}</p>
-          <div className="flex items-center mb-2">
-            <div className="flex text-yellow-400 mr-1">
-              {[...Array(Math.floor(product.rating.average))].map((_, i) => (
-                <FaStar key={i} className="w-4 h-4" />
-              ))}
-            </div>
-            <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>({product.rating.count})</span>
+          <div className="flex items-center mb-2 h-6">
+            {product.rating.average > 0 ? (
+              <>
+                <div className="flex text-yellow-400 mr-1">
+                  {[...Array(Math.floor(product.rating.average))].map((_, i) => (
+                    <FaStar key={i} className="w-4 h-4" />
+                  ))}
+                </div>
+                <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>({product.rating.count})</span>
+              </>
+            ) : (
+              <div className="flex-grow"></div>
+            )}
             {product.sold > 0 && (
               <span className={`text-sm ml-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 Sold: {product.sold}
@@ -102,7 +108,7 @@ const ProductCard = ({ product }) => {
               {product.stockStatus}
             </span>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 mt-auto">
             <button 
               onClick={handleAddToCart}
               className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition flex items-center justify-center"

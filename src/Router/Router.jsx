@@ -40,6 +40,10 @@ export const router = createBrowserRouter([
                 index:true,
                 element:<AdminDashboard/>            
             },
+            {
+                path:'dashboard',
+                element:<AdminDashboard/>            
+            },
             ...routeGenerator(adminRoute)
         ]
     }
