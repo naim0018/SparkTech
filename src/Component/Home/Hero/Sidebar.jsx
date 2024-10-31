@@ -9,6 +9,7 @@ const Sidebar = () => {
     
 
     const handleCategoryClick = (category) => {
+        console.log(category)
         navigate(`/shop?category=${category}`);
     }
 
