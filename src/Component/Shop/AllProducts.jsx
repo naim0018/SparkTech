@@ -4,15 +4,18 @@
 import { useState, useEffect } from "react";
 import { FaSearch, FaFilter } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 
 import ProductCard from "./ProductCard";
 import { useTheme } from "../../ThemeContext";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
+import { fixedCategory } from "../../utils/variables";
 
 // Main component for displaying all products
 const AllProducts = () => {
   // Using the theme context to determine if dark mode is active
   const { isDarkMode } = useTheme();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // State variables for pagination, filtering, and product display
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,11 +26,11 @@ const AllProducts = () => {
   
   const [filters, setFilters] = useState({
     priceRange: [0, 20000],
-    stockStatus: 'all',
-    category: 'all',
-    subcategory: 'all',
-    brand: 'all',
-    sort: '-createdAt'
+    stockStatus: searchParams.get('stockStatus') || 'all',
+    category: searchParams.get('category') || 'all',
+    subcategory: searchParams.get('subcategory') || 'all', 
+    brand: searchParams.get('brand') || 'all',
+    sort: searchParams.get('sort') || '-createdAt'
   });
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
@@ -37,14 +40,13 @@ const AllProducts = () => {
   const queryParams = {
     page: currentPage,
     limit: productsPerPage,
-    search: searchTerm,
+    search: searchTerm || searchParams.get('search'),
     category: filters.category !== 'all' ? filters.category : undefined,
     subcategory: filters.subcategory !== 'all' ? filters.subcategory : undefined,
     brand: filters.brand !== 'all' ? filters.brand : undefined,
     priceRange: filters.priceRange,
     stockStatus: filters.stockStatus !== 'all' ? filters.stockStatus : undefined,
     sort: filters.sort,
-    
   };
 
   const { data: productsData, isLoading, isError } = useGetAllProductsQuery(queryParams);
@@ -57,9 +59,8 @@ const AllProducts = () => {
       setFilteredProducts(productsData?.products);
  
       // Extracting unique categories, subcategories, and brands
-      const uniqueCategories = [...new Set(productsData?.products.map(product => product.basicInfo.category))];
+      const uniqueCategories = fixedCategory;
       setCategories(uniqueCategories);
-      
       const uniqueSubcategories = [...new Set(productsData?.products.map(product => product.basicInfo.subcategory))];
       setSubcategories(uniqueSubcategories);
       
@@ -84,6 +85,7 @@ const AllProducts = () => {
       sort: '-createdAt'
     });
     setCurrentPage(1);
+    setSearchParams({}); // Clear URL query parameters
   };
 
   // Loading state

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 
 const ProductInput = ({ product, closeModal }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fixedCategory = ["Home & Kitchen","Electronics", "Fashion", "Beauty & Personal Care", "Toys & Games", "Sports & Outdoors", "Health & Wellness", "Books & Office Supplies", "Pet Supplies"];
 
   const {
     register,
@@ -82,7 +83,7 @@ const ProductInput = ({ product, closeModal }) => {
       if (product) {
         await updateProduct({ id: product._id, ...data }).unwrap();
         toast.success('Product updated successfully');
-        closeModal(); // Close the modal after successful update
+        closeModal();
       } else {
         await addProduct(data).unwrap();
         toast.success('Product added successfully');
@@ -143,11 +144,17 @@ const ProductInput = ({ product, closeModal }) => {
               </label>
               <label className="block">
                 <span className="text-gray-700">Category</span>
-                <input
+                <select
                   {...register("basicInfo.category", { required: "Category is required" })}
-                  placeholder="Enter category"
                   className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1"
-                />
+                >
+                  <option value="">Select a category</option>
+                  {fixedCategory.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
                 {errors.basicInfo?.category && <span className="text-red-500">{errors.basicInfo.category.message}</span>}
               </label>
               <label className="block">

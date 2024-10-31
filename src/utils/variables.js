@@ -1,0 +1,1 @@
+export const fixedCategory = ["Home & Kitchen","Electronics", "Fashion", "Beauty & Personal Care", "Toys & Games", "Sports & Outdoors", "Health & Wellness", "Books & Office Supplies", "Pet Supplies"];

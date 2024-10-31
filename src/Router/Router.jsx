@@ -9,6 +9,8 @@ import AdminLayout from "../Layout/AdminLayout/AdminLayout";
 import { adminRoute } from "./AdminRoute";
 import ProductDetails from "../Component/ProductDetails/ProductDetails";
 import Checkout from "../Component/Checkout/Checkout";
+import { FaSignInAlt } from "react-icons/fa";
+import LogIn from "../Component/SignUpAndLogin/LogIn";
 
 
 export const router = createBrowserRouter([
@@ -46,5 +48,12 @@ export const router = createBrowserRouter([
             },
             ...routeGenerator(adminRoute)
         ]
-    }
+    },
+    {
+        icon:<FaSignInAlt/>,
+        name:'Login',
+        path:'login',
+        element:<LogIn/>
+    },
+
 ])

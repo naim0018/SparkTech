@@ -74,6 +74,8 @@ const ProductCard = ({ product }) => {
             )}
           </div>
           <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{product.basicInfo.brand}</p>
+          <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Category: {product.basicInfo.category}</p>
+          <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2`}>{product.basicInfo.description}</p>
           <div className="flex items-center mb-2 h-6">
             {product.rating.average > 0 ? (
               <>

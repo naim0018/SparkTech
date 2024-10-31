@@ -3,8 +3,7 @@ import Orders from "../Component/Admin/AdminDashboard/Orders";
 import Customers from "../Component/Admin/AdminDashboard/Customers";
 import AddProductForm from "../Component/Admin/AdminDashboard/AddProduct/AddProduct";
 import Products from "../Component/Admin/AdminDashboard/Products/Products";
-import LogIn from "../Component/SignUpAndLogin/LogIn";
-import { FaSignInAlt} from "react-icons/fa";
+
 
 export const adminRoute = [
     
@@ -33,11 +32,6 @@ export const adminRoute = [
         path:'customers',
         element:<Customers/>
     },
-    {
-        icon:<FaSignInAlt/>,
-        name:'Login',
-        path:'login',
-        element:<LogIn/>
-    },
+   
     
 ]
