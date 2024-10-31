@@ -75,7 +75,7 @@ const CategoryButton = () => (
 // Logo component for displaying the site logo
 const Logo = () => (
   <NavLink to="/" className="hover:opacity-80 transition-opacity duration-300">
-    <h5 className="text-white text-xl md:text-2xl font-bold">SparkTech</h5>
+    <h5 className="text-white text-xl md:text-2xl font-bold">DropIt</h5>
   </NavLink>
 );
 
@@ -97,7 +97,8 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => (
   <div className="lg:w-[204px] flex items-center lg:justify-between gap-[2px]">
     <DarkMode />
     <CiSearch className="lg:hidden m-[10px] text-xl text-white" />
-    <NavLink to="/admin">
+    {/* User Login */}
+    <NavLink to="/login">
       <FaUserCircle className="hidden lg:flex text-xl text-white" />
     </NavLink>
     <div

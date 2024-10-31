@@ -2,8 +2,9 @@
 // It uses Framer Motion for animations and React Icons for icons
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaEnvelope, FaLock, FaGoogle, FaGithub, FaUser } from 'react-icons/fa';
+import { FaEnvelope, FaLock, FaGoogle, FaGithub, FaUser, FaHome } from 'react-icons/fa';
 import { useTheme } from '../../ThemeContext'; // Import useTheme hook
+import { Link } from 'react-router-dom';
 
 const LogIn = () => {
   // State variables for form inputs and login/signup mode
@@ -39,12 +40,21 @@ const LogIn = () => {
   };
 
   return (
-    <div className={`flex h-screen items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+    <div className={`flex h-screen items-center justify-center ${isDarkMode ? 'bg-gray-100' : 'bg-white'}`}>
+      {/* Go Back Home Button */}
+      <Link 
+        to="/"
+        className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-gray-600 to-gray-800 text-white hover:from-gray-800 hover:to-gray-600 transition-all"
+      >
+        <FaHome className="text-lg" />
+        <span>Back to Home</span>
+      </Link>
+
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
-        className={`flex h-[90%] w-[90%] max-w-5xl overflow-hidden rounded-3xl shadow-2xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
+        className={`flex h-[90%] w-[90%] max-w-5xl overflow-hidden rounded-3xl shadow-2xl ${isDarkMode ? 'bg-white' : 'bg-gray-50'}`}
       >
         <AnimatePresence initial={false}>
           {isLogin ? (
@@ -56,7 +66,7 @@ const LogIn = () => {
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{ type: 'tween', duration: 0.5 }}
-                className="relative hidden h-full items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-600 md:flex md:w-1/2 overflow-hidden"
+                className="relative hidden h-full items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 md:flex md:w-1/2 overflow-hidden"
               >
                 <motion.div 
                   className="z-10 space-y-6 text-center p-8 rounded-xl backdrop-blur-md"
@@ -115,14 +125,14 @@ const LogIn = () => {
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={{ type: 'tween', duration: 0.5 }}
-                className={`flex w-full md:w-1/2 flex-col justify-center py-10 px-8 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
+                className={`flex w-full md:w-1/2 flex-col justify-center py-10 px-8 ${isDarkMode ? 'bg-white' : 'bg-gray-50'}`}
               >
-                <h2 className={`mb-8 text-center text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Welcome Back</h2>
+                <h2 className={`mb-8 text-center text-4xl font-bold text-gray-800`}>Welcome Back</h2>
                 <form onSubmit={handleSubmit} className="flex w-full flex-col items-center justify-center gap-6">
                   <div className="relative w-full max-w-md">
                     <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
-                      className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
+                      className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
                       type="email"
                       placeholder="Email"
                       value={email}
@@ -133,7 +143,7 @@ const LogIn = () => {
                   <div className="relative w-full max-w-md">
                     <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
-                      className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
+                      className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
                       type="password"
                       placeholder="Password"
                       value={password}
@@ -143,34 +153,34 @@ const LogIn = () => {
                   </div>
                   <div className="flex w-full max-w-md justify-between items-center">
                     <label className="flex items-center">
-                      <input type="checkbox" className="mr-2 rounded text-purple-600 focus:ring-purple-500" />
-                      <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Remember me</span>
+                      <input type="checkbox" className="mr-2 rounded text-gray-600 focus:ring-gray-600" />
+                      <span className="text-sm text-gray-600">Remember me</span>
                     </label>
-                    <a href="#" className="text-sm text-purple-600 hover:underline">Forgot password?</a>
+                    <a href="#" className="text-sm text-gray-600 hover:underline">Forgot password?</a>
                   </div>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     type="submit"
-                    className="w-full max-w-md rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-3 font-medium text-white shadow-lg transition-all hover:from-indigo-600 hover:to-purple-600"
+                    className="w-full max-w-md rounded-lg bg-gradient-to-r from-gray-600 to-gray-800 px-6 py-3 font-medium text-white shadow-lg transition-all hover:from-gray-800 hover:to-gray-600"
                   >
                     Log In
                   </motion.button>
                 </form>
-                <p className={`mt-8 text-center text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  Don&apos;t have an account? <button onClick={toggleMode} className="text-purple-600 hover:underline font-medium">Create now</button>
+                <p className="mt-8 text-center text-sm text-gray-600">
+                  Don&apos;t have an account? <button onClick={toggleMode} className="text-gray-600 hover:underline font-medium">Create now</button>
                 </p>
                 {/* Divider and social login buttons */}
                 <div className="my-8 flex items-center px-8">
-                  <hr className={`flex-1 ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`} />
-                  <div className={`mx-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>OR</div>
-                  <hr className={`flex-1 ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`} />
+                  <hr className="flex-1 border-gray-200" />
+                  <div className="mx-4 text-gray-500">OR</div>
+                  <hr className="flex-1 border-gray-200" />
                 </div>
                 <div className="flex justify-center space-x-4">
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="flex items-center justify-center space-x-2 rounded-full bg-red-500 px-4 py-2 text-sm text-white shadow-md hover:bg-red-600"
+                    className="flex items-center justify-center space-x-2 rounded-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-700 shadow-md hover:bg-gray-50"
                   >
                     <FaGoogle />
                     <span>Google</span>
@@ -178,7 +188,7 @@ const LogIn = () => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="flex items-center justify-center space-x-2 rounded-full bg-gray-800 px-4 py-2 text-sm text-white shadow-md hover:bg-gray-900"
+                    className="flex items-center justify-center space-x-2 rounded-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-700 shadow-md hover:bg-gray-50"
                   >
                     <FaGithub />
                     <span>GitHub</span>
@@ -195,14 +205,14 @@ const LogIn = () => {
       animate={{ x: 0 }}
       exit={{ x: '-100%' }}
       transition={{ type: 'tween', duration: 0.5 }}
-      className={`flex w-full md:w-1/2 flex-col justify-center py-10 px-8 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
+      className={`flex w-full md:w-1/2 flex-col justify-center py-10 px-8 ${isDarkMode ? 'bg-white' : 'bg-gray-50'}`}
     >
-      <h2 className={`mb-8 text-center text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Create Account</h2>
+      <h2 className="mb-8 text-center text-4xl font-bold text-gray-800">Create Account</h2>
       <form onSubmit={handleSubmit} className="flex w-full flex-col items-center justify-center gap-6">
         <div className="relative w-full max-w-md">
           <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
-            className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
+            className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
             type="text"
             placeholder="Name"
             value={name}
@@ -213,7 +223,7 @@ const LogIn = () => {
         <div className="relative w-full max-w-md">
           <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
-            className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
+            className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
             type="email"
             placeholder="Email"
             value={email}
@@ -224,7 +234,7 @@ const LogIn = () => {
         <div className="relative w-full max-w-md">
           <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
-            className={`w-full rounded-lg border ${isDarkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-gray-50'} px-10 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
+            className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
             type="password"
             placeholder="Password"
             value={password}
@@ -236,7 +246,7 @@ const LogIn = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           type="submit"
-          className="w-full max-w-md rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-3 font-medium text-white shadow-lg transition-all hover:from-indigo-600 hover:to-purple-600"
+          className="w-full max-w-md rounded-lg bg-gradient-to-r from-gray-600 to-gray-800 px-6 py-3 font-medium text-white shadow-lg transition-all hover:from-gray-800 hover:to-gray-600"
         >
           Sign Up
         </motion.button>
@@ -246,21 +256,21 @@ const LogIn = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleGoogleSignUp}
-          className={`flex items-center justify-center rounded-full p-2 shadow-md transition-all ${isDarkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'}`}
+          className="flex items-center justify-center rounded-full bg-white border border-gray-200 p-2 text-gray-700 shadow-md transition-all hover:bg-gray-50"
         >
-          <FaGoogle className="text-red-500 text-xl" />
+          <FaGoogle className="text-xl" />
         </motion.button>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleGithubSignUp}
-          className="flex items-center justify-center rounded-full bg-gray-800 p-2 text-white shadow-md transition-all hover:bg-gray-700"
+          className="flex items-center justify-center rounded-full bg-white border border-gray-200 p-2 text-gray-700 shadow-md transition-all hover:bg-gray-50"
         >
           <FaGithub className="text-xl" />
         </motion.button>
       </div>
-      <p className={`mt-8 text-center text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-        Already have an account? <button onClick={toggleMode} className="text-purple-600 hover:underline font-medium">Login</button>
+      <p className="mt-8 text-center text-sm text-gray-600">
+        Already have an account? <button onClick={toggleMode} className="text-gray-600 hover:underline font-medium">Login</button>
       </p>
     </motion.div>
               {/* Welcome Section for Sign Up */}
@@ -270,7 +280,7 @@ const LogIn = () => {
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={{ type: 'tween', duration: 0.5 }}
-                className="relative hidden h-full items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-600 md:flex md:w-1/2 overflow-hidden"
+                className="relative hidden h-full items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 md:flex md:w-1/2 overflow-hidden"
               >
                 <motion.div 
                   className="z-10 space-y-6 text-center p-8 rounded-xl backdrop-blur-md"
