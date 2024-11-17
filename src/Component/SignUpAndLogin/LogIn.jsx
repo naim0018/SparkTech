@@ -1,26 +1,114 @@
 // This component handles both login and signup functionality
 // It uses Framer Motion for animations and React Icons for icons
+
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaEnvelope, FaLock, FaGoogle, FaGithub, FaUser, FaHome } from 'react-icons/fa';
-import { useTheme } from '../../ThemeContext'; // Import useTheme hook
-import { Link } from 'react-router-dom';
+import { useTheme } from '../../ThemeContext';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCreateUserMutation } from '../../redux/api/UserApi';
+import { useForm } from 'react-hook-form';
+import Swal from 'sweetalert2';
+import { useLoginMutation } from '../../redux/api/AuthApi';
+import { decodeToken } from '../../utils/verifyToken';
+import { setCredentials } from '../../redux/features/AuthSlice';
+import { useDispatch } from 'react-redux';
 
 const LogIn = () => {
-  // State variables for form inputs and login/signup mode
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [isLogin, setIsLogin] = useState(true);
-  const { isDarkMode } = useTheme(); // Use the useTheme hook
+  const { isDarkMode } = useTheme();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isLogin) {
-      console.log('Login attempted with:', { email, password });
-    } else {
-      console.log('Sign up attempted with:', { name, email, password });
+  const { register: registerLogin, handleSubmit: handleLoginSubmit, reset: resetLogin, formState: { errors: loginErrors } } = useForm({
+    defaultValues: {
+      loginEmail: 'mdkazinaim0018@gmail.com',
+      loginPassword: '123'
+    }
+  });
+  const { register: registerSignup, handleSubmit: handleSignupSubmit, reset: resetSignup } = useForm();
+
+  const [createUser] = useCreateUserMutation();
+  const [login] = useLoginMutation();
+
+  // Handle login form submission
+  const handleLogin = async (data) => {
+    try {
+      const response = await login({
+        email: data.loginEmail,
+        password: data.loginPassword
+      });
+      if (response.data) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Login Successful!',
+          text: 'Welcome back!',
+          confirmButtonColor: '#4B5563',
+          timer: 1500,
+          timerProgressBar: true
+        });
+        console.log(response?.data?.data)
+        const decodedToken = decodeToken(response?.data?.data?.accessToken)
+        dispatch(setCredentials({ user: decodedToken, accessToken: response?.data?.data?.accessToken }))
+        console.log(decodedToken)
+        // Clear login form
+        resetLogin();
+        // Navigate to dashboard or home page
+        navigate('/');
+      } else if (response.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: response.error.data?.message || 'Invalid email or password',
+          confirmButtonColor: '#4B5563'
+        });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: error.message || 'Something went wrong',
+        confirmButtonColor: '#4B5563'
+      });
+    }
+  };
+
+  // Handle signup form submission  
+  const handleSignup = async (data) => {
+    try {
+      const userData = {
+        name: data.name,
+        email: data.signupEmail,
+        password: data.signupPassword
+      };
+      await createUser(userData);
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Sign Up Successful!',
+        text: 'Please login to continue',
+        confirmButtonColor: '#4B5563',
+        timer: 3000,
+        timerProgressBar: true
+      });
+      
+      // Clear signup form
+      resetSignup();
+      
+      // Switch to login mode after a short delay
+      setTimeout(() => {
+        setIsLogin(true);
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Signup error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Sign Up Failed',
+        text: 'Please try again',
+        confirmButtonColor: '#4B5563'
+      });
     }
   };
 
@@ -128,28 +216,42 @@ const LogIn = () => {
                 className={`flex w-full md:w-1/2 flex-col justify-center py-10 px-8 ${isDarkMode ? 'bg-white' : 'bg-gray-50'}`}
               >
                 <h2 className={`mb-8 text-center text-4xl font-bold text-gray-800`}>Welcome Back</h2>
-                <form onSubmit={handleSubmit} className="flex w-full flex-col items-center justify-center gap-6">
+                <form onSubmit={handleLoginSubmit(handleLogin)} className="flex w-full flex-col items-center justify-center gap-6">
                   <div className="relative w-full max-w-md">
                     <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
-                      className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
+                      className={`w-full rounded-lg border ${loginErrors.loginEmail ? 'border-red-500' : 'border-gray-200'} bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
                       type="email"
                       placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
+                      {...registerLogin('loginEmail', { 
+                        required: 'Email is required',
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: "Invalid email address"
+                        }
+                      })}
                     />
+                    {loginErrors.loginEmail && (
+                      <p className="mt-1 text-xs text-red-500">{loginErrors.loginEmail.message}</p>
+                    )}
                   </div>
                   <div className="relative w-full max-w-md">
                     <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
-                      className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
+                      className={`w-full rounded-lg border ${loginErrors.loginPassword ? 'border-red-500' : 'border-gray-200'} bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
                       type="password"
                       placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
+                      {...registerLogin('loginPassword', { 
+                        required: 'Password is required',
+                        minLength: {
+                          value: 3,
+                          message: 'Password must be at least 3 characters'
+                        }
+                      })}
                     />
+                    {loginErrors.loginPassword && (
+                      <p className="mt-1 text-xs text-red-500">{loginErrors.loginPassword.message}</p>
+                    )}
                   </div>
                   <div className="flex w-full max-w-md justify-between items-center">
                     <label className="flex items-center">
@@ -208,16 +310,14 @@ const LogIn = () => {
       className={`flex w-full md:w-1/2 flex-col justify-center py-10 px-8 ${isDarkMode ? 'bg-white' : 'bg-gray-50'}`}
     >
       <h2 className="mb-8 text-center text-4xl font-bold text-gray-800">Create Account</h2>
-      <form onSubmit={handleSubmit} className="flex w-full flex-col items-center justify-center gap-6">
+      <form onSubmit={handleSignupSubmit(handleSignup)} className="flex w-full flex-col items-center justify-center gap-6">
         <div className="relative w-full max-w-md">
           <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
             type="text"
             placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
+            {...registerSignup('name', { required: true })}
           />
         </div>
         <div className="relative w-full max-w-md">
@@ -226,9 +326,7 @@ const LogIn = () => {
             className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            {...registerSignup('signupEmail', { required: true })}
           />
         </div>
         <div className="relative w-full max-w-md">
@@ -237,9 +335,7 @@ const LogIn = () => {
             className={`w-full rounded-lg border border-gray-200 bg-white text-gray-800 px-10 py-3 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent`}
             type="password"
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            {...registerSignup('signupPassword', { required: true })}
           />
         </div>
         <motion.button

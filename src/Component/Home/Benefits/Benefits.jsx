@@ -20,7 +20,7 @@ const Benefits = () => {
       title: "Swift Delivery",
       description: (
         <div className="flex items-center justify-center">
-          <p className="">Free for orders above 2000</p>
+          <span className="">Free for orders above 2000</span>
           <TbCurrencyTaka className="" />
         </div>
       ),
@@ -67,9 +67,9 @@ const Benefits = () => {
                   {item.icon}
                 </motion.div>
                 <h3 className="text-xs sm:text-base md:text-lg lg:text-xl font-semibold text-center mb-1">{item.title}</h3>
-                <p className={`text-center text-[10px] sm:text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>
+                <div className={`text-center text-[10px] sm:text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>
                   {item.description}
-                </p>
+                </div>
               </div>
             </motion.div>
           ))}

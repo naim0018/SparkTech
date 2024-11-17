@@ -1,25 +1,22 @@
 /* eslint-disable no-unused-vars */
-// Import necessary dependencies and components
 import { useState, useEffect } from 'react'
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { FiMenu, FiX, FiHome, FiUser, FiLogOut } from 'react-icons/fi'
+import { userRoute } from '../../Router/UserRoute'
 import { navbarGenerator } from '../../utils/navbarGenerator'
-import { adminRoute } from '../../Router/AdminRoute'
 import { useTheme } from '../../ThemeContext'
 import DarkMode from '../DarkMode'
 import { BiHome } from 'react-icons/bi'
+import { useSelector } from 'react-redux'
 
-// AdminLayout component for the admin dashboard
-const AdminLayout = () => {
-  // State for sidebar visibility and screen size
+const UserDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isLargeScreen, setIsLargeScreen] = useState(false)
-  // Generate sidebar items from admin routes
-  const sidebarItems = navbarGenerator(adminRoute)
+  const sidebarItems = navbarGenerator(userRoute)
   const { isDarkMode } = useTheme()
   const location = useLocation()
+  const { user } = useSelector((state) => state.auth)
 
-  // Effect to handle screen resize and sidebar visibility
   useEffect(() => {
     const handleResize = () => {
       const largeScreen = window.innerWidth >= 1440
@@ -32,7 +29,6 @@ const AdminLayout = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Function to toggle sidebar visibility
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
   }
@@ -46,13 +42,13 @@ const AdminLayout = () => {
         } transition-transform duration-300 ease-in-out xl:translate-x-0 fixed xl:static z-30 ${isDarkMode ? 'hover:bg-emerald-800' : 'hover:bg-emerald-600'}`}
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold">Admin Panel</h2>
+          <h2 className="text-2xl font-semibold">User Dashboard</h2>
           <button onClick={toggleSidebar} className="xl:hidden">
             <FiX size={24} />
           </button>
         </div>
         <nav>
-          <NavLink to="/admin" end className={({ isActive }) =>
+          <NavLink to="/dashboard" end className={({ isActive }) =>
                 `flex items-center space-x-2 mb-4 px-4 py-2 rounded transition-colors ${
                   isActive ? (isDarkMode ? 'bg-emerald-700' : 'bg-emerald-800') : (isDarkMode ? 'hover:bg-emerald-800' : 'hover:bg-emerald-600')
                 }`
@@ -96,7 +92,7 @@ const AdminLayout = () => {
               </NavLink>
               <button className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <FiUser />
-                <span>Profile</span>
+                <span>{user?.name || 'Profile'}</span>
               </button>
               <button className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <FiLogOut />
@@ -116,4 +112,4 @@ const AdminLayout = () => {
   )
 }
 
-export default AdminLayout
+export default UserDashboard

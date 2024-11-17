@@ -18,7 +18,7 @@ const NewArrivals = () => {
       setProducts(data.products.slice(0, 8));
     }
   }, [data]);
-
+  
   return (
     <section ref={ref} className="container mx-auto px-4 py-8 overflow-x-hidden">
       <Title title="New Arrivals" className="mb-6 text-center" />

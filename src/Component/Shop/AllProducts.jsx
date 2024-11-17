@@ -23,14 +23,13 @@ const AllProducts = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  
   const [filters, setFilters] = useState({
     priceRange: [0, 20000],
-    stockStatus: searchParams.get('stockStatus') || 'all',
-    category: searchParams.get('category') || 'all',
-    subcategory: searchParams.get('subcategory') || 'all', 
-    brand: searchParams.get('brand') || 'all',
-    sort: searchParams.get('sort') || '-createdAt'
+    stockStatus: decodeURIComponent(searchParams.get('stockStatus') || 'all'),
+    category: decodeURIComponent(searchParams.get('category') || 'all'),
+    subcategory: decodeURIComponent(searchParams.get('subcategory') || 'all'),
+    brand: decodeURIComponent(searchParams.get('brand') || 'all'),
+    sort: decodeURIComponent(searchParams.get('sort') || '-createdAt')
   });
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
@@ -40,18 +39,20 @@ const AllProducts = () => {
   const queryParams = {
     page: currentPage,
     limit: productsPerPage,
-    search: searchTerm || searchParams.get('search'),
-    category: filters.category !== 'all' ? filters.category : undefined,
-    subcategory: filters.subcategory !== 'all' ? filters.subcategory : undefined,
-    brand: filters.brand !== 'all' ? filters.brand : undefined,
-    priceRange: filters.priceRange,
-    stockStatus: filters.stockStatus !== 'all' ? filters.stockStatus : undefined,
+    ...(searchTerm && { search: searchTerm }),
+    ...(searchParams.get('search') && { search: decodeURIComponent(searchParams.get('search')) }),
+    ...(filters.category !== 'all' && { category: filters.category }),
+    ...(filters.subcategory !== 'all' && { subcategory: filters.subcategory }),
+    ...(filters.brand !== 'all' && { brand: filters.brand }),
+    ...(filters.stockStatus !== 'all' && { stockStatus: filters.stockStatus }),
     sort: filters.sort,
+    minPrice: filters.priceRange[0],
+    maxPrice: filters.priceRange[1]
   };
 
   const { data: productsData, isLoading, isError } = useGetAllProductsQuery(queryParams);
   // Fetching products data using the custom hook
-  
+  console.log(productsData);
 
   // Effect hook to update state when product data changes
   useEffect(() => {
@@ -339,7 +340,7 @@ const AllProducts = () => {
             </div>
             
             {/* Product grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[800px]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ">
               <AnimatePresence>
                 {isLoading ? (
                   // Loading skeleton

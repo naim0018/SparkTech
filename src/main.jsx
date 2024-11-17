@@ -4,17 +4,20 @@ import './index.css'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './Router/Router.jsx'
 import { Provider } from 'react-redux'
-import { store } from './redux/store.js'
+import { persistor, store } from './redux/store.js'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ThemeProvider } from './ThemeContext'
+import { PersistGate } from 'redux-persist/integration/react'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
       <ThemeProvider>
-        <RouterProvider router={router}/>
-        <ToastContainer />
+        <PersistGate loading={null} persistor={persistor}>
+          <RouterProvider router={router} />
+          <ToastContainer />
+        </PersistGate>
       </ThemeProvider>
     </Provider>
   </StrictMode>

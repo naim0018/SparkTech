@@ -32,7 +32,7 @@ const Carousel = () => {
       >
         {carouselImages.map((slide, idx) => (
           <img
-            key={slide}
+            key={idx}
             src={slide}
             className="min-w-full h-full object-fill"
             alt={`Slider - ${idx + 1}`}

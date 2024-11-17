@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
-import { FaStar, FaShoppingCart, FaHeart } from 'react-icons/fa';
+import { FaStar, FaShoppingCart, FaHeart, FaCheck } from 'react-icons/fa';
 import { TbCurrencyTaka } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -11,8 +10,6 @@ import { useTheme } from '../../ThemeContext';
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
-  const [isHovered, setIsHovered] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -35,99 +32,105 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Link to={`/product/${product._id}`} className="block h-[500px]">
-      <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-200' : 'bg-white border text-gray-800'} border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full`}>
-        <div 
-          className="relative overflow-hidden pt-2 flex-shrink-0 h-48"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
+    <Link to={`/product/${product._id}`} className="block">
+      <div className={`group ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-[480px]`}>
+        {/* Image Section with Overlay */}
+        <div className="relative h-64">
           <img 
             src={product.images[0].url} 
-            alt={product.images[0].alt} 
-            className={`w-full h-full object-contain ${isDarkMode ? 'bg-gray-700' : 'bg-white'} rounded-lg transition-transform duration-300 ${isHovered ? 'scale-110' : 'scale-100'}`}
+            alt={product.basicInfo.title}
+            className="w-full h-full object-cover"
           />
-          {product.price.discounted && product.price.savingsPercentage > 0 && (
-            <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-              Save {product.price.savingsPercentage.toFixed(2)}%
-            </div>
-          )}
-          {product.additionalInfo && product.additionalInfo.isOnSale && (
-            <div className="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-              On Sale
-            </div>
-          )}
-        </div>
-        <div className="p-4 flex-grow flex flex-col">
-          <div className="relative mb-2">
-            <h2 
-              className={`text-lg font-semibold truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-            >
-              {product.basicInfo.title}
-            </h2>
-            {showTooltip && (
-              <div className={`absolute z-10 p-2 rounded-md text-sm ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'} shadow-lg`}>
-                {product.basicInfo.title}
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute bottom-4 left-4 right-4">
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-white/90 hover:bg-white text-gray-900 py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-colors"
+                >
+                  <FaShoppingCart />
+                  Add to Cart
+                </button>
+                <button
+                  onClick={(e) => e.preventDefault()}
+                  className="bg-white/90 hover:bg-white text-gray-900 p-2 rounded-lg transition-colors"
+                >
+                  <FaHeart />
+                </button>
               </div>
-            )}
+            </div>
           </div>
-          <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{product.basicInfo.brand}</p>
-          <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Category: {product.basicInfo.category}</p>
-          <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2`}>{product.basicInfo.description}</p>
-          <div className="flex items-center mb-2 h-6">
-            {product.rating.average > 0 ? (
-              <>
-                <div className="flex text-yellow-400 mr-1">
-                  {[...Array(Math.floor(product.rating.average))].map((_, i) => (
-                    <FaStar key={i} className="w-4 h-4" />
-                  ))}
-                </div>
-                <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>({product.rating.count})</span>
-              </>
-            ) : (
-              <div className="flex-grow"></div>
+          
+          {/* Badges */}
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
+            {product.price.discounted && (
+              <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                -{product.price.savingsPercentage.toFixed(0)}%
+              </span>
             )}
-            {product.sold > 0 && (
-              <span className={`text-sm ml-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Sold: {product.sold}
+            {product.additionalInfo?.isOnSale && (
+              <span className="bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                Sale
               </span>
             )}
           </div>
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              {product.price.discounted ? (
-                <>
-                  <span className={`text-lg font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} flex items-center`}><TbCurrencyTaka />{product.price.discounted.toFixed(2)}</span>
-                  <span className={`text-sm line-through ml-2 ${isDarkMode ? 'text-red-400' : 'text-red-500'} flex items-center`}><TbCurrencyTaka />{product.price.regular.toFixed(2)}</span>
-                </>
-              ) : (
-                <span className={`text-lg font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} flex items-center`}><TbCurrencyTaka />{product.price.regular.toFixed(2)}</span>
-              )}
+        </div>
+
+        {/* Content Section */}
+        <div className="p-4">
+          {/* Title and Brand */}
+          <div className="mb-3">
+            <h3 className={`font-medium text-lg leading-tight mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              {product.basicInfo.title}
+            </h3>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              by <span className="font-medium">{product.basicInfo.brand}</span>
+            </p>
+          </div>
+
+          {/* Rating and Category */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-1">
+              <div className="flex text-yellow-400">
+                {[...Array(5)].map((_, i) => (
+                  <FaStar key={i} className={`w-3.5 h-3.5 ${i < Math.floor(product.rating.average) ? 'opacity-100' : 'opacity-30'}`} />
+                ))}
+              </div>
+              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                ({product.rating.count})
+              </span>
             </div>
-            <span className={`text-sm font-semibold ${product.stockStatus === 'In Stock' ? 'text-green-500' : 'text-red-500'}`}>
-              {product.stockStatus}
+            <span className={`text-xs px-2 py-1 rounded-full ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
+              {product.basicInfo.category}
             </span>
           </div>
-          <div className="flex space-x-2 mt-auto">
-            <button 
-              onClick={handleAddToCart}
-              className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition flex items-center justify-center"
-            >
-              <FaShoppingCart className="mr-2" />
-              Add to Cart
-            </button>
-            <button 
-              onClick={(e) => e.preventDefault()}
-              className={`${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'} px-3 py-2 rounded-md transition`}
-            >
-              <FaHeart />
-            </button>
+
+          {/* Price Section */}
+          <div className="flex items-baseline gap-2 mb-3">
+            <span className={`text-xl font-bold flex items-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <TbCurrencyTaka className="text-xl" />
+              {(product.price.discounted || product.price.regular).toFixed(2)}
+            </span>
+            {product.price.discounted && (
+              <span className={`text-sm line-through flex items-center ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                <TbCurrencyTaka />
+                {product.price.regular.toFixed(2)}
+              </span>
+            )}
           </div>
-        </div>
-        <div className={`block text-center ${isDarkMode ? 'bg-gray-700 text-blue-400 hover:bg-gray-600' : 'bg-gray-100 text-blue-600 hover:bg-gray-200'} py-2 font-semibold transition`}>
-          View Details
+
+          {/* Status and Sales */}
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-1">
+              <FaCheck className={product.stockStatus === 'In Stock' ? 'text-emerald-500' : 'text-red-500'} />
+              <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                {product.stockStatus}
+              </span>
+            </div>
+            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              {product.sold} sold
+            </span>
+          </div>
         </div>
       </div>
     </Link>

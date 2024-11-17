@@ -11,6 +11,7 @@ const buildQuery = (options) => {
 
   // Handle filters
   if (options.category && options.category !== 'all') {
+    
     queryParams.append('category', options.category);
   }
   if (options.subcategory && options.subcategory !== 'all') {
@@ -46,7 +47,6 @@ export const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query({
       query: (options = {}) => {
-        console.log('Query options:', options);
         const queryString = buildQuery(options);
         return {
           url: `/product?${queryString}`,
@@ -54,8 +54,6 @@ export const productApi = baseApi.injectEndpoints({
         };
       },
       transformResponse: (response) => {
-        // Assuming the backend returns { data: [...], meta: {...} }
-        console.log(response.meta);
         return {
           products: response.data,
           pagination: response.meta,

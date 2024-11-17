@@ -8,7 +8,7 @@ const FilterOptions = ({ filterOptions, handleFilterChange }) => {
   const { isDarkMode } = useTheme();
   const { data: brandsAndCategories } = useGetAllBrandsAndCategoriesQuery();
   const [brands, setBrands] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState();
 
   useEffect(() => {
     if (brandsAndCategories) {

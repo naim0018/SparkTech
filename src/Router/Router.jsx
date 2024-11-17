@@ -5,13 +5,15 @@ import { navbarRoute } from "./NavbarRoute";
 import ErrorPage from "../Component/ErrorPage/ErrorPage";
 import Home from "../Pages/Home";
 import AdminDashboard from "../Component/Admin/AdminDashboard/AdminDashboard";
-import AdminLayout from "../Layout/AdminLayout/AdminLayout";
 import { adminRoute } from "./AdminRoute";
 import ProductDetails from "../Component/ProductDetails/ProductDetails";
 import Checkout from "../Component/Checkout/Checkout";
 import { FaSignInAlt } from "react-icons/fa";
 import LogIn from "../Component/SignUpAndLogin/LogIn";
-
+import { userRoute } from "./UserRoute";
+import Dashboard from "../Layout/DashboardLayout/DashboardLayout";
+import ProtectedRoute from "../Layout/ProtectedRoute";
+import Unauthorized from "../Component/ErrorPage/Unauthorized";
 
 export const router = createBrowserRouter([
     {
@@ -35,18 +37,29 @@ export const router = createBrowserRouter([
         ],
     },
     {
-        path:'/admin',
-        element:<AdminLayout/>,
+        path:'admin/dashboard',
+        element: (
+            <ProtectedRoute allowedRoles={['admin']}>
+                <Dashboard/>
+            </ProtectedRoute>
+        ),
         children:[
             {
-                index:true,
-                element:<AdminDashboard/>            
-            },
-            {
-                path:'dashboard',
-                element:<AdminDashboard/>            
+                index: true,
+                element: <AdminDashboard/>
             },
             ...routeGenerator(adminRoute)
+        ]
+    },
+    {
+        path:'user/dashboard',
+        element: (
+            <ProtectedRoute allowedRoles={['user']}>
+                <Dashboard/>
+            </ProtectedRoute>
+        ),
+        children:[
+            ...routeGenerator(userRoute)
         ]
     },
     {
@@ -55,5 +68,8 @@ export const router = createBrowserRouter([
         path:'login',
         element:<LogIn/>
     },
-
+    {
+        path: 'unauthorized',
+        element: <Unauthorized/>
+    }
 ])
