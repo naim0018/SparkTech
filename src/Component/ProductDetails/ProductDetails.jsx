@@ -5,8 +5,9 @@ import { useParams } from 'react-router-dom';
 import { FaShoppingCart, FaHeart, FaStar, FaExclamationTriangle, FaSearch } from 'react-icons/fa';
 import { useGetProductByIdQuery } from '../../redux/api/ProductApi';
 import RelatedProducts from './RelatedProducts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../redux/features/CartSlice';
+import { addToWishlist, removeFromWishlist } from '../../redux/features/wishlistSlice';
 import { toast } from 'react-toastify';
 import { useTheme } from '../../ThemeContext';
 import { motion } from 'framer-motion';
@@ -20,6 +21,8 @@ const ProductView = () => {
   const [selectedVariant, setSelectedVariant] = useState(null);
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
+  const wishlistItems = useSelector(state => state.wishlist.wishlistItems);
+  const isInWishlist = wishlistItems.some(item => item._id === product?._id);
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState />;
@@ -49,6 +52,27 @@ const ProductView = () => {
     });
   };
 
+  const handleWishlist = () => {
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(product._id));
+      toast.info('Removed from wishlist!', {
+        position: "bottom-right",
+        autoClose: 2000
+      });
+    } else {
+      dispatch(addToWishlist({
+        _id: product._id,
+        title: product.basicInfo.title,
+        price: product.price.discounted || product.price.regular,
+        image: product.images[0].url
+      }));
+      toast.success('Added to wishlist!', {
+        position: "bottom-right", 
+        autoClose: 2000
+      });
+    }
+  };
+
   return (
     <div className={`${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-gray-900'} min-h-screen py-4 sm:py-8`}>
       <div className="container mx-auto px-4">
@@ -69,6 +93,8 @@ const ProductView = () => {
                 incrementQuantity={incrementQuantity}
                 decrementQuantity={decrementQuantity}
                 handleAddToCart={handleAddToCart}
+                handleWishlist={handleWishlist}
+                isInWishlist={isInWishlist}
                 selectedVariant={selectedVariant}
                 setSelectedVariant={setSelectedVariant}
               />
@@ -117,7 +143,7 @@ const NotFoundState = () => (
   </div>
 );
 
-const ProductInfo = ({ product, quantity, incrementQuantity, decrementQuantity, handleAddToCart, selectedVariant, setSelectedVariant }) => (
+const ProductInfo = ({ product, quantity, incrementQuantity, decrementQuantity, handleAddToCart, handleWishlist, isInWishlist, selectedVariant, setSelectedVariant }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
     <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{product.basicInfo.title}</h1>
     {product.rating && product.rating.count > 0 && <Rating rating={product.rating} />}
@@ -130,7 +156,7 @@ const ProductInfo = ({ product, quantity, incrementQuantity, decrementQuantity, 
       incrementQuantity={incrementQuantity}
       decrementQuantity={decrementQuantity}
     />
-    <ActionButtons handleAddToCart={handleAddToCart} />
+    <ActionButtons handleAddToCart={handleAddToCart} handleWishlist={handleWishlist} isInWishlist={isInWishlist} />
     <AdditionalNotes product={product} />
   </motion.div>
 );
@@ -244,7 +270,7 @@ const QuantitySelector = ({ quantity, incrementQuantity, decrementQuantity }) =>
   </div>
 );
 
-const ActionButtons = ({ handleAddToCart }) => (
+const ActionButtons = ({ handleAddToCart, handleWishlist, isInWishlist }) => (
   <div className="flex flex-col sm:flex-row gap-4 mb-4">
     <motion.button 
       whileHover={{ scale: 1.05 }} 
@@ -258,10 +284,11 @@ const ActionButtons = ({ handleAddToCart }) => (
     <motion.button 
       whileHover={{ scale: 1.05 }} 
       whileTap={{ scale: 0.95 }}
-      className="flex-1 border-2 border-blue-600 text-blue-600 py-2 sm:py-3 px-4 sm:px-6 rounded-md text-base sm:text-lg font-semibold hover:bg-blue-50 transition flex items-center justify-center"
+      onClick={handleWishlist}
+      className={`flex-1 border-2 ${isInWishlist ? 'border-red-600 text-red-600 hover:bg-red-50' : 'border-blue-600 text-blue-600 hover:bg-blue-50'} py-2 sm:py-3 px-4 sm:px-6 rounded-md text-base sm:text-lg font-semibold transition flex items-center justify-center`}
     >
       <FaHeart className="mr-2" />
-      Wishlist
+      {isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
     </motion.button>
   </div>
 );

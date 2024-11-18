@@ -2,14 +2,17 @@
 import { FaStar, FaShoppingCart, FaHeart, FaCheck } from 'react-icons/fa';
 import { TbCurrencyTaka } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../redux/features/CartSlice';
+import { addToWishlist } from '../../redux/features/wishlistSlice';
 import { toast } from 'react-toastify';
 import { useTheme } from '../../ThemeContext';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
+  const wishlistItems = useSelector(state => state.wishlist.wishlistItems);
+  const isInWishlist = wishlistItems.some(item => item._id === product._id);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -21,6 +24,25 @@ const ProductCard = ({ product }) => {
       quantity: 1
     }));
     toast.success('Product added to cart!', {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
+  const handleAddToWishlist = (e) => {
+    e.preventDefault();
+    dispatch(addToWishlist({
+      _id: product._id,
+      title: product.basicInfo.title,
+      price: product.price.discounted || product.price.regular,
+      image: product.images[0].url
+    }));
+    toast.success('Product added to wishlist!', {
       position: "bottom-right",
       autoClose: 2000,
       hideProgressBar: false,
@@ -52,8 +74,8 @@ const ProductCard = ({ product }) => {
                   Add to Cart
                 </button>
                 <button
-                  onClick={(e) => e.preventDefault()}
-                  className="bg-white/90 hover:bg-white text-gray-900 p-2 rounded-lg transition-colors"
+                  onClick={handleAddToWishlist}
+                  className={`${isInWishlist ? 'bg-red-500 text-white' : 'bg-white/90 hover:bg-white text-gray-900'} p-2 rounded-lg transition-colors`}
                 >
                   <FaHeart />
                 </button>

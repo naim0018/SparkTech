@@ -55,6 +55,7 @@ const Profile = () => {
       dispatch(updateUser(response.data));
       setIsEditing(false);
       toast.success('Profile updated successfully!');
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       toast.error('Failed to update profile');
     }

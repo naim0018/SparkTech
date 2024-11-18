@@ -1,102 +1,106 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { FaTrash, FaShoppingCart } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { FaShoppingCart, FaHeart, FaRegHeart, FaTrash } from 'react-icons/fa';
 import { TbCurrencyTaka } from 'react-icons/tb';
 import { addToCart } from '../../../redux/features/CartSlice';
+import { removeFromWishlist } from '../../../redux/features/wishlistSlice';
 import { toast } from 'react-toastify';
 import { useTheme } from '../../../ThemeContext';
+import { motion } from 'framer-motion';
 
 const Wishlist = () => {
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
-  const [wishlistItems, setWishlistItems] = useState([
-    // Sample data - replace with actual wishlist data
-    {
-      id: 1,
-      name: "Sample Product 1",
-      price: 999,
-      image: "https://example.com/image1.jpg",
-      inStock: true
-    },
-    {
-      id: 2, 
-      name: "Sample Product 2",
-      price: 1499,
-      image: "https://example.com/image2.jpg",
-      inStock: false
-    }
-  ]);
-
+  const wishlistItems = useSelector((state) => state?.wishlist?.wishlistItems) || [];
+  console.log(wishlistItems);
   const handleAddToCart = (item) => {
     dispatch(addToCart({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      image: item.image,
+      id: item?._id,
+      title: item?.title,
+      price: item?.price,
+      image: item?.image,
       quantity: 1
     }));
     toast.success('Added to cart!');
   };
 
   const handleRemoveFromWishlist = (itemId) => {
-    setWishlistItems(prev => prev.filter(item => item.id !== itemId));
+    dispatch(removeFromWishlist(itemId));
     toast.success('Removed from wishlist!');
   };
 
   return (
-    <div className={`min-h-screen p-6 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'}`}>
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">My Wishlist</h1>
-        
-        {wishlistItems.length === 0 ? (
-          <div className={`text-center py-12 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md`}>
-            <p className="text-xl">Your wishlist is empty</p>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <FaHeart className="text-3xl text-red-500" />
+            <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+              My Wishlist ({wishlistItems.length})
+            </h1>
           </div>
+        </div>
+
+        {wishlistItems.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`flex flex-col items-center justify-center p-12 ${
+              isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-600'
+            } rounded-lg shadow-lg`}
+          >
+            <FaRegHeart className="text-6xl text-red-400 mb-4" />
+            <h2 className="text-2xl font-semibold mb-2">Your Wishlist is Empty</h2>
+            <p className="text-center max-w-md">
+              Add items to your wishlist to keep track of products you&apos;re interested in.
+            </p>
+          </motion.div>
         ) : (
-          <div className="grid gap-6">
-            {wishlistItems.map((item) => (
-              <div 
-                key={item.id} 
-                className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md p-4 flex items-center justify-between`}
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {wishlistItems.map((item, index) => (
+              <motion.div
+                key={item?._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className={`relative ${
+                  isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
+                } rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300`}
               >
-                <div className="flex items-center space-x-4">
-                  <img 
-                    src={item.image} 
-                    alt={item.name}
-                    className="w-24 h-24 object-cover rounded-md"
+                <div className="relative">
+                  <img
+                    src={item?.image}
+                    alt={item?.title}
+                    className="w-full h-48 object-cover rounded-t-lg"
                   />
-                  <div>
-                    <h3 className="text-lg font-semibold">{item.name}</h3>
-                    <div className="flex items-center mt-2">
-                      <TbCurrencyTaka className="text-xl" />
-                      <span className="text-lg font-medium">{item.price}</span>
-                    </div>
-                    <span className={`text-sm ${item.inStock ? 'text-green-500' : 'text-red-500'}`}>
-                      {item.inStock ? 'In Stock' : 'Out of Stock'}
-                    </span>
-                  </div>
+                  <button
+                    onClick={() => handleRemoveFromWishlist(item?._id)}
+                    className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                  >
+                    <FaTrash className="text-sm" />
+                  </button>
                 </div>
                 
-                <div className="flex items-center space-x-4">
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold mb-2 line-clamp-2">
+                    {item?.name}
+                  </h3>
+                  
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <TbCurrencyTaka className="text-2xl" />
+                      <span className="text-xl font-bold">{item?.price}</span>
+                    </div>
+                  </div>
+
                   <button
                     onClick={() => handleAddToCart(item)}
-                    disabled={!item.inStock}
-                    className={`p-2 rounded-full ${
-                      item.inStock 
-                        ? 'bg-blue-500 hover:bg-blue-600 text-white' 
-                        : 'bg-gray-400 cursor-not-allowed text-gray-200'
-                    }`}
+                    className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                   >
-                    <FaShoppingCart className="text-xl" />
-                  </button>
-                  <button
-                    onClick={() => handleRemoveFromWishlist(item.id)}
-                    className="p-2 rounded-full text-red-500 hover:bg-red-100"
-                  >
-                    <FaTrash className="text-xl" />
+                    <FaShoppingCart />
+                    <span>Add to Cart</span>
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
