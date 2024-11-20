@@ -110,11 +110,15 @@ const ProductView = () => {
         >
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="w-full lg:w-3/4">
-              <Specifications product={product} />
+              {product.specifications && product.specifications.length > 0 && <Specifications product={product} />}
               <AdditionalInfo product={product} />
             </div>
             <div className="w-full lg:w-1/4">
-              <RelatedProducts relatedProducts={product.relatedProducts} currentProductId={product._id} />
+            {
+              product.relatedProducts && product.relatedProducts.length > 0 && (
+                <RelatedProducts relatedProducts={product.relatedProducts} />
+              )
+            }
             </div>
           </div>
         </motion.div>
@@ -333,16 +337,18 @@ const AdditionalInfo = ({ product }) => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.4 }}>
       <h2 className="text-xl sm:text-2xl font-bold mb-4 mt-8">Additional Information</h2>
       <div className="bg-gray-100 rounded-lg overflow-hidden">
-        {Object.entries(product.additionalInfo).map(([key, value], index) => (
-          <div key={index} className={`flex ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
-            <div className="w-1/3 p-2 sm:p-3 font-semibold text-gray-700 border-gray-200 border-r text-xs sm:text-sm">
-              {key}
+        {Object.entries(product.additionalInfo)
+          .filter(([key]) => !['isFeatured', 'isOnSale', 'freeShipping'].includes(key))
+          .map(([key, value], index) => (
+            <div key={index} className={`flex ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
+              <div className="w-1/3 p-2 sm:p-3 font-semibold text-gray-700 border-gray-200 border-r text-xs sm:text-sm">
+                {key}
+              </div>
+              <div className="w-2/3 p-2 sm:p-3 text-gray-600 text-xs sm:text-sm">
+                {value.toString()}
+              </div>
             </div>
-            <div className="w-2/3 p-2 sm:p-3 text-gray-600 text-xs sm:text-sm">
-              {value.toString()}
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
     </motion.div>
   )

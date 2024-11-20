@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useAddProductMutation } from "../../../../redux/api/ProductApi";
-import { useTheme } from "../../../../ThemeContext";
+import { useAddProductMutation } from "../../../redux/api/ProductApi";
+import { useTheme } from "../../../ThemeContext";
 
 // Define the AddProduct component
 export default function AddProduct() {

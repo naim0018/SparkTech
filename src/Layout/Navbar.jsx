@@ -44,7 +44,7 @@ const MobileNav = ({ isOpen, navbar }) => (
   >
     <div className="mt-16 flex flex-col gap-2 sm:gap-3">
       {navbar.map((item) => (
-        <NavItem key={item._id} item={item} isActive={false} />
+        <NavItem key={item.name} item={item} isActive={false} />
       ))}
     </div>
   </div>
@@ -57,7 +57,7 @@ const DesktopNav = ({ navbar }) => (
       <CategoryButton />
       <div className="flex gap-1 sm:gap-2 ml-2 sm:ml-4">
         {navbar.map((item) => (
-          <NavItem key={item._id} item={item} isActive={false} />
+          <NavItem key={item.name} item={item} isActive={false} />
         ))}
       </div>
     </div>
@@ -78,7 +78,7 @@ const CategoryButton = () => (
 // Logo component for displaying the site logo
 const Logo = () => (
   <NavLink to="/" className="hover:opacity-80 transition-opacity duration-300">
-    <h5 className="text-white text-lg sm:text-xl md:text-2xl font-bold">DropIt</h5>
+    <h5 className="text-white text-lg sm:text-xl md:text-2xl font-bold">KitchenSpot</h5>
   </NavLink>
 );
 

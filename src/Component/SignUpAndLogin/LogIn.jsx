@@ -21,10 +21,7 @@ const LogIn = () => {
   const dispatch = useDispatch();
 
   const { register: registerLogin, handleSubmit: handleLoginSubmit, reset: resetLogin, formState: { errors: loginErrors } } = useForm({
-    defaultValues: {
-      loginEmail: 'mdkazinaim0018@gmail.com',
-      loginPassword: '123'
-    }
+  
   });
   const { register: registerSignup, handleSubmit: handleSignupSubmit, reset: resetSignup } = useForm();
 

@@ -24,7 +24,8 @@ const AllProducts = () => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
-    priceRange: [0, 20000],
+    minPrice: 0,
+    maxPrice: 10000,
     stockStatus: decodeURIComponent(searchParams.get('stockStatus') || 'all'),
     category: decodeURIComponent(searchParams.get('category') || 'all'),
     subcategory: decodeURIComponent(searchParams.get('subcategory') || 'all'),
@@ -46,18 +47,20 @@ const AllProducts = () => {
     ...(filters.brand !== 'all' && { brand: filters.brand }),
     ...(filters.stockStatus !== 'all' && { stockStatus: filters.stockStatus }),
     sort: filters.sort,
-    minPrice: filters.priceRange[0],
-    maxPrice: filters.priceRange[1]
   };
 
   const { data: productsData, isLoading, isError } = useGetAllProductsQuery(queryParams);
-  // Fetching products data using the custom hook
-  console.log(productsData);
 
   // Effect hook to update state when product data changes
   useEffect(() => {
     if (productsData) {
-      setFilteredProducts(productsData?.products);
+      // Filter products based on price range on frontend
+      const priceFilteredProducts = productsData?.products.filter(product => {
+        const price = product.price.regular;
+        return price >= filters.minPrice && price <= filters.maxPrice;
+      });
+      
+      setFilteredProducts(priceFilteredProducts);
  
       // Extracting unique categories, subcategories, and brands
       const uniqueCategories = fixedCategory;
@@ -68,7 +71,7 @@ const AllProducts = () => {
       const uniqueBrands = [...new Set(productsData?.products.map(product => product.basicInfo.brand))];
       setBrands(uniqueBrands);
     }
-  }, [productsData]);
+  }, [productsData, filters.minPrice, filters.maxPrice]);
   // Handler for filter changes
   const handleFilterChange = (name, value) => {
     setFilters(prev => ({ ...prev, [name]: value }));
@@ -78,7 +81,8 @@ const AllProducts = () => {
   // Function to clear all filters
   const clearFilters = () => {
     setFilters({
-      priceRange: [0, 20000],
+      minPrice: 0,
+      maxPrice: 10000,
       stockStatus: 'all',
       category: 'all',
       subcategory: 'all',
@@ -132,18 +136,29 @@ const AllProducts = () => {
           {/* Price Range Filter */}
           <div>
             <h3 className="text-lg font-semibold mb-2">Price Range</h3>
-            <input
-              type="range"
-              min="0"
-              max="20000"
-              step="1000"
-              value={filters.priceRange[1]}
-              onChange={(e) => handleFilterChange('priceRange', [0, Number(e.target.value)])}
-              className="w-full mb-2"
-            />
-            <div className="flex justify-between text-sm">
-              <span>${filters.priceRange[0]}</span>
-              <span>${filters.priceRange[1]}</span>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Min: ৳{filters.minPrice}</span>
+                <input
+                  type="range"
+                  min="0"
+                  max={filters.maxPrice}
+                  value={filters.minPrice}
+                  onChange={(e) => handleFilterChange('minPrice', Number(e.target.value))}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Max: ৳{filters.maxPrice}</span>
+                <input
+                  type="range"
+                  min={filters.minPrice}
+                  max="10000"
+                  value={filters.maxPrice}
+                  onChange={(e) => handleFilterChange('maxPrice', Number(e.target.value))}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                />
+              </div>
             </div>
           </div>
 

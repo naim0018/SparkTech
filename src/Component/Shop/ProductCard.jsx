@@ -102,7 +102,7 @@ const ProductCard = ({ product }) => {
         <div className="p-4">
           {/* Title and Brand */}
           <div className="mb-3">
-            <h3 className={`font-medium text-lg leading-tight mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={`font-medium text-lg leading-tight mb-1 h-[50px] overflow-hidden ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               {product.basicInfo.title}
             </h3>
             <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
