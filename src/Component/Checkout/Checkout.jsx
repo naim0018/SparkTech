@@ -6,7 +6,7 @@ import { useCreateOrderMutation } from '../../redux/api/OrderApi'
 import { clearCart } from '../../redux/features/CartSlice'
 
 function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, formState: { errors }, watch } = useForm()
   const dispatch = useDispatch()
   const [createOrder] = useCreateOrderMutation()
   const cartItems = useSelector((state) => state.cart.cartItems)
@@ -16,7 +16,7 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
   const taxRate = 0
   
   const onSubmit = async (data) => {
-    if (step < 3) {
+    if (step < 4) {
       nextStep()
     } else {
       try {
@@ -189,42 +189,67 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
                   PayPal
                 </label>
               </div>
+              <div className="flex items-center space-x-2 p-2 rounded-md border border-gray-200">
+                <input type="radio" name="paymentMethod" value="cod" id="cod" className="h-4 w-4 text-teal-600 border-gray-300" {...register('paymentMethod', { required: true })} />
+                <label htmlFor="cod" className="flex items-center cursor-pointer">
+                  <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3"></path></svg>
+                  Cash on Delivery
+                </label>
+              </div>
+              <div className="flex items-center space-x-2 p-2 rounded-md border border-gray-200">
+                <input type="radio" name="paymentMethod" value="bkash" id="bkash" className="h-4 w-4 text-teal-600 border-gray-300" {...register('paymentMethod', { required: true })} />
+                <label htmlFor="bkash" className="flex items-center cursor-pointer">
+                  <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3"></path></svg>
+                  bKash
+                </label>
+              </div>
               {errors.paymentMethod && <span className="text-red-500">Please select a payment method</span>}
             </div>
-            <div>
-              <label htmlFor="cardNumber" className="text-gray-700">Card Number</label>
-              <input id="cardNumber" placeholder="1234 5678 9012 3456" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('cardNumber', { required: true })} />
-              {errors.cardNumber && <span className="text-red-500">This field is required</span>}
-            </div>
-            <div className="grid grid-cols-3 gap-6">
+            {watch('paymentMethod') === 'card' && (
+              <>
+                <div>
+                  <label htmlFor="cardNumber" className="text-gray-700">Card Number</label>
+                  <input id="cardNumber" placeholder="1234 5678 9012 3456" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('cardNumber', { required: true })} />
+                  {errors.cardNumber && <span className="text-red-500">This field is required</span>}
+                </div>
+                <div className="grid grid-cols-3 gap-6">
+                  <div>
+                    <label htmlFor="expMonth" className="text-gray-700">Exp. Month</label>
+                    <select id="expMonth" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('expMonth', { required: true })}>
+                      {Array.from({length: 12}, (_, i) => i + 1).map(month => (
+                        <option key={month} value={month.toString().padStart(2, '0')}>
+                          {month.toString().padStart(2, '0')}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.expMonth && <span className="text-red-500">This field is required</span>}
+                  </div>
+                  <div>
+                    <label htmlFor="expYear" className="text-gray-700">Exp. Year</label>
+                    <select id="expYear" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('expYear', { required: true })}>
+                      {Array.from({length: 10}, (_, i) => new Date().getFullYear() + i).map(year => (
+                        <option key={year} value={year.toString()}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.expYear && <span className="text-red-500">This field is required</span>}
+                  </div>
+                  <div>
+                    <label htmlFor="cvv" className="text-gray-700">CVV</label>
+                    <input id="cvv" placeholder="123" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('cvv', { required: true })} />
+                    {errors.cvv && <span className="text-red-500">This field is required</span>}
+                  </div>
+                </div>
+              </>
+            )}
+            {watch('paymentMethod') === 'bkash' && (
               <div>
-                <label htmlFor="expMonth" className="text-gray-700">Exp. Month</label>
-                <select id="expMonth" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('expMonth', { required: true })}>
-                  {Array.from({length: 12}, (_, i) => i + 1).map(month => (
-                    <option key={month} value={month.toString().padStart(2, '0')}>
-                      {month.toString().padStart(2, '0')}
-                    </option>
-                  ))}
-                </select>
-                {errors.expMonth && <span className="text-red-500">This field is required</span>}
+                <label htmlFor="bkashNumber" className="text-gray-700">bKash Number</label>
+                <input id="bkashNumber" placeholder="01XXXXXXXXX" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('bkashNumber', { required: true })} />
+                {errors.bkashNumber && <span className="text-red-500">This field is required</span>}
               </div>
-              <div>
-                <label htmlFor="expYear" className="text-gray-700">Exp. Year</label>
-                <select id="expYear" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('expYear', { required: true })}>
-                  {Array.from({length: 10}, (_, i) => new Date().getFullYear() + i).map(year => (
-                    <option key={year} value={year.toString()}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-                {errors.expYear && <span className="text-red-500">This field is required</span>}
-              </div>
-              <div>
-                <label htmlFor="cvv" className="text-gray-700">CVV</label>
-                <input id="cvv" placeholder="123" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('cvv', { required: true })} />
-                {errors.cvv && <span className="text-red-500">This field is required</span>}
-              </div>
-            </div>
+            )}
             <div>
               <label htmlFor="notes" className="text-gray-700">Order Notes (Optional)</label>
               <textarea id="notes" placeholder="Any special instructions for your order?" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('notes')}></textarea>
@@ -234,6 +259,49 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
               <label htmlFor="terms" className="text-sm text-gray-700">I agree to the terms and conditions</label>
             </div>
             {errors.terms && <span className="text-red-500">You must agree to the terms and conditions</span>}
+            <div className="flex space-x-4">
+              <button type="button" onClick={prevStep} className="w-1/2 bg-gray-200 text-gray-800 p-2 rounded hover:bg-gray-300 transition-colors duration-300">
+                Back
+              </button>
+              <button type="submit" className="w-1/2 bg-teal-500 hover:bg-teal-600 text-white p-2 rounded transition-colors duration-300">
+                Review Order
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 4 && (
+          <div className="space-y-6">
+            {/* Step 4: Order Review */}
+            <h3 className="text-xl font-semibold mb-4">Order Review</h3>
+            
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Personal Information</h4>
+              <p>Name: {watch('firstName')} {watch('lastName')}</p>
+              <p>Email: {watch('email')}</p>
+              <p>Phone: {watch('phone')}</p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Shipping Address</h4>
+              <p>{watch('streetAddress')}</p>
+              <p>{watch('city')}, {watch('state')} {watch('zipCode')}</p>
+              <p>{watch('country')}</p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Payment Method</h4>
+              <p className="capitalize">{watch('paymentMethod') === 'cod' ? 'Cash on Delivery' : watch('paymentMethod')}</p>
+              {watch('paymentMethod') === 'bkash' && <p>bKash Number: {watch('bkashNumber')}</p>}
+              {watch('paymentMethod') === 'card' && <p>Card ending in: {watch('cardNumber')?.slice(-4)}</p>}
+            </div>
+
+            {watch('notes') && (
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-medium mb-2">Order Notes</h4>
+                <p>{watch('notes')}</p>
+              </div>
+            )}
+
             <div className="flex space-x-4">
               <button type="button" onClick={prevStep} className="w-1/2 bg-gray-200 text-gray-800 p-2 rounded hover:bg-gray-300 transition-colors duration-300">
                 Back
@@ -288,22 +356,22 @@ function OrderSummary() {
           <span>Shipping</span>
           <span>${shippingCost.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between text-gray-600">   
+        {/* <div className="flex justify-between text-gray-600">   
           <span>Tax</span>
           <span>${(cartTotal * taxRate).toFixed(2)}</span>
-        </div>
+        </div> */}
         <div className="border-t pt-4 mt-4">
           <div className="flex justify-between font-semibold text-lg text-gray-800">
             <span>Total</span>
             <span>${(cartTotal + shippingCost + (cartTotal * taxRate)).toFixed(2)}</span>
           </div>
         </div>
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <input placeholder="Enter promo code" className="bg-white border-gray-300 p-2 rounded w-full" />
           <button className="w-full mt-2 bg-gray-800 text-white p-2 rounded hover:bg-gray-900 transition-colors duration-300">
             Apply Promo Code
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   )
@@ -323,12 +391,12 @@ export default function Component() {
           <div className="md:w-2/3 p-8">
             <h1 className="text-3xl font-light mb-6 text-gray-800">Checkout</h1>
             <div className="mb-8 flex justify-between">
-              {[1, 2, 3].map((i) => (
+              {[1, 2, 3, 4].map((i) => (
                 <div key={i} className={`flex items-center ${i < step ? 'text-teal-600' : i === step ? 'text-teal-500' : 'text-gray-400'}`}>
                   <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center mr-2 ${i < step ? 'border-teal-600 bg-teal-600 text-white' : i === step ? 'border-teal-500 text-teal-500' : 'border-gray-400'}`}>
                     {i < step ? <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> : i}
                   </div>
-                  <span className="text-sm">{i === 1 ? 'Details' : i === 2 ? 'Shipping' : 'Payment'}</span>
+                  <span className="text-sm">{i === 1 ? 'Details' : i === 2 ? 'Shipping' : i === 3 ? 'Payment' : 'Review'}</span>
                 </div>
               ))}
             </div>

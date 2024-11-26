@@ -4,7 +4,7 @@ import { IoMdClose } from 'react-icons/io';
 import { FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
 import { incrementQuantity, decrementQuantity, removeFromCart } from '../../redux/features/CartSlice';
 import { useTheme } from '../../ThemeContext'; // Import useTheme hook
-import Checkout from '../Checkout/Checkout';
+
 import { Link } from 'react-router-dom';
 const Cart = ({ toggleCart }) => {
   const cartItems = useSelector((state) => state.cart.cartItems) || [];

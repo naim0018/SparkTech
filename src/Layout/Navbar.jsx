@@ -78,7 +78,7 @@ const CategoryButton = () => (
 // Logo component for displaying the site logo
 const Logo = () => (
   <NavLink to="/" className="hover:opacity-80 transition-opacity duration-300">
-    <h5 className="text-white text-lg sm:text-xl md:text-2xl font-bold">KitchenSpot</h5>
+    <h5 className="text-white text-lg sm:text-xl md:text-2xl font-bold">ajkerbazarbd</h5>
   </NavLink>
 );
 

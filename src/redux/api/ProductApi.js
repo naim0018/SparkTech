@@ -47,6 +47,7 @@ export const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query({
       query: (options = {}) => {
+        console.log(options);
         const queryString = buildQuery(options);
         return {
           url: `/product?${queryString}`,
