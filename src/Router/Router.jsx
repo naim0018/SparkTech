@@ -14,6 +14,7 @@ import { userRoute } from "./UserRoute";
 import Dashboard from "../Layout/DashboardLayout/DashboardLayout";
 import ProtectedRoute from "../Layout/ProtectedRoute";
 import Unauthorized from "../Component/ErrorPage/Unauthorized";
+import Error from "../Component/Checkout/Error";
 
 export const router = createBrowserRouter([
     {
@@ -33,6 +34,11 @@ export const router = createBrowserRouter([
                 path: 'checkout',
                 element: <Checkout/>
             },
+            {
+                path:'error',
+                element:<Error/>
+            },
+            
             ...routeGenerator(navbarRoute)
         ],
     },

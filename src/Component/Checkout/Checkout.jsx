@@ -1,9 +1,12 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useCreateOrderMutation } from '../../redux/api/OrderApi'
 import { clearCart } from '../../redux/features/CartSlice'
+import { useCreateBkashPaymentMutation } from '../../redux/api/bkashApi'
+import { useLocation } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
@@ -14,7 +17,24 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const shippingCost = 0
   const taxRate = 0
+  const location = useLocation()
   
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search)
+    const message = searchParams.get('message')
+    const trxID = searchParams.get('trxID')
+    const amount = searchParams.get('amount')
+
+    if (message === 'Successful') {
+      Swal.fire({
+        title: 'Payment Successful!',
+        text: `Transaction ID: ${trxID}\nAmount Paid: ${amount} BDT`,
+        icon: 'success',
+        confirmButtonText: 'OK'
+      })
+    }
+  }, [location])
+
   const onSubmit = async (data) => {
     if (step < 4) {
       nextStep()
@@ -26,7 +46,7 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
             quantity: item.quantity,
             price: item.price
           })),
-          totalAmount: cartTotal + shippingCost + (cartTotal * taxRate), // Including shipping and tax
+          totalAmount: cartTotal + shippingCost + (cartTotal * taxRate),
           status: 'Pending',
           billingInformation: {
             firstName: data.firstName,
@@ -55,19 +75,15 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
       } catch (error) {
         console.error('Failed to create order:', error)
         if (error.status === 400) {
-          // Handle 400 Bad Request error
           console.error('Bad Request:', error.data)
           if (error.data && error.data.errorSources) {
             error.data.errorSources.forEach(errorSource => {
               console.error(`${errorSource.path}: ${errorSource.message}`)
-              // Show specific error message to user based on errorSource
             })
           }
         } else {
-          // Handle other types of errors
           console.error('An unexpected error occurred:', error.message)
         }
-        // Show error message to user
       }
     }
   }
@@ -75,7 +91,6 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
   const handleGoHome = () => {
     setShowSuccessModal(false)
     resetCheckout()
-    // Add navigation to home page here
   }
 
   const handleCancel = () => {
@@ -88,7 +103,6 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
       <form onSubmit={handleSubmit(onSubmit)}>
         {step === 1 && (
           <div className="space-y-6">
-            {/* Step 1: User Details */}
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label htmlFor="firstName" className="text-gray-700">First Name</label>
@@ -118,7 +132,6 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
         )}
         {step === 2 && (
           <div className="space-y-6">
-            {/* Step 2: Shipping Details */}
             <div>
               <label htmlFor="streetAddress" className="text-gray-700">Street Address</label>
               <input id="streetAddress" placeholder="123 Main St" className="mt-1 p-2 border border-gray-300 rounded w-full" {...register('streetAddress', { required: true })} />
@@ -172,7 +185,6 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
         )}
         {step === 3 && (
           <div className="space-y-6">
-            {/* Step 3: Payment Details */}
             <label className="text-gray-700">Payment Method</label>
             <div className="space-y-2">
               <div className="flex items-center space-x-2 p-2 rounded-md border border-gray-200">
@@ -271,7 +283,6 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
         )}
         {step === 4 && (
           <div className="space-y-6">
-            {/* Step 4: Order Review */}
             <h3 className="text-xl font-semibold mb-4">Order Review</h3>
             
             <div className="bg-gray-50 p-4 rounded-lg">
@@ -336,8 +347,34 @@ function CheckoutForm({ step, nextStep, prevStep, resetCheckout }) {
 function OrderSummary() {
   const cartItems = useSelector((state) => state.cart.cartItems)
   const cartTotal = useSelector((state) => state.cart.cartItems.reduce((total, item) => total + item.price * item.quantity, 0))
+  const [createBkashPayment] = useCreateBkashPaymentMutation()
+  const user = useSelector((state) => state.auth.user)
+  const location = useLocation()
+  console.log("user", user)
   const shippingCost = 0
   const taxRate = 0
+
+  const searchParams = new URLSearchParams(location.search)
+  const message = searchParams.get('message')
+
+  const handleBkashPayment = async () => {
+  
+    try {
+      const response = await createBkashPayment({
+        amount: cartTotal,
+        currency: "BDT",
+        intent: "sale",
+        merchantInvoiceNumber: "Inv" + Math.random().toString(36).substring(2, 7),
+        userEmail: user?.email
+      }).unwrap()
+
+      if (response.bkashURL) {
+        window.location.href = response.bkashURL
+      }
+    } catch (error) {
+      console.error('Bkash payment error:', error)
+    }
+  }
 
   return (
     <div className="md:w-1/3 bg-gray-50 p-8">
@@ -372,6 +409,17 @@ function OrderSummary() {
             Apply Promo Code
           </button>
         </div> */}
+        <div className="mt-6">
+          {message === 'Successful' ? (
+            <button disabled className="w-full mt-2 bg-green-500 text-white p-2 rounded">
+              Payment Complete
+            </button>
+          ) : (
+            <button onClick={handleBkashPayment} className="w-full mt-2 bg-gray-800 text-white p-2 rounded hover:bg-gray-900 transition-colors duration-300">
+              Pay with bKash
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -385,7 +433,7 @@ export default function Component() {
   const resetCheckout = () => setStep(1)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex  justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex justify-center p-4">
       <div className="bg-white rounded-lg shadow-2xl overflow-hidden w-full px-10">
         <div className="flex flex-col md:flex-row">
           <div className="md:w-2/3 p-8">
