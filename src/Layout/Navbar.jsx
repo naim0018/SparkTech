@@ -78,7 +78,7 @@ const CategoryButton = () => (
 // Logo component for displaying the site logo
 const Logo = () => (
   <NavLink to="/" className="hover:opacity-80 transition-opacity duration-300">
-    <h5 className="text-white text-lg sm:text-xl md:text-2xl font-bold">BestBuy4uBD</h5>
+    <img src="https://i.imgur.com/TGLPFni.png" alt="BestBuy4uBD" className="h-8 sm:h-10" />
   </NavLink>
 );
 
@@ -347,7 +347,7 @@ const Navbar = () => {
                       : ""
                   }`}
                 ></div>
-                <div
+                <div 
                   className={`rounded-2xl h-[2px] sm:h-[3px] w-full bg-white duration-200 ease-in ${
                     isOpen ? "-rotate-45" : ""
                   }`}

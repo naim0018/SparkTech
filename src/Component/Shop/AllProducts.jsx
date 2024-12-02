@@ -6,6 +6,7 @@ import ProductCard from "./ProductCard";
 import { useTheme } from "../../ThemeContext";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
 import { useSearchParams } from "react-router-dom";
+import { fixedCategory } from "../../utils/variables";
 
 // Main component for displaying all products
 const AllProducts = () => {
@@ -34,6 +35,10 @@ const AllProducts = () => {
     
     if (newFilters.searchTerm) params.set('search', newFilters.searchTerm);
     if (newFilters.category) params.set('category', newFilters.category);
+    if (newFilters.stockStatus) params.set('stockStatus', newFilters.stockStatus);
+    if (newFilters.minPrice > 0) params.set('minPrice', newFilters.minPrice);
+    if (newFilters.maxPrice < 10000) params.set('maxPrice', newFilters.maxPrice);
+    if (newFilters.sortPrice) params.set('sort', newFilters.sortPrice);
     if (currentPage > 1) params.set('page', currentPage);
 
     setSearchParams(params);
@@ -43,25 +48,16 @@ const AllProducts = () => {
   const queryParams = {
     page: currentPage,
     limit: productsPerPage,
-    ...(filters.searchTerm && { search: filters.searchTerm }),
-    ...(filters.category && { category: filters.category }),
+    search: filters.searchTerm,
+    category: filters.category,
+    stockStatus: filters.stockStatus,
+    minPrice: filters.minPrice,
+    maxPrice: filters.maxPrice,
+    sort: filters.sortPrice === "lowToHigh" ? "price.regular" : filters.sortPrice === "highToLow" ? "-price.regular" : ""
   };
 
   // Fetching products data using RTK Query
   const { data: productsData, isLoading, isError } = useGetAllProductsQuery(queryParams);
-
-  // Filter products based on search term, category and price range
-  const filteredProducts = productsData?.products?.filter(product => {
-    const matchesPrice = product.price.regular >= filters.minPrice && 
-                        product.price.regular <= filters.maxPrice;
-                        
-    const matchesSearch = filters.searchTerm ? 
-      product.basicInfo.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      product.basicInfo.category.toLowerCase().includes(filters.searchTerm.toLowerCase())
-      : true;
-
-    return matchesPrice && matchesSearch;
-  });
 
   // Update filters and search params
   const handleFilterChange = (newFilters) => {
@@ -92,9 +88,6 @@ const AllProducts = () => {
 
   // Error state - Shows error message if data fetching fails
   if (isError) return <div className={`flex justify-center items-center h-screen ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Error loading products</div>;
-
-  // Get unique categories for filter dropdown
-  const uniqueCategories = [...new Set(productsData?.products?.map(p => p.basicInfo?.category))];
 
   // Filter sidebar content
   const FilterSidebar = () => (
@@ -181,7 +174,7 @@ const AllProducts = () => {
               />
               All Categories
             </label>
-            {uniqueCategories?.map(category => (
+            {fixedCategory.map(category => (
               <label key={category} className="flex items-center">
                 <input
                   type="radio"
@@ -327,7 +320,7 @@ const AllProducts = () => {
                       <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} h-4 w-1/2 rounded animate-pulse`}></div>
                     </motion.div>
                   ))
-                ) : filteredProducts?.length === 0 ? (
+                ) : productsData?.products?.length === 0 ? (
                   // No products found message
                   <div className="col-span-full flex flex-col justify-center items-center">
                     <div className={`text-center ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -338,7 +331,7 @@ const AllProducts = () => {
                   </div>
                 ) : (
                   // Actual product cards with animation
-                  filteredProducts?.map((product) => (
+                  productsData?.products?.map((product) => (
                     <motion.div
                       key={product._id}
                       initial={{ opacity: 0, y: 20 }}
