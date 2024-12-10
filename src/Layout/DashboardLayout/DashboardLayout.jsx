@@ -1,13 +1,14 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react'
-import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { FiMenu, FiX, FiHome, FiUser, FiLogOut } from 'react-icons/fi'
 import { navbarGenerator } from '../../utils/navbarGenerator'
 import { adminRoute } from '../../Router/AdminRoute'
 import { userRoute } from '../../Router/UserRoute'
 import { useTheme } from '../../ThemeContext'
 import { BiHome } from 'react-icons/bi'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout } from '../../redux/features/AuthSlice'
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -17,6 +18,8 @@ const Dashboard = () => {
   const { isDarkMode } = useTheme()
   const location = useLocation()
   const baseRoute = user?.role === 'admin' ? '/admin/dashboard' : '/user/dashboard'
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleResize = () => {
@@ -32,6 +35,11 @@ const Dashboard = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
+  }
+
+  const handleLogout = () => {
+    dispatch(logout())
+    navigate('/login')
   }
 
   return (
@@ -95,7 +103,10 @@ const Dashboard = () => {
                 <FiUser />
                 <span>Profile</span>
               </button>
-              <button className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              <button 
+                onClick={handleLogout}
+                className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} hover:text-red-500 transition-colors`}
+              >
                 <FiLogOut />
                 <span>Logout</span>
               </button>

@@ -19,7 +19,7 @@ export const userApi = baseApi.injectEndpoints({
       providesTags: ['Users'],
     }),
     getUserByEmail: builder.query({
-      query: (email) => `/user/${email}`,
+      query: (email) => `/user/user-by-email/${email}`,
       providesTags: ['Users'],
     }),
     updateUser: builder.mutation({

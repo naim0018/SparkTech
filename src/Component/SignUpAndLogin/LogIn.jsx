@@ -44,10 +44,8 @@ const LogIn = () => {
           timer: 1500,
           timerProgressBar: true
         });
-        console.log(response?.data?.data)
         const decodedToken = decodeToken(response?.data?.data?.accessToken)
         dispatch(setCredentials({ user: decodedToken, accessToken: response?.data?.data?.accessToken }))
-        console.log(decodedToken)
         // Clear login form
         resetLogin();
         // Navigate to dashboard or home page
@@ -116,12 +114,12 @@ const LogIn = () => {
 
   // Handle Google sign up/login
   const handleGoogleSignUp = () => {
-    console.log('Google sign up/login attempted');
+      
   };
 
   // Handle GitHub sign up/login
   const handleGithubSignUp = () => {
-    console.log('GitHub sign up/login attempted');
+    
   };
 
   return (

@@ -13,7 +13,6 @@ const BestDeals = () => {
     page: currentPage,
     limit: productsPerPage
   });
-console.log(productsData)
   // Filter products that are on sale and have a discount
   const saleProducts = useMemo(() => {
     if (!productsData?.products) return [];

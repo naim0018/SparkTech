@@ -151,7 +151,7 @@ const TrendingProducts = () => {
                                 isDarkMode ? "text-gray-300" : "text-gray-900"
                               }`}
                             >
-                              $
+                              ৳
                               {product?.price?.discounted ||
                                 product?.price?.regular ||
                                 "N/A"}
@@ -163,7 +163,7 @@ const TrendingProducts = () => {
                                     isDarkMode ? "text-gray-500" : "text-gray-500"
                                   }`}
                                 >
-                                  ${product?.price?.regular}
+                                  ৳{product?.price?.regular}
                                 </span>
                               )}
                           </div>

@@ -124,7 +124,7 @@ export default function AddProduct() {
   // Handle form submission
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-    console.log(data);
+
     try {
       // Prepare product data
       const productData = {
@@ -190,10 +190,8 @@ export default function AddProduct() {
           slug: data.seo.slug,
         },
       };
-      console.log("productData:", productData);
       // Call the addProduct mutation
       const result = await addProduct(productData).unwrap();
-      console.log("result:", result);
       if (result.success) {
         toast.success("Product added successfully!");
       } else {

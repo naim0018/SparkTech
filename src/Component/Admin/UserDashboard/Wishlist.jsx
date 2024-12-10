@@ -11,7 +11,7 @@ const Wishlist = () => {
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
   const wishlistItems = useSelector((state) => state?.wishlist?.wishlistItems) || [];
-  console.log(wishlistItems);
+  
   const handleAddToCart = (item) => {
     dispatch(addToCart({
       id: item?._id,

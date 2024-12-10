@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 
 const RelatedProducts = ({ relatedProducts }) => {
     const { isDarkMode } = useTheme();
-    console.log(relatedProducts);
   return (
     <div className={isDarkMode ? 'bg-gray-900' : 'bg-white'}>
       <Title title="Related Products" />

@@ -36,7 +36,7 @@ const About = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Here you would typically send the form data to a server
-    console.log('Form submitted:', formData);
+
     // Reset form after submission
     setFormData({ name: '', email: '', message: '' });
   };

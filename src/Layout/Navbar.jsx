@@ -23,39 +23,57 @@ import Search from "./Search";
 const NavItem = ({ item, isActive }) => (
   <NavLink
     to={`/${item.path}`}
-    className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-md transition-all duration-300 ${
+    className={`px-4 md:px-5 py-2.5 rounded-lg transition-all duration-300 relative group ${
       isActive
-        ? "bg-[#3a4556] text-white shadow-md"
-        : "text-white/80 hover:bg-[#2c3544] hover:text-white"
+        ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30"
+        : "text-gray-200 hover:text-white"
     }`}
   >
-    <p className="text-sm sm:text-base font-medium">{item.name}</p>
+    <p className="text-sm sm:text-base font-medium relative z-10">{item.name}</p>
+    {!isActive && (
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/80 to-blue-600/80 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    )}
   </NavLink>
 );
 
 // MobileNav component for mobile navigation menu
-const MobileNav = ({ isOpen, navbar }) => (
-  <div
-    className={`absolute z-40 ${
-      isOpen
-        ? "flex flex-col gap-3 sm:gap-5 top-0 right-0 duration-500"
-        : "top-0 left-96 hidden"
-    } lg:hidden bg-[#222934] w-full sm:w-2/3 h-screen p-3 sm:p-5 shadow-lg`}
-  >
-    <div className="mt-16 flex flex-col gap-2 sm:gap-3">
-      {navbar.map((item) => (
-        <NavItem key={item.name} item={item} isActive={false} />
-      ))}
-    </div>
-  </div>
-);
+const MobileNav = ({ isOpen, navbar, setIsOpen }) => {
+  const navRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [setIsOpen]);
+
+  return (
+    <motion.div
+      ref={navRef}
+      initial={{ x: "100%" }}
+      animate={{ x: isOpen ? 0 : "100%" }}
+      transition={{ type: "spring", damping: 20 }}
+      className={`fixed z-40 top-0 right-0 lg:hidden bg-gradient-to-b from-[#1a2234] to-[#222934] w-full sm:w-2/5 h-screen p-4 sm:p-6 shadow-2xl`}
+    >
+      <div className="mt-16 flex flex-col gap-3">
+        {navbar.map((item) => (
+          <NavItem key={item.name} item={item} isActive={false} />
+        ))}
+      </div>
+    </motion.div>
+  );
+};
 
 // DesktopNav component for desktop navigation menu
 const DesktopNav = ({ navbar }) => (
-  <div className="hidden lg:flex items-center gap-4 xl:gap-10 container mx-auto overflow-x-auto">
+  <div className="hidden lg:flex items-center gap-6 xl:gap-8 container mx-auto">
     <div className="flex items-center justify-start min-w-0">
       <CategoryButton />
-      <div className="flex gap-1 sm:gap-2 ml-2 sm:ml-4">
+      <div className="flex gap-2 ml-4">
         {navbar.map((item) => (
           <NavItem key={item.name} item={item} isActive={false} />
         ))}
@@ -66,31 +84,49 @@ const DesktopNav = ({ navbar }) => (
 
 // CategoryButton component for displaying categories
 const CategoryButton = () => (
-  <div className="flex items-center justify-between w-[306px] px-4 sm:px-6 py-2 sm:py-3 bg-[#333d4b] rounded-tl-md rounded-tr-md hover:bg-[#3a4556] transition-colors duration-300 cursor-pointer">
-    <div className="text-white flex items-center gap-2">
-      <MdGridView className="text-base sm:text-lg" />
-      <p className="text-white text-sm sm:text-base font-medium">Categories</p>
+  <motion.div
+    whileHover={{ scale: 1.02 }}
+    className="flex items-center justify-between w-[306px] px-5 py-2.5 bg-gradient-to-r from-[#2c3544] to-[#333d4b] rounded-lg cursor-pointer shadow-lg shadow-black/10 group"
+  >
+    <div className="text-white flex items-center gap-3">
+      <MdGridView className="text-lg text-blue-400 group-hover:text-blue-300 transition-colors" />
+      <p className="text-base font-medium">Categories</p>
     </div>
-    <TfiAngleRight className="text-white text-xs rotate-90" />
-  </div>
+    <motion.div
+      animate={{ rotate: 90 }}
+      transition={{ duration: 0.2 }}
+    >
+      <TfiAngleRight className="text-blue-400 text-sm group-hover:text-blue-300 transition-colors" />
+    </motion.div>
+  </motion.div>
 );
 
 // Logo component for displaying the site logo
 const Logo = () => (
-  <NavLink to="/" className="hover:opacity-80 transition-opacity duration-300">
-    <img src="https://i.imgur.com/TGLPFni.png" alt="BestBuy4uBD" className="h-8 sm:h-10" />
+  <NavLink to="/" className="group">
+    <motion.img 
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: "spring", stiffness: 300 }}
+      src="https://i.imgur.com/TGLPFni.png" 
+      alt="BestBuy4uBD" 
+      className="h-10" 
+    />
   </NavLink>
 );
 
 // SaleInfo component for displaying sale information
-const SaleInfo = () => (
-  <div className="hidden lg:flex items-center justify-center gap-2">
-    <div className="size-10 sm:size-12 bg-[#333D4C] rounded-full flex items-center justify-center">
-      <PiPercentBold className="text-[#F55266] text-lg sm:text-xl" />
-    </div>
+const SaleInfo = () => ( 
+  <div className="hidden lg:flex items-center justify-center gap-3  px-4 py-2 rounded-lg">
+    <motion.div 
+      whileHover={{ rotate: 360 }}
+      transition={{ duration: 0.5 }}
+      className="size-11 bg-gradient-to-br from-[#333D4C] to-[#2c3544] rounded-full flex items-center justify-center shadow-lg"
+    >
+      <PiPercentBold className="text-[#F55266] text-xl" />
+    </motion.div>
     <div>
-      <p className="text-xs font-normal text-[#CAD0D9]">Only this month</p>
-      <p className="text-sm sm:text-base font-medium text-white">Super Sale 20%</p>
+      <p className="text-xs font-normal text-blue-200/80">Only this month</p>
+      <p className="text-base font-medium text-white">Super Sale 20%</p>
     </div>
   </div>
 );
@@ -323,7 +359,7 @@ const Navbar = () => {
   // Effect to handle scroll and show compact nav
   useEffect(() => {
     const handleScroll = () => {
-      setShowCompactNav(window.scrollY > 100);
+      setShowCompactNav(window.scrollY > 80);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -372,17 +408,20 @@ const Navbar = () => {
             cartRef={cartRef}
           />
         </div>
-        <MobileNav isOpen={isOpen} navbar={navbar} />
+        <MobileNav isOpen={isOpen} navbar={navbar} setIsOpen={setIsOpen} />
         <DesktopNav navbar={navbar} />
       </nav>
+      {/* Compact navigation bar that appears when scrolling down */}
       {showCompactNav && (
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           className="fixed top-0 left-0 right-0 bg-[#222934] shadow-md z-50 transition-all duration-300"
         >
+          {/* Main navigation content */}
           <div className="container mx-auto flex items-center justify-between px-3 sm:px-5 py-2 sm:py-3">
             <div className="flex items-center gap-4">
+              {/* Mobile menu toggle button */}
               <div className="lg:hidden">
                 <label
                   onClick={() => setIsOpen(!isOpen)}
@@ -393,13 +432,16 @@ const Navbar = () => {
                   <div className="rounded-2xl h-[2px] sm:h-[3px] w-1/2 bg-white place-self-end"></div>
                 </label>
               </div>
+              {/* Site logo */}
               <Logo />
+            </div>
+              {/* Desktop navigation items */}
               <div className="hidden lg:flex gap-1 sm:gap-2">
                 {navbar.map((item) => (
                   <NavItem key={item.name} item={item} isActive={false} />
                 ))}
               </div>
-            </div>
+            {/* User actions (cart, profile, etc) */}
             <UserActions
               toggleCart={toggleCart}
               cartItems={cartItems}
@@ -407,22 +449,7 @@ const Navbar = () => {
               cartRef={cartRef}
             />
           </div>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="lg:hidden bg-[#222934] py-2"
-            >
-              <div className="container mx-auto px-3 sm:px-5">
-                <div className="flex flex-col gap-2">
-                  {navbar.map((item) => (
-                    <NavItem key={item.name} item={item} isActive={false} />
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
+          
         </motion.nav>
       )}
     </>
