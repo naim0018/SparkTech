@@ -17,7 +17,7 @@ const Mainlayout = () => {
       if (window.scrollY > 300) {
         setShowGoToTop(true)
       } else {
-        setShowGoToTop(false)
+        setShowGoToTop(false) 
       }
     }
 
@@ -36,6 +36,7 @@ const Mainlayout = () => {
   return (
     <div className={`relative ${isDarkMode ? 'dark' : ''}`}>
       <Navbar/>
+     
       <Outlet/>
       <Footer/>
       <AnimatePresence>
