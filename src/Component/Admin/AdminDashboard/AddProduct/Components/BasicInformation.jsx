@@ -1,8 +1,12 @@
+// Import required dependencies
 import PropTypes from 'prop-types';
 import { useFieldArray } from "react-hook-form";
 import { FaPlus, FaTrash } from 'react-icons/fa';
+import { fixedCategory } from '../../../../../utils/variables';
 
+// BasicInformation component for handling product's basic details
 const BasicInformation = ({ register, errors, control, isDarkMode }) => {
+  // Initialize field array for dynamic key features
   const {
     fields: keyFeatureFields,
     append: appendKeyFeature,
@@ -12,23 +16,15 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
     name: "basicInfo.keyFeatures",
   });
 
-  const fixedCategory = [
-    "Home & Kitchen", 
-    "Fashion", 
-    "Beauty & Personal Care", 
-    "Toys & Games", 
-    "Sports & Outdoors", 
-    "Health & Wellness", 
-    "Books & Office Supplies", 
-    "Pet Supplies"
-  ];
-
   return (
+    // Main container with dark/light mode styling
     <div className={`mb-10 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-6 rounded-xl shadow-lg`}>
       <h2 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-gray-700'}`}>
         Basic Information
       </h2>
+      {/* Form fields container */}
       <div className="space-y-4">
+        {/* Product Code field */}
         <label className="block">
           <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Product Code</span>
           <input
@@ -39,6 +35,7 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>Leave blank for auto-generated code</p>
         </label>
 
+        {/* Title field */}
         <label className="block">
           <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Title</span>
           <input
@@ -51,6 +48,7 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
           )}
         </label>
 
+        {/* Brand field */}
         <label className="block">
           <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Brand</span>
           <input
@@ -63,6 +61,7 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
           )}
         </label>
 
+        {/* Category dropdown */}
         <label className="block">
           <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Category</span>
           <select
@@ -79,6 +78,7 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
           )}
         </label>
 
+        {/* Subcategory field */}
         <label className="block">
           <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Subcategory</span>
           <input
@@ -88,6 +88,7 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
           />
         </label>
 
+        {/* Description textarea */}
         <label className="block">
           <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Description</span>
           <textarea
@@ -101,6 +102,7 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
           )}
         </label>
 
+        {/* Dynamic Key Features section */}
         <div className="mb-4">
           <label className="block mb-2">
             <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
@@ -130,6 +132,7 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
               ))}
             </div>
           </label>
+          {/* Add feature button */}
           <button
             type="button"
             onClick={() => appendKeyFeature("")}
@@ -144,6 +147,7 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
   );
 };
 
+// PropTypes validation
 BasicInformation.propTypes = {
   register: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
@@ -151,4 +155,4 @@ BasicInformation.propTypes = {
   isDarkMode: PropTypes.bool.isRequired
 };
 
-export default BasicInformation; 
+export default BasicInformation;

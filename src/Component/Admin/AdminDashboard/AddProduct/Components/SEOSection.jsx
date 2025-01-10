@@ -76,24 +76,16 @@ const SEOSection = ({ register, errors, isDarkMode }) => {
             <span className="text-xs text-gray-400 ml-1">(optional)</span>
           </span>
           <input
-            {...register("seo.slug", {
-              pattern: {
-                value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-                message: "Invalid URL slug format"
-              }
-            })}
-            placeholder="Enter URL slug"
+            {...register("seo.slug")}
+            placeholder="Enter URL slug (e.g., premium-leather-wallet-brown/)"
             className={`w-full p-3 border ${
               isDarkMode 
                 ? 'bg-gray-700 border-gray-600 text-white' 
                 : 'bg-white border-gray-300 text-gray-900'
             } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
           />
-          {errors.seo?.slug && (
-            <span className="text-red-500 text-sm mt-1">{errors.seo.slug.message}</span>
-          )}
           <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            Use lowercase letters, numbers, and hyphens only
+            Use lowercase letters, numbers and hyphens only. Add a trailing slash (e.g., product-name/)
           </p>
         </label>
       </div>
