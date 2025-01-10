@@ -1,8 +1,9 @@
 import { BiPackage, BiListUl, BiCart, BiGroup } from "react-icons/bi";
 import Orders from "../Component/Admin/AdminDashboard/Orders";
 import Customers from "../Component/Admin/AdminDashboard/Customers";
-import AddProductForm from "../Component/Admin/AdminDashboard/AddProduct";
+// import AddProduct from "../Component/Admin/AdminDashboard/AddProduct";
 import Products from "../Component/Admin/AdminDashboard/Products";
+import AddProduct01 from "../Component/Admin/AdminDashboard/AddProduct/AddProduct01";
 
 
 export const adminRoute = [
@@ -12,7 +13,7 @@ export const adminRoute = [
         icon:<BiPackage/>,
         name:'Add Product',
         path:'add-product',
-        element:<AddProductForm/>
+        element:<AddProduct01/>
     },
     {
         icon:<BiListUl/>,

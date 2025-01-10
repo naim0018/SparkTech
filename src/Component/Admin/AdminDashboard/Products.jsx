@@ -6,20 +6,25 @@
    - CRUD operations (Create, Read, Update, Delete) for products
    - Responsive design with different layouts for different screen sizes
    - Dark mode support
+   - Pagination support
 */
 
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useState } from 'react';
-import ProductInput from './ProductInput';
+// import ProductInput from './ProductInput';
 import { useDeleteProductMutation, useGetAllProductsQuery } from '../../../redux/api/ProductApi';
 
 import Swal from 'sweetalert2';
+import { fixedCategory } from '../../../utils/variables';
+import UpdateProduct from './UpdateProduct';
 
 const Products = () => {
   const [expandedProduct, setExpandedProduct] = useState(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filters, setFilters] = useState({
     category: '',
     stockStatus: '',
@@ -29,7 +34,11 @@ const Products = () => {
     sortPrice: ''
   });
 
-  const { data, isLoading } = useGetAllProductsQuery();
+  const { data, isLoading } = useGetAllProductsQuery({
+    page: currentPage,
+    limit: itemsPerPage,
+    ...filters
+  });
   const [deleteProduct] = useDeleteProductMutation();
 
   const toggleProductExpansion = (productId) => {
@@ -90,6 +99,7 @@ const Products = () => {
       ...prev,
       [name]: value
     }));
+    setCurrentPage(1); // Reset to first page when filters change
   };
 
   const handlePriceChange = (e) => {
@@ -98,26 +108,19 @@ const Products = () => {
       ...prev,
       [name]: Number(value)
     }));
+    setCurrentPage(1);
   };
 
-  let filteredProducts = data?.products?.filter(product => {
-    const matchesCategory = !filters.category || product.basicInfo?.category === filters.category;
-    const matchesStock = !filters.stockStatus || product.stockStatus === filters.stockStatus;
-    const matchesSearch = !filters.searchTerm || 
-      product.basicInfo?.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      product.basicInfo?.brand.toLowerCase().includes(filters.searchTerm.toLowerCase());
-    
-    const matchesPrice = product.price.regular >= filters.minPrice && product.price.regular <= filters.maxPrice;
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
-    return matchesCategory && matchesStock && matchesSearch && matchesPrice;
-  });
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
 
-  // Sort products based on price
-  if (filters.sortPrice === 'lowToHigh') {
-    filteredProducts = [...filteredProducts].sort((a, b) => a.price.regular - b.price.regular);
-  } else if (filters.sortPrice === 'highToLow') {
-    filteredProducts = [...filteredProducts].sort((a, b) => b.price.regular - a.price.regular);
-  }
+  const totalPages = data?.pagination?.totalPages || 0;
 
   if (isLoading) {
     return (
@@ -127,7 +130,7 @@ const Products = () => {
     );
   }
 
-  const uniqueCategories = [...new Set(data?.products?.map(p => p.basicInfo?.category))];
+  const uniqueCategories = fixedCategory;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-2 sm:p-4 lg:p-8">
@@ -147,7 +150,7 @@ const Products = () => {
 
         {/* Filter Section */}
         <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Search</label>
               <input
@@ -204,6 +207,20 @@ const Products = () => {
             </div>
 
             <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Items Per Page</label>
+              <select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                <option value={5}>5 per page</option>
+                <option value={10}>10 per page</option>
+                <option value={20}>20 per page</option>
+                <option value={50}>50 per page</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Price Range</label>
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
@@ -238,7 +255,7 @@ const Products = () => {
         {/* Products Table/Grid Section */}
         <section className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
-            {filteredProducts?.length > 0 ? (
+            {data?.products?.length > 0 ? (
               <div className="min-w-full">
                 {/* Desktop View */}
                 <table className="hidden lg:table min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -265,7 +282,7 @@ const Products = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {filteredProducts.map((product) => (
+                    {data.products.map((product) => (
                       <tr key={product._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
                         <td className="px-4 sm:px-6 py-4">
                           <div className="flex items-center">
@@ -354,7 +371,7 @@ const Products = () => {
 
                 {/* Mobile/Tablet View */}
                 <div className="lg:hidden space-y-4 p-4">
-                  {filteredProducts.map((product) => (
+                  {data.products.map((product) => (
                     <div key={product._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transform transition-all duration-200 hover:shadow-lg">
                       <div className="p-4">
                         <div className="flex items-center justify-between">
@@ -439,14 +456,58 @@ const Products = () => {
               </div>
             )}
           </div>
+
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-center py-4 px-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded-md ${
+                  currentPage === 1
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                } transition-colors duration-200`}
+              >
+                Previous
+              </button>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === pageNumber
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  } transition-colors duration-200`}
+                >
+                  {pageNumber}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded-md ${
+                  currentPage === totalPages
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                } transition-colors duration-200`}
+              >
+                Next
+              </button>
+            </div>
+          </div>
         </section>
       </div>
 
       {/* Modal */}
       {isUpdateModalOpen && selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all duration-300">
-            <ProductInput product={selectedProduct} closeModal={closeUpdateModal} />
+          <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-[90vw] max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all duration-300">
+            {/* <ProductInput product={selectedProduct} closeModal={closeUpdateModal} /> */}
+            <UpdateProduct product={selectedProduct} closeModal={closeUpdateModal} />
           </div>
         </div>
       )}

@@ -19,6 +19,8 @@ export default function AddProduct() {
     register,
     control,
     handleSubmit,
+    getValues,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -34,12 +36,18 @@ export default function AddProduct() {
       price: {
         regular: 0,
         discounted: "",
-        selectedVariant: "",
+        selectedVariants: new Map()
       },
       stockStatus: "In Stock",
       stockQuantity: 0,
       images: [{ url: "", alt: "" }],
-      variants: [{ name: "", value: "", price: 0 }],
+      variants: [{
+        group: "",
+        items: [{
+          value: "",
+          price: 0
+        }]
+      }],
       specifications: [{ group: "", items: [{ name: "", value: "" }] }],
       reviews: [],
       rating: {
@@ -140,7 +148,7 @@ export default function AddProduct() {
         price: {
           regular: Number(data.price.regular),
           discounted: data.price.discounted ? Number(data.price.discounted) : undefined,
-          selectedVariant: data.price.selectedVariant,
+          selectedVariants: new Map()
         },
         stockStatus: data.stockStatus,
         stockQuantity: Number(data.stockQuantity),
@@ -150,9 +158,11 @@ export default function AddProduct() {
           alt: image.alt,
         })),
         variants: data.variants.map(variant => ({
-          name: variant.name,
-          value: variant.value,
-          price: Number(variant.price),
+          group: variant.group,
+          items: variant.items.map(item => ({
+            value: item.value,
+            price: Number(item.price)
+          }))
         })),
         specifications: data.specifications.map(spec => ({
           group: spec.group,
@@ -760,74 +770,88 @@ export default function AddProduct() {
           {/* Variants Section */}
           <div className={`mb-10 ${isDarkMode ? 'bg-gray-800 dark' : 'bg-white'} p-6 rounded-xl shadow-lg`}>
             <h2 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-white dark' : 'text-gray-700'}`}>Variants</h2>
-            {variantFields.map((field, index) => (
+            {variantFields.map((field, variantIndex) => (
               <div
                 key={field.id}
                 className={`mb-4 p-4 border-2 ${isDarkMode ? 'border-gray-600 dark' : 'border-gray-300'} rounded-lg`}
               >
                 <label className="block mb-2">
-                  <span className={`${isDarkMode ? 'text-gray-200 dark' : 'text-gray-700'}`}>Variant Name</span>
+                  <span className={`${isDarkMode ? 'text-gray-200 dark' : 'text-gray-700'}`}>Variant Group</span>
                   <input
-                    {...register(`variants.${index}.name`, {
-                      required: "Variant name is required",
+                    {...register(`variants.${variantIndex}.group`, {
+                      required: "Variant group is required",
                     })}
-                    placeholder="Enter variant name"
+                    placeholder="Enter variant group (e.g., Size, Color)"
                     className={`w-full p-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white dark' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1`}
                   />
-                  {errors.variants?.[index]?.name && (
-                    <span className="text-red-500">
-                      {errors.variants[index].name.message}
-                    </span>
-                  )}
                 </label>
-                <label className="block mb-2">
-                  <span className={`${isDarkMode ? 'text-gray-200 dark' : 'text-gray-700'}`}>Variant Value</span>
-                  <input
-                    {...register(`variants.${index}.value`, {
-                      required: "Variant value is required",
-                    })}
-                    placeholder="Enter variant value"
-                    className={`w-full p-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white dark' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1`}
-                  />
-                  {errors.variants?.[index]?.value && (
-                    <span className="text-red-500">
-                      {errors.variants[index].value.message}
-                    </span>
-                  )}
-                </label>
-                <label className="block mb-2">
-                  <span className={`${isDarkMode ? 'text-gray-200 dark' : 'text-gray-700'}`}>Variant Price</span>
-                  <input
-                    {...register(`variants.${index}.price`, {
-                      required: "Variant price is required",
-                      min: 0,
-                      valueAsNumber: true,
-                    })}
-                    type="number"
-                    placeholder="Enter variant price"
-                    className={`w-full p-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white dark' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1`}
-                  />
-                  {errors.variants?.[index]?.price && (
-                    <span className="text-red-500">
-                      {errors.variants[index].price.message}
-                    </span>
-                  )}
-                </label>
+
+                <div className="mt-4">
+                  <h4 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white dark' : 'text-gray-700'}`}>Items</h4>
+                  {field.items.map((item, itemIndex) => (
+                    <div key={itemIndex} className="flex gap-4 mb-2">
+                      <label className="flex-1">
+                        <span className={`${isDarkMode ? 'text-gray-200 dark' : 'text-gray-700'}`}>Value</span>
+                        <input
+                          {...register(`variants.${variantIndex}.items.${itemIndex}.value`, {
+                            required: "Value is required",
+                          })}
+                          placeholder="Enter value (e.g., Large, Red)"
+                          className={`w-full p-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white dark' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1`}
+                        />
+                      </label>
+                      <label className="flex-1">
+                        <span className={`${isDarkMode ? 'text-gray-200 dark' : 'text-gray-700'}`}>Price</span>
+                        <input
+                          type="number"
+                          {...register(`variants.${variantIndex}.items.${itemIndex}.price`, {
+                            required: "Price is required",
+                            min: 0,
+                          })}
+                          placeholder="Enter price"
+                          className={`w-full p-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white dark' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1`}
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newItems = [...field.items];
+                          newItems.splice(itemIndex, 1);
+                          setValue(`variants.${variantIndex}.items`, newItems);
+                        }}
+                        className="mt-8 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                      >
+                        Remove Item
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const currentItems = getValues(`variants.${variantIndex}.items`) || [];
+                      setValue(`variants.${variantIndex}.items`, [...currentItems, { value: "", price: 0 }]);
+                    }}
+                    className="mt-2 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    Add Item
+                  </button>
+                </div>
+
                 <button
                   type="button"
-                  onClick={() => removeVariant(index)}
-                  className="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 shadow-md"
+                  onClick={() => removeVariant(variantIndex)}
+                  className="mt-4 p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 shadow-md"
                 >
-                  Remove Variant
+                  Remove Variant Group
                 </button>
               </div>
             ))}
             <button
               type="button"
-              onClick={() => appendVariant({ name: "", value: "", price: 0 })}
+              onClick={() => appendVariant({ group: "", items: [{ value: "", price: 0 }] })}
               className="p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 shadow-md"
             >
-              Add Variant
+              Add Variant Group
             </button>
           </div>
 

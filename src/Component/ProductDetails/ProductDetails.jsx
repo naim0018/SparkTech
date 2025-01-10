@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaShoppingCart, FaHeart, FaStar, FaExclamationTriangle, FaSearch } from 'react-icons/fa';
 import { useGetProductByIdQuery } from '../../redux/api/ProductApi';
@@ -18,11 +18,21 @@ const ProductView = () => {
   const { data: productResponse, isLoading, isError } = useGetProductByIdQuery(productId);
   const product = productResponse?.data;
   const [quantity, setQuantity] = useState(1);
-  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [selectedVariants, setSelectedVariants] = useState(new Map());
+  const [currentPrice, setCurrentPrice] = useState(
+    product?.price?.discounted || product?.price?.regular
+  );
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
   const wishlistItems = useSelector(state => state.wishlist.wishlistItems);
   const isInWishlist = wishlistItems.some(item => item._id === product?._id);
+
+  useEffect(() => {
+    if (product) {
+      setCurrentPrice(product.price.discounted || product.price.regular);
+      setSelectedVariants(new Map());
+    }
+  }, [product]);
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState />;
@@ -32,15 +42,20 @@ const ProductView = () => {
   const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
 
   const handleAddToCart = () => {
-    const price = selectedVariant ? selectedVariant.price : (product.price.discounted || product.price.regular);
+    const variantSelections = {};
+    selectedVariants.forEach((value, group) => {
+      variantSelections[group] = value;
+    });
+
     dispatch(addToCart({
       id: product._id,
       name: product.basicInfo.title,
-      price: price,
+      price: currentPrice,
       image: product.images[0].url,
       quantity: quantity,
-      variant: selectedVariant ? selectedVariant.value : null
+      variants: variantSelections
     }));
+
     toast.success('Product added to cart!', {
       position: "bottom-right",
       autoClose: 2000,
@@ -63,30 +78,31 @@ const ProductView = () => {
       dispatch(addToWishlist({
         _id: product._id,
         title: product.basicInfo.title,
-        price: product.price.discounted || product.price.regular,
+        price: currentPrice,
         image: product.images[0].url
       }));
       toast.success('Added to wishlist!', {
-        position: "bottom-right", 
+        position: "bottom-right",
         autoClose: 2000
       });
     }
   };
 
   return (
-    <div className={`${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-100 text-gray-900'} min-h-screen py-4 sm:py-8`}>
-      <div className="container mx-auto px-4">
+    <div className={`${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'} min-h-screen py-8`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-4 md:p-8 mb-8`}
+          className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl overflow-hidden`}
         >
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="w-full lg:w-1/2 h-[250px] sm:h-[350px] md:h-[500px] lg:h-[622px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-8">
+            <div className="aspect-w-1 aspect-h-1">
               <ProductImages images={product.images} />
             </div>
-            <div className="w-full lg:w-1/2">
+            
+            <div className="space-y-8">
               <ProductInfo 
                 product={product} 
                 quantity={quantity}
@@ -95,8 +111,10 @@ const ProductView = () => {
                 handleAddToCart={handleAddToCart}
                 handleWishlist={handleWishlist}
                 isInWishlist={isInWishlist}
-                selectedVariant={selectedVariant}
-                setSelectedVariant={setSelectedVariant}
+                selectedVariants={selectedVariants}
+                setSelectedVariants={setSelectedVariants}
+                currentPrice={currentPrice}
+                setCurrentPrice={setCurrentPrice}
               />
             </div>
           </div>
@@ -106,19 +124,17 @@ const ProductView = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-4 md:p-8 mb-8`}
+          className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl mt-8 p-6 md:p-8`}
         >
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="w-full lg:w-3/4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div className="lg:col-span-3">
               {product.specifications && product.specifications.length > 0 && <Specifications product={product} />}
               <AdditionalInfo product={product} />
             </div>
-            <div className="w-full lg:w-1/4">
-            {
-              product.relatedProducts && product.relatedProducts.length > 0 && (
+            <div>
+              {product.relatedProducts && product.relatedProducts.length > 0 && (
                 <RelatedProducts relatedProducts={product.relatedProducts} />
-              )
-            }
+              )}
             </div>
           </div>
         </motion.div>
@@ -129,118 +145,183 @@ const ProductView = () => {
 
 const LoadingState = () => (
   <div className="flex justify-center items-center h-screen">
-    <div className="animate-spin rounded-full h-16 w-16 sm:h-32 sm:w-32 border-t-2 border-b-2 border-blue-500"></div>
+    <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-blue-500"></div>
   </div>
 );
 
 const ErrorState = () => (
-  <div className="flex justify-center items-center h-screen text-red-600">
-    <FaExclamationTriangle className="text-2xl sm:text-4xl mr-2" />
-    <span className="text-sm sm:text-base">Error loading product details</span>
+  <div className="flex flex-col items-center justify-center h-screen space-y-4">
+    <FaExclamationTriangle className="text-6xl text-red-500" />
+    <p className="text-xl font-medium text-gray-700">Error loading product details</p>
   </div>
 );
 
 const NotFoundState = () => (
-  <div className="flex justify-center items-center h-screen text-gray-800">
-    <FaSearch className="text-2xl sm:text-4xl mr-2" />
-    <span className="text-sm sm:text-base">Product not found</span>
+  <div className="flex flex-col items-center justify-center h-screen space-y-4">
+    <FaSearch className="text-6xl text-gray-400" />
+    <p className="text-xl font-medium text-gray-700">Product not found</p>
   </div>
 );
 
-const ProductInfo = ({ product, quantity, incrementQuantity, decrementQuantity, handleAddToCart, handleWishlist, isInWishlist, selectedVariant, setSelectedVariant }) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{product.basicInfo.title}</h1>
-    {product.rating && product.rating.count > 0 && <Rating rating={product.rating} />}
+const ProductInfo = ({ product, quantity, incrementQuantity, decrementQuantity, handleAddToCart, handleWishlist, isInWishlist, selectedVariants, setSelectedVariants, currentPrice, setCurrentPrice }) => (
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="space-y-6">
+    <div>
+      <h1 className="text-4xl font-bold tracking-tight">{product.basicInfo.title}</h1>
+      {product.rating && product.rating.count > 0 && <Rating rating={product.rating} />}
+    </div>
+    
     <ProductDetails product={product} />
-    <PriceInfo product={product} selectedVariant={selectedVariant} />
+    <PriceInfo product={product} currentPrice={currentPrice} />
     <KeyFeatures product={product} />
-    <ProductVariants product={product} selectedVariant={selectedVariant} setSelectedVariant={setSelectedVariant} />
-    <QuantitySelector 
-      quantity={quantity}
-      incrementQuantity={incrementQuantity}
-      decrementQuantity={decrementQuantity}
+    
+    <ProductVariants 
+      product={product} 
+      selectedVariants={selectedVariants}
+      setSelectedVariants={setSelectedVariants}
+      setCurrentPrice={setCurrentPrice}
     />
-    <ActionButtons handleAddToCart={handleAddToCart} handleWishlist={handleWishlist} isInWishlist={isInWishlist} />
+    
+    <div className="space-y-4">
+      <QuantitySelector 
+        quantity={quantity}
+        incrementQuantity={incrementQuantity}
+        decrementQuantity={decrementQuantity}
+      />
+      <ActionButtons handleAddToCart={handleAddToCart} handleWishlist={handleWishlist} isInWishlist={isInWishlist} />
+    </div>
+    
     <AdditionalNotes product={product} />
   </motion.div>
 );
 
 const Rating = ({ rating }) => (
-  <div className="flex items-center mb-4">
-    <div className="flex text-yellow-400 mr-2">
+  <div className="flex items-center mt-2 space-x-2">
+    <div className="flex">
       {[...Array(5)].map((_, i) => (
-        <FaStar key={i} className={`text-lg sm:text-xl ${i < Math.round(rating.average) ? 'text-yellow-400' : 'text-gray-300'}`} />
+        <FaStar key={i} className={`w-5 h-5 ${i < Math.round(rating.average) ? 'text-yellow-400' : 'text-gray-300'}`} />
       ))}
     </div>
-    <span className="text-gray-600 text-xs sm:text-sm">({rating.count} reviews)</span>
+    <span className="text-sm text-gray-500">({rating.count} reviews)</span>
   </div>
 );
 
 const ProductDetails = ({ product }) => (
-  <div className="mb-4 text-xs sm:text-sm">
-    <p className="mb-1"><span className="font-semibold">Brand:</span> {product.basicInfo.brand}</p>
-    <p className="mb-1"><span className="font-semibold">Product Code:</span> {product.basicInfo.productCode}</p>
-    <p className="mb-1"><span className="font-semibold">Availability:</span> {product.stockStatus}</p>
-    <p className="mb-1 uppercase"><span className="font-semibold capitalize">Category:</span> {product.basicInfo.category}</p>
-    <p className="mb-1"><span className="font-semibold">Subcategory:</span> {product.basicInfo.subcategory}</p>
-    {product.basicInfo.model && (
-      <p className="mb-1"><span className="font-semibold">Model:</span> {product.basicInfo.model}</p>
-    )}
-    {product.basicInfo.warranty && (
-      <p className="mb-1"><span className="font-semibold">Warranty:</span> {product.basicInfo.warranty}</p>
-    )}
-    {product.stockQuantity && (
-      <p className="mb-1"><span className="font-semibold">In Stock:</span> {product.stockQuantity} units</p>
-    )}
+  <div className="grid grid-cols-2 gap-4 text-sm">
+    <div className="space-y-2">
+      <p><span className="font-medium">Brand:</span> {product.basicInfo.brand}</p>
+      <p><span className="font-medium">Product Code:</span> {product.basicInfo.productCode}</p>
+      <p><span className="font-medium">Category:</span> {product.basicInfo.category}</p>
+    </div>
+    <div className="space-y-2">
+      <p><span className="font-medium">Availability:</span> {product.stockStatus}</p>
+      <p><span className="font-medium">Subcategory:</span> {product.basicInfo.subcategory}</p>
+      {product.stockQuantity && (
+        <p><span className="font-medium">In Stock:</span> {product.stockQuantity} units</p>
+      )}
+    </div>
     {product.additionalInfo && product.additionalInfo.isOnSale && (
-      <p className="mb-1 text-green-600 font-semibold">On Sale</p>
+      <div className="col-span-2">
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+          On Sale
+        </span>
+      </div>
     )}
   </div>
 );
 
-const PriceInfo = ({ product, selectedVariant }) => {
-  const price = selectedVariant ? selectedVariant.price : product.price;
-  return (
-    <div className="mb-4">
-      <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600 mb-2">
-        Tk {price.discounted || price.regular}
-      </p>
-      {price.discounted && (
-        <p className="text-xs sm:text-sm text-gray-500">
-          Regular Price: <span className="line-through">Tk {price.regular}</span>
-          {' '}(Save: Tk {price.savings} - {price.savingsPercentage.toFixed(2)}%)
+const PriceInfo = ({ product, currentPrice }) => (
+  <div>
+    <p className="text-5xl font-bold text-blue-600">
+      Tk {currentPrice.toLocaleString()}
+    </p>
+    {product.price.discounted && currentPrice === product.price.discounted && (
+      <div className="mt-2 space-y-1">
+        <p className="text-sm text-gray-500">
+          Regular Price: <span className="line-through">Tk {product.price.regular.toLocaleString()}</span>
         </p>
-      )}
-    </div>
-  );
-};
+        <p className="text-sm text-green-600">
+          Save: Tk {product.price.savings.toLocaleString()} ({product.price.savingsPercentage?.toFixed(2)}%)
+        </p>
+      </div>
+    )}
+  </div>
+);
 
 const KeyFeatures = ({ product }) => (
-  <div className="mb-4">
-    <h2 className="text-lg sm:text-xl font-bold mb-2">Key Features</h2>
-    <ul className="list-disc list-inside text-xs sm:text-sm">
+  <div>
+    <h2 className="text-xl font-semibold mb-3">Key Features</h2>
+    <ul className="list-disc list-inside space-y-2 text-sm">
       {product.basicInfo.keyFeatures.map((feature, index) => (
-        <li key={index} className="mb-1">{feature}</li>
+        <li key={index} className="text-gray-700">{feature}</li>
       ))}
     </ul>
   </div>
 );
 
-const ProductVariants = ({ product, selectedVariant, setSelectedVariant }) => (
+const ProductVariants = ({ product, selectedVariants, setSelectedVariants, setCurrentPrice }) => (
   product.variants && product.variants.length > 0 && (
-    <div className="mb-4">
-      {product.variants.map((variant, index) => (
-        <div key={index} className="mb-2">
-          <label className="block mb-1 font-semibold text-xs sm:text-sm">{variant.name}:</label>
-          <select 
-            className="w-full p-2 border border-gray-300 bg-white text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm"
-            value={selectedVariant && selectedVariant.value === variant.value ? variant.value : ''}
-            
-            onChange={(e) => setSelectedVariant(variant)}
-          >
-            <option value="">Select {variant.name}</option>
-            <option value={variant.value}>{variant.value}</option>
-          </select>
+    <div className="space-y-4">
+      <h3 className="text-xl font-semibold">Available Options</h3>
+      {product.variants.map((variantGroup, groupIndex) => (
+        <div key={groupIndex} className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">{variantGroup.group}:</label>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+            {variantGroup.items.map((item, itemIndex) => {
+              const isSelected = selectedVariants.get(variantGroup.group) === item.value;
+              
+              return (
+                <motion.button
+                  key={itemIndex}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    const newVariants = new Map(selectedVariants);
+                    if (isSelected) {
+                      newVariants.delete(variantGroup.group);
+                      setCurrentPrice(product.price.regular);
+                    } else {
+                      newVariants.set(variantGroup.group, item.value);
+                      setCurrentPrice(item.price);
+                    }
+                    setSelectedVariants(newVariants);
+                  }}
+                  className={`
+                    relative p-2 rounded-lg text-xs transition-all duration-200
+                    ${isSelected 
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md ring-2 ring-blue-500 ring-offset-1' 
+                      : 'bg-white text-gray-800 border border-gray-200 hover:border-blue-400 hover:shadow-sm'
+                    }
+                  `}
+                >
+                  <div className="flex flex-col items-center space-y-1">
+                    <span className="font-medium">{item.value}</span>
+                    {item.price !== product.price.regular && (
+                      <span className={`
+                        text-[10px] font-medium px-1.5 py-0.5 rounded-full
+                        ${isSelected 
+                          ? 'bg-blue-400 text-white' 
+                          : 'bg-gray-100 text-gray-700'
+                        }
+                      `}>
+                        {item.price > product.price.regular ? `+${item.price - product.price.regular}` : item.price - product.price.regular} Tk
+                      </span>
+                    )}
+                  </div>
+                  {isSelected && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center"
+                    >
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </motion.div>
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
         </div>
       ))}
     </div>
@@ -248,48 +329,55 @@ const ProductVariants = ({ product, selectedVariant, setSelectedVariant }) => (
 );
 
 const QuantitySelector = ({ quantity, incrementQuantity, decrementQuantity }) => (
-  <div className="flex items-center mb-4">
-    <motion.button 
-      whileHover={{ scale: 1.1 }} 
-      whileTap={{ scale: 0.9 }}
-      onClick={decrementQuantity} 
-      className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 text-gray-600 hover:bg-gray-300 rounded-l-md transition text-lg sm:text-xl flex items-center justify-center"
-    >
-      -
-    </motion.button>
-    <input 
-      type="text" 
-      value={quantity} 
-      readOnly
-      className="w-12 sm:w-16 h-8 sm:h-10 text-center border-t border-b border-gray-300 bg-white text-gray-700 text-base sm:text-lg"
-    />
-    <motion.button 
-      whileHover={{ scale: 1.1 }} 
-      whileTap={{ scale: 0.9 }}
-      onClick={incrementQuantity} 
-      className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 text-gray-600 hover:bg-gray-300 rounded-r-md transition text-lg sm:text-xl flex items-center justify-center"
-    >
-      +
-    </motion.button>
+  <div className="flex items-center space-x-3">
+    <span className="text-sm font-medium">Quantity:</span>
+    <div className="flex items-center">
+      <motion.button 
+        whileHover={{ scale: 1.1 }} 
+        whileTap={{ scale: 0.9 }}
+        onClick={decrementQuantity}
+        className="w-10 h-10 rounded-l-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition"
+      >
+        -
+      </motion.button>
+      <input 
+        type="text" 
+        value={quantity} 
+        readOnly
+        className="w-16 h-10 text-center border-y border-gray-200 bg-white"
+      />
+      <motion.button 
+        whileHover={{ scale: 1.1 }} 
+        whileTap={{ scale: 0.9 }}
+        onClick={incrementQuantity}
+        className="w-10 h-10 rounded-r-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition"
+      >
+        +
+      </motion.button>
+    </div>
   </div>
 );
 
 const ActionButtons = ({ handleAddToCart, handleWishlist, isInWishlist }) => (
-  <div className="flex flex-col sm:flex-row gap-4 mb-4">
+  <div className="flex gap-4">
     <motion.button 
-      whileHover={{ scale: 1.05 }} 
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.02 }} 
+      whileTap={{ scale: 0.98 }}
       onClick={handleAddToCart}
-      className="flex-1 bg-blue-600 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-md text-base sm:text-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center"
+      className="flex-1 bg-blue-600 text-white h-12 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center"
     >
       <FaShoppingCart className="mr-2" />
       Add to Cart
     </motion.button>
     <motion.button 
-      whileHover={{ scale: 1.05 }} 
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.02 }} 
+      whileTap={{ scale: 0.98 }}
       onClick={handleWishlist}
-      className={`flex-1 border-2 ${isInWishlist ? 'border-red-600 text-red-600 hover:bg-red-50' : 'border-blue-600 text-blue-600 hover:bg-blue-50'} py-2 sm:py-3 px-4 sm:px-6 rounded-md text-base sm:text-lg font-semibold transition flex items-center justify-center`}
+      className={`flex-1 h-12 rounded-lg font-medium transition flex items-center justify-center
+        ${isInWishlist 
+          ? 'bg-red-50 text-red-600 border-2 border-red-600 hover:bg-red-100' 
+          : 'bg-gray-50 text-blue-600 border-2 border-blue-600 hover:bg-gray-100'
+        }`}
     >
       <FaHeart className="mr-2" />
       {isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
@@ -298,53 +386,55 @@ const ActionButtons = ({ handleAddToCart, handleWishlist, isInWishlist }) => (
 );
 
 const AdditionalNotes = ({ product }) => (
-  <div>
-    <p className="text-red-600 text-xs sm:text-sm mb-1">* PLEASE CHECK THE PRODUCT IN FRONT OF THE DELIVERY PERSON</p>
+  <div className="space-y-2 text-sm">
+    <p className="text-red-600">* PLEASE CHECK THE PRODUCT IN FRONT OF THE DELIVERY PERSON</p>
     {product.additionalInfo.freeShipping && (
-      <p className="text-blue-600 text-xs sm:text-sm">* FREE SHIPPING</p>
+      <p className="text-blue-600">* FREE SHIPPING</p>
     )}
     {product.additionalInfo.estimatedDelivery && (
-      <p className="text-green-600 text-xs sm:text-sm">* Estimated Delivery: {product.additionalInfo.estimatedDelivery}</p>
+      <p className="text-green-600">* Estimated Delivery: {product.additionalInfo.estimatedDelivery}</p>
     )}
   </div>
 );
 
 const Specifications = ({ product }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }}>
-    <h2 className="text-xl sm:text-2xl font-bold mb-4">Specifications</h2>
-    {product.specifications.map((specGroup, groupIndex) => (
-      <div key={groupIndex} className="mb-6">
-        <h3 className="text-lg sm:text-xl font-semibold mb-3">{specGroup.group}</h3>
-        <div className="bg-gray-100 rounded-lg overflow-hidden">
-          {specGroup.items.map((item, itemIndex) => (
-            <div key={itemIndex} className={`flex ${itemIndex % 2 === 0 ? 'bg-gray-50' : ''}`}>
-              <div className="w-1/3 p-2 sm:p-3 font-semibold text-gray-700 border-gray-200 border-r text-xs sm:text-sm">
-                {item.name}
+    <h2 className="text-2xl font-bold mb-6">Specifications</h2>
+    <div className="space-y-8">
+      {product.specifications.map((specGroup, groupIndex) => (
+        <div key={groupIndex}>
+          <h3 className="text-xl font-semibold mb-4">{specGroup.group}</h3>
+          <div className="bg-gray-50 rounded-xl overflow-hidden">
+            {specGroup.items.map((item, itemIndex) => (
+              <div key={itemIndex} className={`flex ${itemIndex % 2 === 0 ? 'bg-white' : ''}`}>
+                <div className="w-1/3 p-4 font-medium text-gray-900 border-r border-gray-200">
+                  {item.name}
+                </div>
+                <div className="w-2/3 p-4 text-gray-600">
+                  {item.value}
+                </div>
               </div>
-              <div className="w-2/3 p-2 sm:p-3 text-gray-600 text-xs sm:text-sm">
-                {item.value}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    ))}
+      ))}
+    </div>
   </motion.div>
 );
 
 const AdditionalInfo = ({ product }) => (
   product.additionalInfo && Object.keys(product.additionalInfo).length > 0 && (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.4 }}>
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 mt-8">Additional Information</h2>
-      <div className="bg-gray-100 rounded-lg overflow-hidden">
+      <h2 className="text-2xl font-bold mb-6 mt-12">Additional Information</h2>
+      <div className="bg-gray-50 rounded-xl overflow-hidden">
         {Object.entries(product.additionalInfo)
           .filter(([key]) => !['isFeatured', 'isOnSale', 'freeShipping'].includes(key))
           .map(([key, value], index) => (
-            <div key={index} className={`flex ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
-              <div className="w-1/3 p-2 sm:p-3 font-semibold text-gray-700 border-gray-200 border-r text-xs sm:text-sm">
+            <div key={index} className={`flex ${index % 2 === 0 ? 'bg-white' : ''}`}>
+              <div className="w-1/3 p-4 font-medium text-gray-900 border-r border-gray-200">
                 {key}
               </div>
-              <div className="w-2/3 p-2 sm:p-3 text-gray-600 text-xs sm:text-sm">
+              <div className="w-2/3 p-4 text-gray-600">
                 {value.toString()}
               </div>
             </div>
