@@ -11,16 +11,16 @@ import { useTheme } from '../../ThemeContext';
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
-  const wishlistItems = useSelector(state => state.wishlist.wishlistItems);
-  const isInWishlist = wishlistItems.some(item => item._id === product._id);
+  const wishlistItems = useSelector(state => state?.wishlist?.wishlistItems);
+  const isInWishlist = wishlistItems?.some(item => item?._id === product?._id);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     dispatch(addToCart({
-      id: product._id,
-      name: product.basicInfo.title,
-      price: product.price.discounted || product.price.regular,
-      image: product.images[0].url,
+      id: product?._id,
+      name: product?.basicInfo?.title,
+      price: Math.ceil(product?.price?.discounted || product?.price?.regular),
+      image: product?.images?.[0]?.url,
       quantity: 1
     }));
     toast.success('Product added to cart!', {
@@ -37,10 +37,10 @@ const ProductCard = ({ product }) => {
   const handleAddToWishlist = (e) => {
     e.preventDefault();
     dispatch(addToWishlist({
-      _id: product._id,
-      title: product.basicInfo.title,
-      price: product.price.discounted || product.price.regular,
-      image: product.images[0].url
+      _id: product?._id,
+      title: product?.basicInfo?.title,
+      price: Math.ceil(product?.price?.discounted || product?.price?.regular),
+      image: product?.images?.[0]?.url
     }));
     toast.success('Product added to wishlist!', {
       position: "bottom-right",
@@ -54,13 +54,13 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Link to={`/product/${product._id}`} className="block">
+    <Link to={`/product/${product?._id}`} className="block">
       <div className={`group ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-[480px]`}>
         {/* Image Section with Overlay */}
         <div className="relative h-64">
           <img 
-            src={product.images[0].url} 
-            alt={product.basicInfo.title}
+            src={product?.images?.[0]?.url} 
+            alt={product?.basicInfo?.title}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -84,14 +84,14 @@ const ProductCard = ({ product }) => {
           </div>
           
           {/* Badges */}
-          <div className="absolute top-4 left-4 flex flex-col gap-2">
-            {product.price.discounted && (
-              <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                -{product.price.savingsPercentage.toFixed(0)}%
+          <div className="absolute top-4 right-4 flex flex-col gap-2">
+            {product?.price?.discounted && (
+              <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                {product?.price?.savingsPercentage?.toFixed(0)}%
               </span>
             )}
-            {product.additionalInfo?.isOnSale && (
-              <span className="bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+            {product?.additionalInfo?.isOnSale && (
+              <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
                 Sale
               </span>
             )}
@@ -103,10 +103,10 @@ const ProductCard = ({ product }) => {
           {/* Title and Brand */}
           <div className="mb-3">
             <h3 className={`font-medium text-lg leading-tight mb-1 h-[50px] overflow-hidden ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              {product.basicInfo.title}
+              {product?.basicInfo?.title}
             </h3>
             <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              by <span className="font-medium">{product.basicInfo.brand}</span>
+              by <span className="font-medium">{product?.basicInfo?.brand}</span>
             </p>
           </div>
 
@@ -115,15 +115,15 @@ const ProductCard = ({ product }) => {
             <div className="flex items-center gap-1">
               <div className="flex text-yellow-400">
                 {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} className={`w-3.5 h-3.5 ${i < Math.floor(product.rating.average) ? 'opacity-100' : 'opacity-30'}`} />
+                  <FaStar key={i} className={`w-3.5 h-3.5 ${i < Math.floor(product?.rating?.average) ? 'opacity-100' : 'opacity-30'}`} />
                 ))}
               </div>
               <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                ({product.rating.count})
+                ({product?.rating?.count})
               </span>
             </div>
             <span className={`text-xs px-2 py-1 rounded-full ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
-              {product.basicInfo.category}
+              {product?.basicInfo?.category}
             </span>
           </div>
 
@@ -131,12 +131,12 @@ const ProductCard = ({ product }) => {
           <div className="flex items-baseline gap-2 mb-3">
             <span className={`text-xl font-bold flex items-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               <TbCurrencyTaka className="text-xl" />
-              {(product.price.discounted || product.price.regular).toFixed(2)}
+              {Math.ceil(product?.price?.discounted || product?.price?.regular)}
             </span>
-            {product.price.discounted && (
+            {product?.price?.discounted && (
               <span className={`text-sm line-through flex items-center ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                 <TbCurrencyTaka />
-                {product.price.regular.toFixed(2)}
+                {Math.ceil(product?.price?.regular)}
               </span>
             )}
           </div>
@@ -144,13 +144,13 @@ const ProductCard = ({ product }) => {
           {/* Status and Sales */}
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-1">
-              <FaCheck className={product.stockStatus === 'In Stock' ? 'text-emerald-500' : 'text-red-500'} />
+              <FaCheck className={product?.stockStatus === 'In Stock' ? 'text-emerald-500' : 'text-red-500'} />
               <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                {product.stockStatus}
+                {product?.stockStatus}
               </span>
             </div>
             <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              {product.sold} sold
+              {product?.sold} sold
             </span>
           </div>
         </div>

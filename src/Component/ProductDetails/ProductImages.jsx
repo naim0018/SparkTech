@@ -1,13 +1,16 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
-const ProductImages = ({ images }) => {
+const ProductImages = ({ images, currentImage }) => {
     const [selectedImage, setSelectedImage] = useState(images[0]?.url || '');
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isZoomed, setIsZoomed] = useState(false);
     const imageRef = useRef(null);
+    const [mainImage, setMainImage] = useState(images[0]);
 
     const nextImage = () => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -18,8 +21,12 @@ const ProductImages = ({ images }) => {
     };
   
     useEffect(() => {
-      setSelectedImage(images[currentIndex]?.url || '');
-    }, [currentIndex, images]);
+      if (currentImage) {
+        setMainImage(currentImage);
+      } else {
+        setMainImage(images[0]);
+      }
+    }, [currentImage, images]);
   
     const handleMouseMove = (e) => {
       if (!isZoomed || !imageRef.current) return;

@@ -20,19 +20,18 @@ import { removeFromWishlist } from "../redux/features/wishlistSlice";
 import Search from "./Search";
 
 // NavItem component for rendering individual navigation items
-const NavItem = ({ item, isActive }) => (
+const NavItem = ({ item, onClick }) => (
   <NavLink
     to={`/${item.path}`}
-    className={`px-4 md:px-5 py-2.5 rounded-lg transition-all duration-300 relative group ${
-      isActive
-        ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30"
-        : "text-gray-200 hover:text-white"
-    }`}
+    onClick={onClick}
+    className={({ isActive }) =>
+      `px-4 md:px-5 py-2.5 rounded-lg transition-all duration-300 relative group text-gray-200 hover:text-white ${
+        isActive ? "after:content-[''] after:absolute after:left-4 after:right-4 after:-bottom-1 after:h-0.5 after:bg-white" : ""
+      }`
+    }
   >
     <p className="text-sm sm:text-base font-medium relative z-10">{item.name}</p>
-    {!isActive && (
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/80 to-blue-600/80 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-    )}
+    <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
   </NavLink>
 );
 
@@ -40,16 +39,20 @@ const NavItem = ({ item, isActive }) => (
 const MobileNav = ({ isOpen, navbar, setIsOpen }) => {
   const navRef = useRef(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (navRef.current && !navRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (navRef.current && !navRef.current.contains(event.target)) {
+  //       setIsOpen(false);
+  //     }
+  //   };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setIsOpen]);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => document.removeEventListener("mousedown", handleClickOutside);
+  // }, []);
+
+  const handleNavItemClick = () => {
+    setIsOpen(false);
+  };
 
   return (
     <motion.div
@@ -61,7 +64,11 @@ const MobileNav = ({ isOpen, navbar, setIsOpen }) => {
     >
       <div className="mt-16 flex flex-col gap-3">
         {navbar.map((item) => (
-          <NavItem key={item.name} item={item} isActive={false} />
+          <NavItem 
+            key={item.name} 
+            item={item} 
+            onClick={handleNavItemClick}
+          />
         ))}
       </div>
     </motion.div>
@@ -75,7 +82,7 @@ const DesktopNav = ({ navbar }) => (
       <CategoryButton />
       <div className="flex gap-2 ml-4">
         {navbar.map((item) => (
-          <NavItem key={item.name} item={item} isActive={false} />
+          <NavItem key={item.name} item={item} />
         ))}
       </div>
     </div>
@@ -86,7 +93,7 @@ const DesktopNav = ({ navbar }) => (
 const CategoryButton = () => (
   <motion.div
     whileHover={{ scale: 1.02 }}
-    className="flex items-center justify-between w-[306px] px-5 py-2.5 bg-gradient-to-r from-[#2c3544] to-[#333d4b] rounded-lg cursor-pointer shadow-lg shadow-black/10 group"
+    className="flex items-center justify-between w-[306px] px-5 py-2.5 bg-gradient-to-r from-[#2c3544] to-[#333d4b] cursor-pointer  shadow-black/10 group"
   >
     <div className="text-white flex items-center gap-3">
       <MdGridView className="text-lg text-blue-400 group-hover:text-blue-300 transition-colors" />
@@ -202,13 +209,13 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
               <>
                 <NavLink
                   to={`/${user.role}/dashboard`}
-                  className="block px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:bg-emerald-50 transition-colors"
+                  className="block px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:bg-blue-50 transition-colors"
                 >
                   Dashboard
                 </NavLink>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:bg-emerald-50 transition-colors"
+                  className="w-full text-left px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:bg-blue-50 transition-colors"
                 >
                   Logout
                 </button>
@@ -216,7 +223,7 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
             ) : (
               <NavLink
                 to="/login"
-                className="block px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:bg-emerald-50 transition-colors"
+                className="block px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:bg-blue-50 transition-colors"
               >
                 Login/Signup
               </NavLink>
@@ -230,7 +237,7 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
         className="relative p-1.5 sm:p-2 rounded-full bg-[#333D4C] hover:bg-[#3a4556] transition-colors"
         onClick={toggleWishlist}
       >
-        <span className="absolute -top-2 -right-2 bg-emerald-500 text-white w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm rounded-full flex items-center justify-center">
+        <span className="absolute -top-2 -right-2 bg-blue-500 text-white w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm rounded-full flex items-center justify-center">
           {wishlistItems.length}
         </span>
         <MdFavorite className="text-xl sm:text-2xl text-white" />
@@ -241,7 +248,7 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
         className="relative p-1.5 sm:p-2 rounded-full bg-[#333D4C] hover:bg-[#3a4556] transition-colors"
         onClick={toggleCart}
       >
-        <span className="absolute -top-2 -right-2 bg-emerald-500 text-white w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm rounded-full flex items-center justify-center">
+        <span className="absolute -top-2 -right-2 bg-blue-500 text-white w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm rounded-full flex items-center justify-center">
           {cartItems.length}
         </span>
         <IoCartOutline className="text-xl sm:text-2xl text-white" />
@@ -291,7 +298,7 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
                       <img src={item.image} alt={item.title} className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded" />
                       <div className="flex-1">
                         <h3 className="text-sm sm:text-base font-medium mb-1">{item.title}</h3>
-                        <p className="text-emerald-600 font-semibold text-sm sm:text-base">${item.price}</p>
+                        <p className="text-blue-600 font-semibold text-sm sm:text-base">${item.price}</p>
                         <div className="flex gap-2 mt-2">
                           <NavLink 
                             to={`/product/${item._id}`}
@@ -316,7 +323,7 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
                   <p className="text-gray-500 mb-3 sm:mb-4 text-sm sm:text-base">Your wishlist is empty</p>
                   <NavLink 
                     to="/shop" 
-                    className="text-emerald-600 hover:text-emerald-700 text-sm sm:text-base"
+                    className="text-blue-600 hover:text-blue-700 text-sm sm:text-base"
                     onClick={toggleWishlist}
                   >
                     Continue Shopping
@@ -341,7 +348,7 @@ const Navbar = () => {
   const cartRef = useRef(null);
   const cartItems = useSelector((state) => state.cart.cartItems);
   
-
+ 
   const toggleCart = () => setIsCartOpen(!isCartOpen);
 
   // Effect to handle clicking outside the cart to close it
@@ -371,9 +378,9 @@ const Navbar = () => {
       <nav className="bg-[#222934] relative shadow-md">
         <div className="container mx-auto flex items-center justify-between lg:flex-row px-3 sm:px-5 py-3 sm:p-5">
           <div className="flex items-center gap-2 sm:gap-[15px] lg:gap-0 lg:justify-between lg:w-fit pb-0 sm:pb-2">
-            <div className="lg:hidden relative z-50">
+            <div className="lg:hidden relative z-50 " onClick={() => setIsOpen(!isOpen)}>
               <label
-                onClick={() => setIsOpen(!isOpen)}
+                
                 className="flex flex-col gap-1.5 sm:gap-2 w-[18px] sm:w-[22px] cursor-pointer"
               >
                 <div
@@ -438,7 +445,7 @@ const Navbar = () => {
               {/* Desktop navigation items */}
               <div className="hidden lg:flex gap-1 sm:gap-2">
                 {navbar.map((item) => (
-                  <NavItem key={item.name} item={item} isActive={false} />
+                  <NavItem key={item.name} item={item} />
                 ))}
               </div>
             {/* User actions (cart, profile, etc) */}

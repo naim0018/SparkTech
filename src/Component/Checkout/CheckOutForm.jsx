@@ -4,18 +4,19 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useCreateOrderMutation } from '../../redux/api/OrderApi'
 import { clearCart } from '../../redux/features/CartSlice'
-import { useCreateBkashPaymentMutation } from '../../redux/api/bkashApi'
+import { useCreateBkashPaymentMutation } from '../../redux/api/BkashApi'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import PropTypes from 'prop-types'
+import { toast } from 'react-toastify'
 
 function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setPaymentStatus }) {
-  // All state and hooks remain the same
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm()
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm()
   const dispatch = useDispatch()
   const [createOrder] = useCreateOrderMutation()
   const cartItems = useSelector((state) => state.cart?.cartItems)
-  const cartTotal = useSelector((state) => state.cart?.cartItems?.reduce((total, item) => total + item.price * item.quantity, 0))
+  
+  const cartTotal = cartItems?.reduce((total, item) => total + item.price * item.quantity, 0) || 0
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const shippingCost = 0
   const taxRate = 0
@@ -25,7 +26,6 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
   const navigate = useNavigate()
   const [bkashPaymentSuccess, setBkashPaymentSuccess] = useState(false)
 
-  // All useEffect hooks and handlers remain exactly the same as before
   useEffect(() => {
     setSelectedPayment('bkash')
   }, [setSelectedPayment])
@@ -77,11 +77,7 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
       }
     } catch (error) {
       console.error('Bkash payment error:', error)
-      Swal.fire({
-        title: 'Error',
-        text: 'Failed to initiate bKash payment',
-        icon: 'error'
-      })
+      toast.error('Failed to initiate bKash payment')
     }
   }
 
@@ -91,25 +87,9 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
     setPaymentStatus('cod')
   }
 
-  const onSubmit = async (data) => {
-    // All submission logic remains the same
-    localStorage.setItem('checkoutFormData', JSON.stringify(data))
-
+  const onSubmit = async (formData) => {
     if (!selectedPayment) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Please select a payment method',
-        icon: 'error'
-      })
-      return
-    }
-
-    if (selectedPayment === 'bkash' && !bkashPaymentSuccess) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Please complete bKash payment first',
-        icon: 'error'
-      })
+      toast.error('Please select a payment method')
       return
     }
 
@@ -124,43 +104,53 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
       })
 
       const orderData = {
-        items: cartItems?.map((item) => ({
-          product: item?.id,
-          quantity: item?.quantity,
-          price: item?.price
+        items: cartItems.map((item) => ({
+          product: item.id,
+          quantity: item.quantity,
+          price: item.price,
+          image: item.image,
+          itemKey: item.itemKey,
+          selectedVariants: item.selectedVariants?.reduce((acc, variant) => {
+            acc[variant.group] = {
+              value: variant.value,
+              price: variant.price,
+            }
+            return acc
+          }, {})
         })),
         totalAmount: cartTotal + shippingCost + (cartTotal * taxRate),
-        status: selectedPayment === 'bkash' ? 'Processing' : 'Pending',
+        status: 'pending',
         billingInformation: {
-          firstName: data?.firstName,
-          lastName: data?.lastName,
-          email: data?.email,
-          phone: data?.phone,
-          streetAddress: data?.streetAddress,
-          city: data?.city,
-          zipCode: data?.zipCode,
-          country: data?.country,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          streetAddress: formData.address,
+          city: formData.city,
+          zipCode: formData.zipCode,
+          country: formData.country || 'Bangladesh',
           paymentMethod: selectedPayment,
-          notes: data?.notes
+          notes: formData.notes
         },
         paymentInfo: {
-          paymentMethod: selectedPayment === 'cod' ? 'cash on delivery' : 'bkash',
-          status: selectedPayment === 'bkash' ? 'completed' : 'pending',
-          amount: cartTotal + shippingCost + (cartTotal * taxRate)
+          paymentMethod: selectedPayment === 'bkash' ? 'bkash' : 'cash on delivery',
+          status: 'pending',
+          amount: cartTotal + shippingCost + (cartTotal * taxRate),
+          ...(selectedPayment === 'bkash' && {
+            bkashNumber: formData.bkashNumber,
+            transactionId: formData.transactionId
+          })
         }
       }
-
       const response = await createOrder(orderData).unwrap()
-
-      if (response?.success) {
+      if (response.success) {
         dispatch(clearCart())
         localStorage.removeItem('checkoutFormData')
         Swal.close()
         setShowSuccessModal(true)
       }
-
     } catch (error) {
-      console.error('Order creation failed:', error)
+      console.error('Order creation error:', error)
       
       Swal.fire({
         title: 'Error',
@@ -183,105 +173,133 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full bg-white shadow-lg rounded-lg p-4">
-        {/* Personal Information */}
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-3">Personal Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <input 
-                placeholder="First Name *"
-                className="w-full px-3 py-2 text-sm border rounded"
-                {...register('firstName', { required: true })}
-              />
-              {errors?.firstName && <span className="text-red-500 text-xs">Required</span>}
-            </div>
-            <div>
-              <input 
-                placeholder="Last Name *"
-                className="w-full px-3 py-2 text-sm border rounded"
-                {...register('lastName', { required: true })}
-              />
-              {errors?.lastName && <span className="text-red-500 text-xs">Required</span>}
-            </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Billing Information */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">First Name</label>
+            <input
+              {...register('firstName', { required: 'First name is required' })}
+              className="w-full px-3 py-2 border rounded"
+            />
+            {errors.firstName && (
+              <span className="text-red-500 text-xs">{errors.firstName.message}</span>
+            )}
           </div>
-          <div className="mt-3 space-y-3">
-            <input 
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Last Name</label>
+            <input
+              {...register('lastName', { required: 'Last name is required' })}
+              className="w-full px-3 py-2 border rounded"
+            />
+            {errors.lastName && (
+              <span className="text-red-500 text-xs">{errors.lastName.message}</span>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Email</label>
+            <input
               type="email"
-              placeholder="Email Address *"
-              className="w-full px-3 py-2 text-sm border rounded"
-              {...register('email', { required: true, pattern: /^\S+@\S+$/i })}
+              {...register('email', { 
+                required: 'Email is required',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Invalid email address'
+                }
+              })}
+              className="w-full px-3 py-2 border rounded"
             />
-            {errors?.email && <span className="text-red-500 text-xs">Valid email required</span>}
-            
-            <input 
-              type="tel"
-              placeholder="Phone Number *"
-              className="w-full px-3 py-2 text-sm border rounded"
-              {...register('phone', { required: true })}
+            {errors.email && (
+              <span className="text-red-500 text-xs">{errors.email.message}</span>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Phone</label>
+            <input
+              {...register('phone', { 
+                required: 'Phone number is required',
+                pattern: {
+                  value: /^[0-9+\-\s()]*$/,
+                  message: 'Invalid phone number'
+                }
+              })}
+              className="w-full px-3 py-2 border rounded"
             />
-            {errors?.phone && <span className="text-red-500 text-xs">Required</span>}
+            {errors.phone && (
+              <span className="text-red-500 text-xs">{errors.phone.message}</span>
+            )}
           </div>
         </div>
 
-        {/* Shipping Information */}
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-3">Shipping Information</h3>
-          <div className="space-y-3">
-            <input 
-              placeholder="Street Address *"
-              className="w-full px-3 py-2 text-sm border rounded"
-              {...register('streetAddress', { required: true })}
+        {/* Address Information */}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Street Address</label>
+            <input
+              {...register('address', { required: 'Address is required' })}
+              className="w-full px-3 py-2 border rounded"
             />
-            {errors?.streetAddress && <span className="text-red-500 text-xs">Required</span>}
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <input 
-                  placeholder="City *"
-                  className="w-full px-3 py-2 text-sm border rounded"
-                  {...register('city', { required: true })}
-                />
-                {errors?.city && <span className="text-red-500 text-xs">Required</span>}
-              </div>
-              <div>
-                <input 
-                  placeholder="ZIP Code *"
-                  className="w-full px-3 py-2 text-sm border rounded"
-                  {...register('zipCode', { required: true })}
-                />
-                {errors?.zipCode && <span className="text-red-500 text-xs">Required</span>}
-              </div>
+            {errors.address && (
+              <span className="text-red-500 text-xs">{errors.address.message}</span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">City</label>
+              <input
+                {...register('city', { required: 'City is required' })}
+                className="w-full px-3 py-2 border rounded"
+              />
+              {errors.city && (
+                <span className="text-red-500 text-xs">{errors.city.message}</span>
+              )}
             </div>
-            
-            <input 
-              value="Bangladesh"
-              readOnly
-              className="w-full px-3 py-2 text-sm border rounded bg-gray-50"
-              {...register('country')}
-            />
+
+            <div>
+              <label className="block text-sm font-medium mb-1">ZIP Code</label>
+              <input
+                {...register('zipCode', { required: 'ZIP code is required' })}
+                className="w-full px-3 py-2 border rounded"
+              />
+              {errors.zipCode && (
+                <span className="text-red-500 text-xs">{errors.zipCode.message}</span>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Country</label>
+              <input
+                {...register('country')}
+                defaultValue="Bangladesh"
+                className="w-full px-3 py-2 border rounded bg-gray-100"
+                readOnly
+              />
+            </div>
           </div>
         </div>
 
-        {/* Additional Information */}
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-3">Additional Information</h3>
+        {/* Order Notes */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Order Notes (Optional)</label>
           <textarea 
-            placeholder="Order Notes (Optional)"
-            rows="2"
-            className="w-full px-3 py-2 text-sm border rounded"
             {...register('notes')}
+            rows="2"
+            className="w-full px-3 py-2 border rounded"
           ></textarea>
         </div>
 
         {/* Payment Method */}
-        <div className="mb-4">
+        <div>
           <h3 className="text-lg font-semibold mb-3">Payment Method</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <button
               type="button"
               onClick={handleBkashPayment}
-              className={`p-3 rounded border text-sm ${
+              className={`p-3 rounded border ${
                 selectedPayment === 'bkash' ? 'border-pink-500 bg-pink-50' : 'border-gray-200'
               }`}
             >
@@ -295,7 +313,7 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
             <button
               type="button"
               onClick={handleCodPayment}
-              className={`p-3 rounded border text-sm ${
+              className={`p-3 rounded border ${
                 selectedPayment === 'cod' ? 'border-green-500 bg-green-50' : 'border-gray-200'
               }`}
             >
@@ -307,24 +325,29 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
           </div>
         </div>
 
-        <div className="mb-4">
-          <label className="flex items-center text-sm">
-            <input
-              type="checkbox"
-              className="mr-2"
-              {...register('terms', { required: true })}
-            />
-            I agree to the terms and conditions
-          </label>
-          {errors?.terms && <span className="text-red-500 text-xs">You must agree to the terms</span>}
-        </div>
+        {/* Terms & Submit */}
+        <div className="space-y-4">
+          <div>
+            <label className="flex items-center text-sm">
+              <input
+                type="checkbox"
+                {...register('terms', { required: true })}
+                className="mr-2"
+              />
+              I agree to the terms and conditions
+            </label>
+            {errors.terms && (
+              <span className="text-red-500 text-xs">You must agree to the terms</span>
+            )}
+          </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded text-sm font-medium hover:bg-blue-700"
-        >
-          Place Order
-        </button>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded text-sm font-medium hover:bg-blue-700"
+          >
+            Place Order
+          </button>
+        </div>
       </form>
 
       {/* Success Modal */}

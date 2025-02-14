@@ -1,7 +1,6 @@
 import { BiPackage, BiListUl, BiCart, BiGroup } from "react-icons/bi";
-import Orders from "../Component/Admin/AdminDashboard/Orders";
+import Orders from "../Component/Admin/AdminDashboard/Orders/index";
 import Customers from "../Component/Admin/AdminDashboard/Customers";
-// import AddProduct from "../Component/Admin/AdminDashboard/AddProduct";
 import Products from "../Component/Admin/AdminDashboard/Products";
 import AddProduct01 from "../Component/Admin/AdminDashboard/AddProduct/AddProduct01";
 

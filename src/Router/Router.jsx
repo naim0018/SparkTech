@@ -4,7 +4,7 @@ import { routeGenerator } from "../utils/routesGenerator";
 import { navbarRoute } from "./NavbarRoute";
 import ErrorPage from "../Component/ErrorPage/ErrorPage";
 import Home from "../Pages/Home";
-import AdminDashboard from "../Component/Admin/AdminDashboard/AdminDashboard";
+import AdminDashboard from "../Component/Admin/AdminDashboard/Dashboard/AdminDashboard";
 import { adminRoute } from "./AdminRoute";
 import ProductDetails from "../Component/ProductDetails/ProductDetails";
 import Checkout from "../Component/Checkout/Checkout";

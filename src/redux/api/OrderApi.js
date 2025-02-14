@@ -3,13 +3,11 @@ import { baseApi } from "./baseApi";
 export const orderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createOrder: builder.mutation({
-      query: (orderData) => {
-        return {
-          url: '/order/create-order',
-          method: 'POST',
-          body: orderData,
-        }
-      },
+      query: (orderData) => ({
+        url: '/order/create-order',
+        method: 'POST',
+        body: orderData,
+      }),
       invalidatesTags: ['Orders'],
     }),
     getOrderById: builder.query({

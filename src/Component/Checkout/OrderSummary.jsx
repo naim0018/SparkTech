@@ -10,16 +10,16 @@ const OrderSummary = ({ paymentStatus }) => {
   const taxRate = 0
   const totalAmount = cartTotal + shippingCost + (cartTotal * taxRate)
 
-  const handleIncrement = (itemId) => {
-    dispatch(incrementQuantity({ id: itemId }))
+  const handleIncrement = (itemKey) => {
+    dispatch(incrementQuantity({ itemKey }))
   }
 
-  const handleDecrement = (itemId) => {
-    dispatch(decrementQuantity({ id: itemId }))
+  const handleDecrement = (itemKey) => {
+    dispatch(decrementQuantity({ itemKey }))
   }
 
-  const handleRemove = (itemId) => {
-    dispatch(removeFromCart({ id: itemId }))
+  const handleRemove = (itemKey) => {
+    dispatch(removeFromCart({ itemKey }))
   }
 
   return (
@@ -31,7 +31,7 @@ const OrderSummary = ({ paymentStatus }) => {
       <div className="space-y-6">
         <div className="max-h-[300px] overflow-y-auto pr-2">
           {cartItems?.map((item) => (
-            <div key={item?.id} className="flex items-center justify-between mb-4 bg-gray-50 p-3 rounded-lg">
+            <div key={item?.itemKey} className="flex items-center justify-between mb-4 bg-gray-50 p-3 rounded-lg">
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <img 
@@ -43,9 +43,18 @@ const OrderSummary = ({ paymentStatus }) => {
                 <div>
                   <h3 className="font-medium text-gray-800">{item?.name}</h3>
                   <p className="text-sm text-gray-500">৳{item?.price?.toFixed(2)} x {item?.quantity}</p>
+                  {item.selectedVariants && item.selectedVariants.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {item.selectedVariants.map((variant, idx) => (
+                        <span key={idx} className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded">
+                          {variant.value}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <div className="flex items-center mt-2 space-x-2">
                     <button 
-                      onClick={() => handleDecrement(item?.id)}
+                      onClick={() => handleDecrement(item?.itemKey)}
                       className="bg-gray-200 text-gray-600 px-2 rounded hover:bg-gray-300"
                       disabled={item?.quantity <= 1}
                     >
@@ -53,13 +62,13 @@ const OrderSummary = ({ paymentStatus }) => {
                     </button>
                     <span className="text-gray-700">{item?.quantity}</span>
                     <button 
-                      onClick={() => handleIncrement(item?.id)}
+                      onClick={() => handleIncrement(item?.itemKey)}
                       className="bg-gray-200 text-gray-600 px-2 rounded hover:bg-gray-300"
                     >
                       +
                     </button>
                     <button 
-                      onClick={() => handleRemove(item?.id)}
+                      onClick={() => handleRemove(item?.itemKey)}
                       className="ml-2 text-red-500 hover:text-red-600"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -59,16 +59,24 @@ export default function AddProduct01() {
       price: {
         regular: 0,
         discounted: "",
+        savings: 0,
+        savingsPercentage: 0,
         selectedVariants: new Map()
       },
       stockStatus: "In Stock",
       stockQuantity: 0,
+      sold: 0,
       images: [{ url: "", alt: "" }],
       variants: [{
         group: "",
         items: [{
           value: "",
-          price: 0
+          price: 0,
+          stock: 0,
+          image: {
+            url: "",
+            alt: ""
+          }
         }]
       }],
       specifications: [{ group: "", items: [{ name: "", value: "" }] }],
@@ -119,9 +127,13 @@ export default function AddProduct01() {
         price: {
           regular: Number(data.price.regular),
           discounted: data.price.discounted ? Number(data.price.discounted) : undefined,
+          savings: Number(data.price.savings),
+          savingsPercentage: Number(data.price.savingsPercentage),
+          selectedVariants: data.price.selectedVariants
         },
         stockStatus: data.stockStatus,
         stockQuantity: Number(data.stockQuantity),
+        sold: Number(data.sold),
         images: data.images.filter(image => image.url.trim() !== ""),
         variants: data.variants
           .filter(variant => variant.group.trim() !== "")
@@ -131,7 +143,12 @@ export default function AddProduct01() {
               .filter(item => item.value.trim() !== "")
               .map(item => ({
                 value: item.value,
-                price: Number(item.price)
+                price: Number(item.price),
+                stock: Number(item.stock),
+                image: {
+                  url: item.image.url,
+                  alt: item.image.alt
+                }
               }))
           })),
         specifications: data.specifications

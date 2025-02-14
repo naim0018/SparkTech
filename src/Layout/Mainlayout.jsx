@@ -36,7 +36,7 @@ const Mainlayout = () => {
   return (
     <div className={`relative ${isDarkMode ? 'dark' : ''}`}>
       <Navbar/>
-     
+      
       <Outlet/>
       <Footer/>
       <AnimatePresence>
