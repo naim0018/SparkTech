@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import { useGetAllOrdersQuery, useUpdateOrderMutation, useDeleteOrderMutation } from '../../../../redux/api/OrderApi';
 import { FiDownload } from 'react-icons/fi';
 import { toast } from 'react-toastify';
@@ -119,61 +120,69 @@ const Orders = () => {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Orders Management</h1>
-        <div className="flex gap-4">
-          <button
-            onClick={handleExportCSV}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-          >
-            <FiDownload /> Export CSV
-          </button>
-          <div className="flex gap-2">
+    <>
+      <Helmet>
+        <title>Orders Management | Admin Dashboard</title>
+        <meta name="description" content="Manage all customer orders, track order status, and handle order processing efficiently." />
+        <meta name="keywords" content="orders, order management, admin dashboard, ecommerce" />
+      </Helmet>
+
+      <div className="p-8 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold">Orders Management</h1>
+          <div className="flex gap-4">
             <button
-              onClick={() => setViewMode('table')}
-              className={`px-4 py-2 rounded-lg ${viewMode === 'table' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+              onClick={handleExportCSV}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
             >
-              Table View
+              <FiDownload /> Export CSV
             </button>
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`px-4 py-2 rounded-lg ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
-            >
-              Grid View
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setViewMode('table')}
+                className={`px-4 py-2 rounded-lg ${viewMode === 'table' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+              >
+                Table View
+              </button>
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`px-4 py-2 rounded-lg ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+              >
+                Grid View
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <OrderStats orders={orders?.data} orderStatuses={orderStatuses} />
-      
-      <OrderFilters 
-        searchTerm={searchTerm}
-        dateFilter={dateFilter}
-        statusFilter={statusFilter}
-        setSearchTerm={setSearchTerm}
-        setDateFilter={setDateFilter}
-        setStatusFilter={setStatusFilter}
-        orderStatuses={orderStatuses}
-      />
-
-      <OrderList 
-        orders={filteredOrders}
-        viewMode={viewMode}
-        handleUpdateOrder={handleUpdateOrder}
-        handleDeleteOrder={handleDeleteOrder}
-        setSelectedOrder={setSelectedOrder}
-        orderStatuses={orderStatuses}
-      />
-
-      {selectedOrder && (
-        <OrderDetails 
-          order={selectedOrder} 
-          onClose={() => setSelectedOrder(null)} 
+        <OrderStats orders={orders?.data} orderStatuses={orderStatuses} />
+        
+        <OrderFilters 
+          searchTerm={searchTerm}
+          dateFilter={dateFilter}
+          statusFilter={statusFilter}
+          setSearchTerm={setSearchTerm}
+          setDateFilter={setDateFilter}
+          setStatusFilter={setStatusFilter}
+          orderStatuses={orderStatuses}
         />
-      )}
-    </div>
+
+        <OrderList 
+          orders={filteredOrders}
+          viewMode={viewMode}
+          handleUpdateOrder={handleUpdateOrder}
+          handleDeleteOrder={handleDeleteOrder}
+          setSelectedOrder={setSelectedOrder}
+          orderStatuses={orderStatuses}
+        />
+
+        {selectedOrder && (
+          <OrderDetails 
+            order={selectedOrder} 
+            onClose={() => setSelectedOrder(null)} 
+          />
+        )}
+      </div>
+    </>
   );
 };
 

@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import PropTypes from 'prop-types'
 import { toast } from 'react-toastify'
+import { Helmet } from 'react-helmet'
 
 function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setPaymentStatus }) {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm()
@@ -173,6 +174,11 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
 
   return (
     <>
+      <Helmet>
+        <title>Checkout | BestBuy4uBD</title>
+        <meta name="description" content="Complete your purchase securely. Enter shipping and payment details to place your order." />
+        <meta name="keywords" content="checkout, payment, shipping, order completion" />
+      </Helmet>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Billing Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

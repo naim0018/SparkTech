@@ -3,6 +3,7 @@ import { useGetAllProductsQuery } from '../../redux/api/ProductApi';
 import ProductCard from '../Shop/ProductCard';
 import { useTheme } from '../../ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet';
 
 const NewArrivals = () => {
   const { isDarkMode } = useTheme();
@@ -54,55 +55,62 @@ const NewArrivals = () => {
   }
 
   return (
-    <div className={`max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-12 ${
-      isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'
-    }`}>
-      <h2 className="text-3xl font-bold mb-8 text-center">Check out our latest products</h2>
-      {recentProducts.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-xl text-gray-500">No new products</p>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <AnimatePresence>
-              {currentProducts.map((product) => (
-                <motion.div
-                  key={product._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <ProductCard product={product} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+    <>
+      <Helmet>
+        <title>New Arrivals | BestBuy4uBD</title>
+        <meta name="description" content="Discover our latest products and new arrivals. Shop the newest electronics and gadgets with great deals." />
+        <meta name="keywords" content="new arrivals, latest products, new electronics, BestBuy4uBD" />
+      </Helmet>
+      <div className={`max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-12 ${
+        isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'
+      }`}>
+        <h2 className="text-3xl font-bold mb-8 text-center">Check out our latest products</h2>
+        {recentProducts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-xl text-gray-500">No new products</p>
           </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="mt-8 flex justify-center space-x-2">
-              {[...Array(totalPages)].map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentPage(idx + 1)}
-                  className={`px-4 py-2 rounded-lg ${
-                    currentPage === idx + 1
-                      ? 'bg-blue-500 text-white'
-                      : isDarkMode
-                      ? 'bg-gray-700 text-gray-200'
-                      : 'bg-gray-200 text-gray-700'
-                  } hover:opacity-80 transition-opacity`}
-                >
-                  {idx + 1}
-                </button>
-              ))}
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <AnimatePresence>
+                {currentProducts.map((product) => (
+                  <motion.div
+                    key={product._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ProductCard product={product} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
-          )}
-        </>
-      )}
-    </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex justify-center space-x-2">
+                {[...Array(totalPages)].map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentPage(idx + 1)}
+                    className={`px-4 py-2 rounded-lg ${
+                      currentPage === idx + 1
+                        ? 'bg-blue-500 text-white'
+                        : isDarkMode
+                        ? 'bg-gray-700 text-gray-200'
+                        : 'bg-gray-200 text-gray-700'
+                    } hover:opacity-80 transition-opacity`}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

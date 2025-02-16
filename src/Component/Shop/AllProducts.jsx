@@ -7,6 +7,7 @@ import { useTheme } from "../../ThemeContext";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
 import { useSearchParams } from "react-router-dom";
 import { fixedCategory } from "../../utils/variables";
+import { Helmet } from 'react-helmet';
 
 // Main component for displaying all products
 const AllProducts = () => {
@@ -231,6 +232,11 @@ const AllProducts = () => {
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
+      <Helmet>
+        <title>All Products | BestBuy4uBD</title>
+        <meta name="description" content="Browse our complete collection of electronics, gadgets, and accessories. Filter by category, price range, and stock status." />
+        <meta name="keywords" content="electronics, gadgets, products, online shopping, BestBuy4uBD" />
+      </Helmet>
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page title */}
         <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-center">Our Products</h1>

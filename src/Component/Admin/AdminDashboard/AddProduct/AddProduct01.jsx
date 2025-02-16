@@ -4,6 +4,7 @@ import { useAddProductMutation } from "../../../../redux/api/ProductApi";
 import { toast } from "react-toastify";
 import { useTheme } from "../../../../ThemeContext";
 import { FaBox, FaTag, FaImage, FaCog, FaTruck, FaInfo, FaSearch, FaDollarSign, FaWarehouse, FaPlus } from 'react-icons/fa';
+import { Helmet } from 'react-helmet';
 
 // Component imports
 import BasicInformation from "./Components/BasicInformation";
@@ -34,7 +35,7 @@ const tabs = [
   { name: 'SEO', icon: FaSearch, component: SEOSection },
 ];
 
-export default function AddProduct01() {
+const AddProduct01 = () => {
   const [addProduct] = useAddProductMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isDarkMode } = useTheme();
@@ -202,91 +203,100 @@ export default function AddProduct01() {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-8">
-            <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              Add New Product
-            </h1>
-            <p className={`mt-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              Fill in the information below to create a new product
-            </p>
-          </div>
+    <>
+      <Helmet>
+        <title>Add New Product | Admin Dashboard</title>
+        <meta name="description" content="Add new products to your store. Enter product details, images, variants, and more." />
+        <meta name="keywords" content="add product, product management, admin" />
+      </Helmet>
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-8">
+              <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                Add New Product
+              </h1>
+              <p className={`mt-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                Fill in the information below to create a new product
+              </p>
+            </div>
 
-          <div className="flex gap-6">
-            {/* Sidebar Navigation */}
-            <div className="w-64 flex-shrink-0">
-              <nav className={`space-y-1 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-4`}>
-                {tabs.map((tab, index) => (
-                  <button
-                    key={tab.name}
-                    type="button"
-                    onClick={() => setSelectedTab(index)}
-                    className={classNames(
-                      selectedTab === index
-                        ? `${isDarkMode ? 'bg-gray-700 text-white' : 'bg-blue-50 text-blue-600'}`
-                        : `${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-50'}`,
-                      'group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full'
-                    )}
-                  >
-                    <tab.icon 
+            <div className="flex gap-6">
+              {/* Sidebar Navigation */}
+              <div className="w-64 flex-shrink-0">
+                <nav className={`space-y-1 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-4`}>
+                  {tabs.map((tab, index) => (
+                    <button
+                      key={tab.name}
+                      type="button"
+                      onClick={() => setSelectedTab(index)}
                       className={classNames(
                         selectedTab === index
-                          ? 'text-blue-500'
-                          : 'text-gray-400 group-hover:text-gray-500',
-                        'flex-shrink-0 -ml-1 mr-3 h-6 w-6'
+                          ? `${isDarkMode ? 'bg-gray-700 text-white' : 'bg-blue-50 text-blue-600'}`
+                          : `${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-50'}`,
+                        'group flex items-center px-3 py-2 text-sm font-medium rounded-md w-full'
                       )}
-                    />
-                    <span className="truncate">{tab.name}</span>
-                  </button>
-                ))}
-              </nav>
+                    >
+                      <tab.icon 
+                        className={classNames(
+                          selectedTab === index
+                            ? 'text-blue-500'
+                            : 'text-gray-400 group-hover:text-gray-500',
+                          'flex-shrink-0 -ml-1 mr-3 h-6 w-6'
+                        )}
+                      />
+                      <span className="truncate">{tab.name}</span>
+                    </button>
+                  ))}
+                </nav>
 
-              <div className="mt-6">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`w-full py-3 px-4 ${
-                    isDarkMode 
-                      ? 'bg-blue-600 hover:bg-blue-700' 
-                      : 'bg-blue-500 hover:bg-blue-600'
-                  } text-white rounded-lg transition duration-200 flex items-center justify-center gap-2 disabled:opacity-50`}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      Processing...
-                    </>
-                  ) : (
-                    'Add Product'
-                  )}
-                </button>
+                <div className="mt-6">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full py-3 px-4 ${
+                      isDarkMode 
+                        ? 'bg-blue-600 hover:bg-blue-700' 
+                        : 'bg-blue-500 hover:bg-blue-600'
+                    } text-white rounded-lg transition duration-200 flex items-center justify-center gap-2 disabled:opacity-50`}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Processing...
+                      </>
+                    ) : (
+                      'Add Product'
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Main Content */}
+              <div className={`flex-1 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+                {tabs.map((Tab, index) => (
+                  <div
+                    key={Tab.name}
+                    className={selectedTab === index ? 'block' : 'hidden'}
+                  >
+                    <Tab.component
+                      register={register}
+                      control={control}
+                      errors={errors}
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
-
-            {/* Main Content */}
-            <div className={`flex-1 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
-              {tabs.map((Tab, index) => (
-                <div
-                  key={Tab.name}
-                  className={selectedTab === index ? 'block' : 'hidden'}
-                >
-                  <Tab.component
-                    register={register}
-                    control={control}
-                    errors={errors}
-                    isDarkMode={isDarkMode}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
-}
+};
+
+export default AddProduct01;
