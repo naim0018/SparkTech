@@ -2,7 +2,7 @@ import Benefits from './Benefits/Benefits'
 // import CustomerReviews from './CustomerReviews/CustomerReviews'
 import HeroContainer from './Hero/HeroContainer'
 import NewArrivals from './NewArrivals/NewArrivals'
-import Offers from './Offers/Offers'
+// import Offers from './Offers/Offers'
 import SpecialOffers from './SpecialOffers/SpecialOffers'
 import TrendingProducts from './TrendingProducts/TrendingProducts'
 import { Helmet } from 'react-helmet'
@@ -20,7 +20,7 @@ const HomeContainer = () => {
         <Benefits/>
         <NewArrivals/>
         <TrendingProducts/>
-        <Offers/>
+        {/* <Offers/> */}
         <SpecialOffers/>
         {/* <Brands/> */}
         {/* <CustomerReviews/> */}

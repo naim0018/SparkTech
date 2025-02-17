@@ -19,7 +19,7 @@ const orderStatuses = [
 const Orders = () => {
   // API Queries & Mutations
   const { data: orders, isLoading } = useGetAllOrdersQuery();
-  console.log(orders)
+  
   const [updateOrder] = useUpdateOrderMutation();
   const [deleteOrder] = useDeleteOrderMutation();
 

@@ -45,7 +45,7 @@ const ProductView = () => {
 
   const handleVariantSelect = (groupName, variant) => {
     const newSelectedVariants = new Map(selectedVariants);
-    console.log({newSelectedVariants});
+    
     
     if (selectedVariants.get(groupName)?.value === variant.value) {
       // Deselect variant
@@ -63,7 +63,7 @@ const ProductView = () => {
       
       // Update image based on remaining variants or reset to default
       const lastSelectedVariant = Array.from(newSelectedVariants.values()).pop();
-      console.log({lastSelectedVariant});
+    
       
       if (lastSelectedVariant?.image?.url) {
         setCurrentImage({
@@ -89,12 +89,12 @@ const ProductView = () => {
       // If we have valid variant prices, use the highest one
       if (variantPrices.length > 0) {
         const highestPrice = Math.max(...variantPrices);
-        console.log({highestPrice});
+       
         setCurrentPrice(highestPrice);
       } else {
         // If no valid variant prices, use base product price
         setCurrentPrice(product.price.discounted || product.price.regular);
-        console.log({currentPrice});
+        
       }
 
       // Update image if variant has specific image
@@ -148,7 +148,7 @@ const ProductView = () => {
       toast.success('Added to wishlist!');
     }
   };
-  console.log(product);
+ 
   return (
     <>
       <Helmet>

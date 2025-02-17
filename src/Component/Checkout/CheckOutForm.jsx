@@ -4,12 +4,12 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useCreateOrderMutation } from '../../redux/api/OrderApi'
 import { clearCart } from '../../redux/features/CartSlice'
-import { useCreateBkashPaymentMutation } from '../../redux/api/BkashApi'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import PropTypes from 'prop-types'
 import { toast } from 'react-toastify'
 import { Helmet } from 'react-helmet'
+import { useCreateBkashPaymentMutation } from '../../redux/api/bkashApi'
 
 function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setPaymentStatus }) {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm()
@@ -19,8 +19,6 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
   
   const cartTotal = cartItems?.reduce((total, item) => total + item.price * item.quantity, 0) || 0
   const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const shippingCost = 0
-  const taxRate = 0
   const location = useLocation()
   const [createBkashPayment] = useCreateBkashPaymentMutation()
   const user = useSelector((state) => state.auth?.user)
@@ -114,21 +112,18 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
           selectedVariants: item.selectedVariants?.reduce((acc, variant) => {
             acc[variant.group] = {
               value: variant.value,
-              price: variant.price,
+              price: variant.price
             }
             return acc
           }, {})
         })),
-        totalAmount: cartTotal + shippingCost + (cartTotal * taxRate),
+        totalAmount: cartTotal,
         status: 'pending',
         billingInformation: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
+          name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          streetAddress: formData.address,
-          city: formData.city,
-          zipCode: formData.zipCode,
+          address: formData.address,
           country: formData.country || 'Bangladesh',
           paymentMethod: selectedPayment,
           notes: formData.notes
@@ -136,10 +131,10 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
         paymentInfo: {
           paymentMethod: selectedPayment === 'bkash' ? 'bkash' : 'cash on delivery',
           status: 'pending',
-          amount: cartTotal + shippingCost + (cartTotal * taxRate),
-          ...(selectedPayment === 'bkash' && {
-            bkashNumber: formData.bkashNumber,
-            transactionId: formData.transactionId
+          amount: cartTotal,
+          ...(selectedPayment === 'bkash' && bkashPaymentSuccess && {
+            transactionId: new URLSearchParams(location.search).get('trxID'),
+            bkashNumber: formData.phone
           })
         }
       }
@@ -181,98 +176,57 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
       </Helmet>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Billing Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">First Name</label>
-            <input
-              {...register('firstName', { required: 'First name is required' })}
-              className="w-full px-3 py-2 border rounded"
-            />
-            {errors.firstName && (
-              <span className="text-red-500 text-xs">{errors.firstName.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Last Name</label>
-            <input
-              {...register('lastName', { required: 'Last name is required' })}
-              className="w-full px-3 py-2 border rounded"
-            />
-            {errors.lastName && (
-              <span className="text-red-500 text-xs">{errors.lastName.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input
-              type="email"
-              {...register('email', { 
-                required: 'Email is required',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Invalid email address'
-                }
-              })}
-              className="w-full px-3 py-2 border rounded"
-            />
-            {errors.email && (
-              <span className="text-red-500 text-xs">{errors.email.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Phone</label>
-            <input
-              {...register('phone', { 
-                required: 'Phone number is required',
-                pattern: {
-                  value: /^[0-9+\-\s()]*$/,
-                  message: 'Invalid phone number'
-                }
-              })}
-              className="w-full px-3 py-2 border rounded"
-            />
-            {errors.phone && (
-              <span className="text-red-500 text-xs">{errors.phone.message}</span>
-            )}
-          </div>
-        </div>
-
-        {/* Address Information */}
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Street Address</label>
-            <input
-              {...register('address', { required: 'Address is required' })}
-              className="w-full px-3 py-2 border rounded"
-            />
-            {errors.address && (
-              <span className="text-red-500 text-xs">{errors.address.message}</span>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <h3 className="text-lg font-semibold mb-3">Billing Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">City</label>
+              <label className="block text-sm font-medium mb-1">Name</label>
               <input
-                {...register('city', { required: 'City is required' })}
+                {...register('name', { required: 'Name is required' })}
                 className="w-full px-3 py-2 border rounded"
               />
-              {errors.city && (
-                <span className="text-red-500 text-xs">{errors.city.message}</span>
+              {errors.name && (
+                <span className="text-red-500 text-xs">{errors.name.message}</span>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">ZIP Code</label>
+              <label className="block text-sm font-medium mb-1">Email</label>
               <input
-                {...register('zipCode', { required: 'ZIP code is required' })}
+                type="email"
+                {...register('email', { 
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address'
+                  }
+                })}
                 className="w-full px-3 py-2 border rounded"
               />
-              {errors.zipCode && (
-                <span className="text-red-500 text-xs">{errors.zipCode.message}</span>
+              {errors.email && (
+                <span className="text-red-500 text-xs">{errors.email.message}</span>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Phone</label>
+              <input
+                {...register('phone', { required: 'Phone is required' })}
+                className="w-full px-3 py-2 border rounded"
+              />
+              {errors.phone && (
+                <span className="text-red-500 text-xs">{errors.phone.message}</span>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Address</label>
+              <input
+                {...register('address', { required: 'Address is required' })}
+                className="w-full px-3 py-2 border rounded"
+              />
+              {errors.address && (
+                <span className="text-red-500 text-xs">{errors.address.message}</span>
               )}
             </div>
 

@@ -49,7 +49,7 @@ const OrderList = ({ orders, viewMode, handleUpdateOrder, handleDeleteOrder, set
                 <td className="px-6 py-4">
                   <div>
                     <p className="font-medium">
-                      {`${order.billingInformation.firstName} ${order.billingInformation.lastName}`}
+                      {`${order.billingInformation.name}`}
                     </p>
                     <p className="text-sm text-gray-500">{order.billingInformation.email}</p>
                   </div>
@@ -131,7 +131,7 @@ const OrderList = ({ orders, viewMode, handleUpdateOrder, handleDeleteOrder, set
           </div>
           <div className="space-y-2">
             <p className="text-gray-600">
-              Customer: {`${order.billingInformation.firstName} ${order.billingInformation.lastName}`}
+              Customer: {`${order.billingInformation.name}`}
             </p>
             <p className="text-gray-600">
               Date: {new Date(order.createdAt).toLocaleDateString()}
