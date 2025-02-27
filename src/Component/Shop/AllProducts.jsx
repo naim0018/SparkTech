@@ -6,8 +6,8 @@ import ProductCard from "./ProductCard";
 import { useTheme } from "../../ThemeContext";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
 import { useSearchParams } from "react-router-dom";
-import { fixedCategory } from "../../utils/variables";
 import { Helmet } from 'react-helmet';
+import { useGetAllCategoriesQuery } from "../../redux/api/CategoriesApi";
 
 // Main component for displaying all products
 const AllProducts = () => {
@@ -24,9 +24,8 @@ const AllProducts = () => {
   const [filters, setFilters] = useState({
     searchTerm: searchParams.get('search') || '',
     category: searchParams.get('category') || '',
+    subcategory: searchParams.get('subcategory') || '',
     stockStatus: searchParams.get('stockStatus') || '',
-    minPrice: Number(searchParams.get('minPrice')) || 0,
-    maxPrice: Number(searchParams.get('maxPrice')) || 10000,
     sortPrice: searchParams.get('sort') || ''
   });
 
@@ -36,39 +35,42 @@ const AllProducts = () => {
     
     if (newFilters.searchTerm) params.set('search', newFilters.searchTerm);
     if (newFilters.category) params.set('category', newFilters.category);
+    if (newFilters.subcategory) params.set('subcategory', newFilters.subcategory);
     if (newFilters.stockStatus) params.set('stockStatus', newFilters.stockStatus);
-    if (newFilters.minPrice > 0) params.set('minPrice', newFilters.minPrice);
-    if (newFilters.maxPrice < 10000) params.set('maxPrice', newFilters.maxPrice);
     if (newFilters.sortPrice) params.set('sort', newFilters.sortPrice);
-    if (currentPage > 1) params.set('page', currentPage);
+    if (currentPage > 1) params.set('page', currentPage.toString());
 
     setSearchParams(params);
   };
 
-  // Constructing query parameters for the API call
+  // Construct query parameters
   const queryParams = {
     page: currentPage,
     limit: productsPerPage,
-    search: filters.searchTerm,
-    category: filters.category,
-    stockStatus: filters.stockStatus,
-    minPrice: filters.minPrice,
-    maxPrice: filters.maxPrice,
-    sort: filters.sortPrice === "lowToHigh" ? "price.regular" : filters.sortPrice === "highToLow" ? "-price.regular" : ""
+    ...(filters.searchTerm && { search: filters.searchTerm }),
+    ...(filters.category && { category: filters.category }),
+    ...(filters.subcategory && { subcategory: filters.subcategory }),
+    ...(filters.stockStatus && { stockStatus: filters.stockStatus }),
+    sort: filters.sortPrice === "lowToHigh" ? "price.regular" : 
+          filters.sortPrice === "highToLow" ? "-price.regular" : "-createdAt"
   };
 
-  // Fetching products data using RTK Query
-  const { data: productsData, isLoading, isError } = useGetAllProductsQuery(queryParams);
+  // Use RTK Query hook with the updated params
+  const { data: productsData, isLoading, error } = useGetAllProductsQuery(queryParams);
+
+  // Fetch categories data
+  const { data: categoriesData } = useGetAllCategoriesQuery();
 
   // Update filters and search params
   const handleFilterChange = (newFilters) => {
+    setCurrentPage(1); // Reset to first page when filters change
     setFilters(newFilters);
     updateSearchParams(newFilters);
   };
 
   // Loading state - Shows animated loading spinner
   if (isLoading) return (
-    <div className={`flex justify-center items-center h-screen ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+    <div className={`flex justify-center items-center h-screen ${isDarkMode ? 'text-orange-500' : 'text-black'}`}>
       <motion.div
         animate={{
           scale: [1, 1.2, 1.2, 1, 1],
@@ -82,31 +84,38 @@ const AllProducts = () => {
           repeat: Infinity,
           repeatDelay: 1
         }}
-        className="w-16 h-16 border-4 border-blue-500"
+        className="w-16 h-16 border-4 border-orange-500"
       />
     </div>
   );
 
   // Error state - Shows error message if data fetching fails
-  if (isError) return <div className={`flex justify-center items-center h-screen ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Error loading products</div>;
+  if (error) {
+    console.error('Error loading products:', error);
+    return (
+      <div className="text-center py-8">
+        <p className="text-orange-500">Error loading products. Please try again later.</p>
+      </div>
+    );
+  }
 
   // Filter sidebar content
   const FilterSidebar = () => (
     <div className="space-y-6">
       {/* Search input with icon */}
       <div className="lg:hidden">
-        <h3 className="text-lg font-semibold mb-2">Search</h3>
+        <h3 className="text-lg font-semibold mb-2 text-orange-500">Search</h3>
         <div className="relative">
           <input
             type="text"
             placeholder="Search by title or category..."
             value={filters.searchTerm}
             onChange={(e) => handleFilterChange({ ...filters, searchTerm: e.target.value })}
-            className={`w-full p-3 pl-10 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-blue-500 ${
-              isDarkMode ? 'bg-gray-700 text-white placeholder-gray-400' : 'bg-white text-gray-800 placeholder-gray-500'
+            className={`w-full p-3 pl-10 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500 ${
+              isDarkMode ? 'bg-gray-700 text-orange-300 placeholder-gray-400' : 'bg-white text-black placeholder-gray-500'
             }`}
           />
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-400" />
         </div>
       </div>
 
@@ -114,12 +123,12 @@ const AllProducts = () => {
 
       {/* Sort by Price */}
       <div className="lg:hidden">
-        <h3 className="text-lg font-semibold mb-2">Sort by Price</h3>
+        <h3 className="text-lg font-semibold mb-2 text-orange-500">Sort by Price</h3>
         <select
           value={filters.sortPrice}
           onChange={(e) => handleFilterChange({ ...filters, sortPrice: e.target.value })}
           className={`w-full p-2 border border-gray-300 rounded-lg ${
-            isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'
+            isDarkMode ? 'bg-gray-700 text-orange-300' : 'bg-white text-black'
           }`}
         >
           <option value="">Default</option>
@@ -130,74 +139,12 @@ const AllProducts = () => {
 
       <div className="border-t border-gray-300 my-4 lg:hidden"></div>
 
-      {/* Price Range Filter */}
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Price Range</h3>
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm">Min: ৳{filters.minPrice}</span>
-            <input
-              type="range"
-              min="0"
-              max={filters.maxPrice}
-              value={filters.minPrice}
-              onChange={(e) => handleFilterChange({ ...filters, minPrice: Number(e.target.value) })}
-              className="w-full"
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm">Max: ৳{filters.maxPrice}</span>
-            <input
-              type="range"
-              min={filters.minPrice}
-              max="10000"
-              value={filters.maxPrice}
-              onChange={(e) => handleFilterChange({ ...filters, maxPrice: Number(e.target.value) })}
-              className="w-full"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-gray-300 my-4"></div>
-
-      {/* Category Filter */}
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Category</h3>
-        <div className="pr-2">
-          <div className="space-y-2">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                checked={filters.category === ''}
-                onChange={() => handleFilterChange({ ...filters, category: '' })}
-                className="mr-2"
-              />
-              All Categories
-            </label>
-            {fixedCategory.map(category => (
-              <label key={category} className="flex items-center">
-                <input
-                  type="radio"
-                  checked={filters.category === category}
-                  onChange={() => handleFilterChange({ ...filters, category: category })}
-                  className="mr-2"
-                />
-                {category}
-              </label>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-gray-300 my-4"></div>
-
       {/* Stock Status Filter */}
       <div>
-        <h3 className="text-lg font-semibold mb-2">Stock Status</h3>
+        <h3 className="text-lg font-semibold mb-2 text-orange-500">Stock Status</h3>
         <div className="pr-2">
           <div className="space-y-2">
-            <label className="flex items-center">
+            <label className="flex items-center text-black">
               <input
                 type="radio"
                 checked={filters.stockStatus === ''}
@@ -206,7 +153,7 @@ const AllProducts = () => {
               />
               All Status
             </label>
-            <label className="flex items-center">
+            <label className="flex items-center text-black">
               <input
                 type="radio"
                 checked={filters.stockStatus === 'In Stock'}
@@ -215,7 +162,7 @@ const AllProducts = () => {
               />
               In Stock
             </label>
-            <label className="flex items-center">
+            <label className="flex items-center text-black">
               <input
                 type="radio"
                 checked={filters.stockStatus === 'Out of Stock'}
@@ -227,11 +174,59 @@ const AllProducts = () => {
           </div>
         </div>
       </div>
+
+      <div className="border-t border-gray-300 my-4"></div>
+
+      {/* Category Filter */}
+      <div>
+        <h3 className="text-lg font-semibold mb-2 text-orange-500">Category</h3>
+        <div className="pr-2">
+          <div className="space-y-2">
+            <label className="flex items-center text-black">
+              <input
+                type="radio"
+                checked={filters.category === ''}
+                onChange={() => handleFilterChange({ ...filters, category: '', subcategory: '' })}
+                className="mr-2"
+              />
+              All Categories
+            </label>
+            {categoriesData?.data?.map(category => (
+              <div key={category._id}>
+                <label className="flex items-center text-black">
+                  <input
+                    type="radio"
+                    checked={filters.category === category.name}
+                    onChange={() => handleFilterChange({ ...filters, category: category.name, subcategory: '' })}
+                    className="mr-2"
+                  />
+                  {category.name}
+                </label>
+                {filters.category === category.name && category.subCategories && category.subCategories.length > 0 && (
+                  <div className="ml-6 mt-2 space-y-2">
+                    {category.subCategories.map(subcategory => (
+                      <label key={subcategory.name} className="flex items-center text-black">
+                        <input
+                          type="radio"
+                          checked={filters.subcategory === subcategory.name}
+                          onChange={() => handleFilterChange({ ...filters, subcategory: subcategory.name })}
+                          className="mr-2"
+                        />
+                        {subcategory.name}
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-orange-200' : 'bg-gray-100 text-black'}`}>
       <Helmet>
         <title>All Products | BestBuy4uBD</title>
         <meta name="description" content="Browse our complete collection of electronics, gadgets, and accessories. Filter by category, price range, and stock status." />
@@ -239,11 +234,31 @@ const AllProducts = () => {
       </Helmet>
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page title */}
-        <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-center">Our Products</h1>
+        {/* Show Categories */}
+        <div className="flex items-center gap-4 mb-6 overflow-x-auto p-2">
+          {categoriesData?.data?.map(category => (
+            <div
+              key={category._id}
+              onClick={() => handleFilterChange({ ...filters, category: category.name, subcategory: '' })}
+              className={`${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'} 
+                flex-1 min-w-[160px] h-24 p-2 rounded-lg shadow-sm cursor-pointer transition-all duration-300 
+                ${filters.category === category.name ? 'ring-2 ring-orange-500' : ''}`}
+            >
+              <div className="h-full flex flex-col items-center justify-center text-center">
+                <img 
+                  src={category.image} 
+                  alt={category.name}
+                  className="w-10 h-10 object-contain mb-2"
+                />
+                <h3 className="text-xs font-medium line-clamp-1 text-orange-500">{category.name}</h3>
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* Mobile filter button */}
         <button
-          className="lg:hidden w-full mb-4 p-3 flex items-center justify-center gap-2 rounded-lg bg-blue-500 text-white"
+          className="lg:hidden w-full mb-4 p-3 flex items-center justify-center gap-2 rounded-lg bg-orange-500 text-white"
           onClick={() => setShowFilters(!showFilters)}
         >
           <FaSearch className="text-lg" />
@@ -256,7 +271,7 @@ const AllProducts = () => {
             <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowFilters(false)}></div>
             <div className={`absolute right-0 top-0 h-full w-80 p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} overflow-y-auto`}>
               <button
-                className="absolute top-4 right-4 text-2xl"
+                className="absolute top-4 right-4 text-2xl text-orange-500"
                 onClick={() => setShowFilters(false)}
               >
                 ×
@@ -284,21 +299,21 @@ const AllProducts = () => {
                   placeholder="Search by title or category..."
                   value={filters.searchTerm}
                   onChange={(e) => handleFilterChange({ ...filters, searchTerm: e.target.value })}
-                  className={`w-full p-3 pl-10 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-blue-500 ${
-                    isDarkMode ? 'bg-gray-700 text-white placeholder-gray-400' : 'bg-white text-gray-800 placeholder-gray-500'
+                  className={`w-full p-3 pl-10 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500 ${
+                    isDarkMode ? 'bg-gray-700 text-orange-300 placeholder-gray-400' : 'bg-white text-black placeholder-gray-500'
                   }`}
                 />
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-400" />
               </div>
 
               {/* Sort dropdown */}
               <div className="flex items-center space-x-4 w-full md:w-auto">
-                <span className="text-sm font-medium whitespace-nowrap">Sort by Price:</span>
+                <span className="text-sm font-medium whitespace-nowrap text-orange-500">Sort by Price:</span>
                 <select
                   value={filters.sortPrice}
                   onChange={(e) => handleFilterChange({ ...filters, sortPrice: e.target.value })}
                   className={`p-2 border border-gray-300 rounded-lg flex-grow md:flex-grow-0 ${
-                    isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'
+                    isDarkMode ? 'bg-gray-700 text-orange-300' : 'bg-white text-black'
                   }`}
                 >
                   <option value="">Default</option>
@@ -329,7 +344,7 @@ const AllProducts = () => {
                 ) : productsData?.products?.length === 0 ? (
                   // No products found message
                   <div className="col-span-full flex flex-col justify-center items-center">
-                    <div className={`text-center ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <div className={`text-center ${isDarkMode ? 'text-orange-300' : 'text-black'}`}>
                       <h3 className="text-3xl font-bold mb-4">Oops! No Products Found</h3>
                       <p className="text-lg">We couldn&apos;t find any products matching your criteria.</p>
                       <p className="mt-2">Please try adjusting your filters or search terms.</p>
@@ -368,11 +383,11 @@ const AllProducts = () => {
                     className={`w-10 h-10 rounded-full flex items-center justify-center ${
                       pageNumber === currentPage
                         ? isDarkMode
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-blue-500 text-white'
+                          ? 'bg-orange-600 text-white'
+                          : 'bg-black text-white'
                         : isDarkMode
-                        ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                        : 'bg-white text-gray-700 hover:bg-gray-100'
+                        ? 'bg-gray-700 text-orange-200 hover:bg-gray-600'
+                        : 'bg-white text-black hover:bg-gray-100'
                     } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''} border ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}
                   >
                     {pageNumber}

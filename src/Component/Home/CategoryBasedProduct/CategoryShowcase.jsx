@@ -14,29 +14,18 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
-import { useState, useEffect } from 'react';
-import { useGetAllProductsQuery } from "../../../redux/api/ProductApi";
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import CartSidebar from '../../Common/CartSidebar';
 import WishlistSidebar from '../../Common/WishlistSidebar';
 
-const TrendingProducts = () => {
+const CategoryShowcase = ({category, products}) => {
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
   const wishlistItems = useSelector(state => state.wishlist.wishlistItems);
   const [swiper, setSwiper] = useState(null);
   const [showCartSidebar, setShowCartSidebar] = useState(false);
   const [showWishlistSidebar, setShowWishlistSidebar] = useState(false);
-  const { data, isLoading } = useGetAllProductsQuery({});
-  const [onSaleProducts, setOnSaleProducts] = useState([]);
-
-  useEffect(() => {
-    if (data?.products) {
-      const filtered = data.products
-        .filter((product) => product?.additionalInfo?.isOnSale)
-        .slice(0, 8);
-      setOnSaleProducts(filtered);
-    }
-  }, [data]);
 
   const handleMouseEnter = () => {
     if (swiper?.autoplay?.running) {
@@ -82,17 +71,9 @@ const TrendingProducts = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-48">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
   return (
     <div className={`container mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
-      <Title title="On Sale" />
+      <Title title={category} />
       <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
@@ -120,7 +101,7 @@ const TrendingProducts = () => {
           onSwiper={setSwiper}
           className="category-showcase-swiper"
         >
-          {onSaleProducts.map((product) => (
+          {products.map((product) => (
             <SwiperSlide key={product._id}>
               <div className={`flex flex-col items-center justify-center p-4 pt-8 group cursor-pointer transition duration-300 ease-in-out hover:shadow-lg ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-white'} rounded-lg`}>
                 <Link to={`/product/${product._id}`} className="w-full flex flex-col items-center">
@@ -210,6 +191,7 @@ const TrendingProducts = () => {
           opacity: 1;
           background: ${isDarkMode ? '#e2e8f0' : '#222934'};
         }
+        
       `}</style>
       <CartSidebar 
         isOpen={showCartSidebar} 
@@ -220,7 +202,12 @@ const TrendingProducts = () => {
         onClose={() => setShowWishlistSidebar(false)} 
       />
     </div>
-  );
+  )
+}
+
+CategoryShowcase.propTypes = {
+  category: PropTypes.string.isRequired,
+  products: PropTypes.array.isRequired
 };
 
-export default TrendingProducts;
+export default CategoryShowcase

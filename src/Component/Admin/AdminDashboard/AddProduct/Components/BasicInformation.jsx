@@ -1,11 +1,38 @@
 // Import required dependencies
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, useWatch } from "react-hook-form";
 import { FaPlus, FaTrash } from 'react-icons/fa';
-import { fixedCategory } from '../../../../../utils/variables';
+import { useGetAllCategoriesQuery } from '../../../../../redux/api/CategoriesApi';
 
 // BasicInformation component for handling product's basic details
-const BasicInformation = ({ register, errors, control, isDarkMode }) => {
+const BasicInformation = ({ register, errors, control, isDarkMode, setValue }) => {
+  // Fetch categories data
+  const { data: categoriesData, isLoading: categoriesLoading } = useGetAllCategoriesQuery();
+  const [selectedCategoryData, setSelectedCategoryData] = useState(null);
+
+  // Watch for category changes
+  const selectedCategory = useWatch({
+    control,
+    name: "basicInfo.category",
+    defaultValue: ""
+  });
+
+  // Update selectedCategoryData and reset subcategory when category changes
+  useEffect(() => {
+    if (selectedCategory && categoriesData?.data) {
+      const categoryData = categoriesData.data.find(
+        cat => cat.name === selectedCategory
+      );
+      setSelectedCategoryData(categoryData);
+      // Reset subcategory when category changes
+      setValue('basicInfo.subcategory', '');
+    } else {
+      setSelectedCategoryData(null);
+      setValue('basicInfo.subcategory', '');
+    }
+  }, [selectedCategory, categoriesData, setValue]);
+
   // Initialize field array for dynamic key features
   const {
     fields: keyFeatureFields,
@@ -69,24 +96,38 @@ const BasicInformation = ({ register, errors, control, isDarkMode }) => {
             className={`w-full p-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1`}
           >
             <option value="">Select category</option>
-            {fixedCategory.map((category, index) => (
-              <option key={index} value={category}>{category}</option>
-            ))}
+            {categoriesLoading ? (
+              <option disabled>Loading categories...</option>
+            ) : (
+              categoriesData?.data?.map((category) => (
+                <option key={category._id} value={category.name}>
+                  {category.name}
+                </option>
+              ))
+            )}
           </select>
           {errors.basicInfo?.category && (
             <span className="text-red-500">{errors.basicInfo.category.message}</span>
           )}
         </label>
 
-        {/* Subcategory field */}
-        <label className="block">
-          <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Subcategory</span>
-          <input
-            {...register("basicInfo.subcategory")}
-            placeholder="Enter product subcategory"
-            className={`w-full p-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1`}
-          />
-        </label>
+        {/* Subcategory dropdown - only show if selected category has subcategories */}
+        {selectedCategoryData?.subCategories?.length > 0 && (
+          <label className="block">
+            <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Subcategory</span>
+            <select
+              {...register("basicInfo.subcategory")}
+              className={`w-full p-3 border-2 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent mt-1`}
+            >
+              <option value="">Select subcategory</option>
+              {selectedCategoryData.subCategories.map((subCat) => (
+                <option key={subCat.name} value={subCat.name}>
+                  {subCat.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
 
         {/* Description textarea */}
         <label className="block">
@@ -152,7 +193,8 @@ BasicInformation.propTypes = {
   register: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
   control: PropTypes.object.isRequired,
-  isDarkMode: PropTypes.bool.isRequired
+  isDarkMode: PropTypes.bool.isRequired,
+  setValue: PropTypes.func.isRequired
 };
 
 export default BasicInformation;

@@ -11,13 +11,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { FaUserCircle } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 import { MdFavorite } from "react-icons/md";
-import { AnimatePresence, motion } from "framer-motion";
-import Cart from "../Component/Cart/Cart";
+import { motion } from "framer-motion";
 import DarkMode from "./DarkMode";
 import { logout } from "../redux/features/AuthSlice";
-import { removeFromWishlist } from "../redux/features/wishlistSlice";
-
 import Search from "./Search";
+import CartSidebar from "../Component/Common/CartSidebar";
+import WishlistSidebar from "../Component/Common/WishlistSidebar";
 
 // NavItem component for rendering individual navigation items
 const NavItem = ({ item, onClick }) => (
@@ -38,18 +37,6 @@ const NavItem = ({ item, onClick }) => (
 // MobileNav component for mobile navigation menu
 const MobileNav = ({ isOpen, navbar, setIsOpen }) => {
   const navRef = useRef(null);
-
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (navRef.current && !navRef.current.contains(event.target)) {
-  //       setIsOpen(false);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => document.removeEventListener("mousedown", handleClickOutside);
-  // }, []);
-
   const handleNavItemClick = () => {
     setIsOpen(false);
   };
@@ -139,22 +126,17 @@ const SaleInfo = () => (
 );
 
 // UserActions component for user-related actions (theme toggle, cart, etc.)
-const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
+const UserActions = ({ toggleCart, cartItems, toggleWishlist }) => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const {user} = useSelector((state) => state.auth);
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
   const dropdownRef = useRef(null);
-  const wishlistRef = useRef(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowUserDropdown(false);
-      }
-      if (wishlistRef.current && !wishlistRef.current.contains(event.target)) {
-        setIsWishlistOpen(false);
       }
     };
 
@@ -166,8 +148,6 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
     dispatch(logout());
     setShowUserDropdown(false);
   };
-
-  const toggleWishlist = () => setIsWishlistOpen(!isWishlistOpen);
 
   return (
     <div className="flex items-center gap-2 sm:gap-4">
@@ -253,87 +233,6 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
         </span>
         <IoCartOutline className="text-xl sm:text-2xl text-white" />
       </button>
-
-      {/* Cart Sidebar */}
-      <AnimatePresence>
-        {isCartOpen && (
-          <motion.div
-            ref={cartRef}
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-lg z-50 overflow-y-auto"
-          >
-            <Cart toggleCart={toggleCart} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Wishlist Sidebar */}
-      <AnimatePresence>
-        {isWishlistOpen && (
-          <motion.div
-            ref={wishlistRef}
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-lg z-50 overflow-y-auto"
-          >
-            <div className="p-4 sm:p-6">
-              <div className="flex justify-between items-center mb-4 sm:mb-6">
-                <h2 className="text-xl sm:text-2xl font-semibold">My Wishlist</h2>
-                <button 
-                  onClick={toggleWishlist}
-                  className="text-gray-500 hover:text-gray-700 text-xl sm:text-2xl"
-                >
-                  ×
-                </button>
-              </div>
-              {wishlistItems.length > 0 ? (
-                <div className="space-y-3 sm:space-y-4">
-                  {wishlistItems.map((item) => (
-                    <div key={item._id} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg">
-                      <img src={item.image} alt={item.title} className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded" />
-                      <div className="flex-1">
-                        <h3 className="text-sm sm:text-base font-medium mb-1">{item.title}</h3>
-                        <p className="text-blue-600 font-semibold text-sm sm:text-base">${item.price}</p>
-                        <div className="flex gap-2 mt-2">
-                          <NavLink 
-                            to={`/product/${item._id}`}
-                            onClick={toggleWishlist}
-                            className="text-xs sm:text-sm text-blue-500 hover:text-blue-600"
-                          >
-                            View Details
-                          </NavLink>
-                          <button 
-                            className="text-xs sm:text-sm text-red-500 hover:text-red-600"
-                            onClick={() => dispatch(removeFromWishlist(item._id))}
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-6 sm:py-8">
-                  <p className="text-gray-500 mb-3 sm:mb-4 text-sm sm:text-base">Your wishlist is empty</p>
-                  <NavLink 
-                    to="/shop" 
-                    className="text-blue-600 hover:text-blue-700 text-sm sm:text-base"
-                    onClick={toggleWishlist}
-                  >
-                    Continue Shopping
-                  </NavLink>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
@@ -342,26 +241,16 @@ const UserActions = ({ toggleCart, cartItems, isCartOpen, cartRef }) => {
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [showCompactNav, setShowCompactNav] = useState(false);
   const navbar = navbarGenerator(navbarRoute);
   
   const cartRef = useRef(null);
+  const wishlistRef = useRef(null);
   const cartItems = useSelector((state) => state.cart.cartItems);
   
- 
   const toggleCart = () => setIsCartOpen(!isCartOpen);
-
-  // Effect to handle clicking outside the cart to close it
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (cartRef.current && !cartRef.current.contains(event.target)) {
-        setIsCartOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const toggleWishlist = () => setIsWishlistOpen(!isWishlistOpen);
 
   // Effect to handle scroll and show compact nav
   useEffect(() => {
@@ -380,7 +269,6 @@ const Navbar = () => {
           <div className="flex items-center gap-2 sm:gap-[15px] lg:gap-0 lg:justify-between lg:w-fit pb-0 sm:pb-2">
             <div className="lg:hidden relative z-50 " onClick={() => setIsOpen(!isOpen)}>
               <label
-                
                 className="flex flex-col gap-1.5 sm:gap-2 w-[18px] sm:w-[22px] cursor-pointer"
               >
                 <div
@@ -413,19 +301,22 @@ const Navbar = () => {
             cartItems={cartItems}
             isCartOpen={isCartOpen}
             cartRef={cartRef}
+            isWishlistOpen={isWishlistOpen}
+            toggleWishlist={toggleWishlist}
+            wishlistRef={wishlistRef}
           />
         </div>
         <MobileNav isOpen={isOpen} navbar={navbar} setIsOpen={setIsOpen} />
         <DesktopNav navbar={navbar} />
       </nav>
-      {/* Compact navigation bar that appears when scrolling down */}
+
+      {/* Compact navigation bar */}
       {showCompactNav && (
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           className="fixed top-0 left-0 right-0 bg-[#222934] shadow-md z-50 transition-all duration-300"
         >
-          {/* Main navigation content */}
           <div className="container mx-auto flex items-center justify-between px-3 sm:px-5 py-2 sm:py-3">
             <div className="flex items-center gap-4">
               {/* Mobile menu toggle button */}
@@ -448,17 +339,23 @@ const Navbar = () => {
                   <NavItem key={item.name} item={item} />
                 ))}
               </div>
-            {/* User actions (cart, profile, etc) */}
+            {/* Use the same UserActions component with the same state */}
             <UserActions
               toggleCart={toggleCart}
               cartItems={cartItems}
               isCartOpen={isCartOpen}
               cartRef={cartRef}
+              isWishlistOpen={isWishlistOpen}
+              toggleWishlist={toggleWishlist}
+              wishlistRef={wishlistRef}
             />
           </div>
-          
         </motion.nav>
       )}
+
+      {/* Single instance of Cart and Wishlist sidebars */}
+      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <WishlistSidebar isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
     </>
   );
 };

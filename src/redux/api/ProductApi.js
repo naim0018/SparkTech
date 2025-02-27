@@ -4,41 +4,31 @@ import { baseApi } from "./baseApi";
 const buildQuery = (options) => {
   const queryParams = new URLSearchParams();
   
-  // Handle search
   if (options.search) {
-    queryParams.append('search', options.search);
+    queryParams.append('search', options.search.trim());
   }
-
-  // Handle filters
-  if (options.category && options.category !== 'all') {
-    
+  if (options.category) {
     queryParams.append('category', options.category);
   }
-  if (options.subcategory && options.subcategory !== 'all') {
-    queryParams.append('subcategory', options.subcategory);
-  }
-  if (options.brand && options.brand !== 'all') {
-    queryParams.append('brand', options.brand);
-  }
-  if (options.stockStatus && options.stockStatus !== 'all') {
+  if (options.stockStatus) {
     queryParams.append('stockStatus', options.stockStatus);
   }
-
-  // Handle price range
-  if (options.priceRange && Array.isArray(options.priceRange)) {
-    queryParams.append('minPrice', options.priceRange[0]);
-    queryParams.append('maxPrice', options.priceRange[1]);
+  if (options.minPrice) {
+    console.log({options})
+    queryParams.append('minPrice', options.minPrice);
   }
-
-  // Handle sorting
-  if (options.sort) queryParams.append('sort', options.sort);
-
-  // Handle pagination
-  if (options.page) queryParams.append('page', options.page);
-  if (options.limit) queryParams.append('limit', options.limit);
-
-  // Handle fields selection
-  if (options.fields) queryParams.append('fields', options.fields);
+  if (options.maxPrice) {
+    queryParams.append('maxPrice', options.maxPrice);
+  }
+  if (options.sort) {
+    queryParams.append('sort', options.sort);
+  }
+  if (options.page) {
+    queryParams.append('page', options.page);
+  }
+  if (options.limit) {
+    queryParams.append('limit', options.limit);
+  }
 
   return queryParams.toString();
 };
@@ -59,9 +49,14 @@ export const productApi = baseApi.injectEndpoints({
           pagination: response.meta,
         };
       },
-      providesTags: ["Product"],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.products.map(({ _id }) => ({ type: 'Products', id: _id })),
+              { type: 'Products', id: 'LIST' },
+            ]
+          : [{ type: 'Products', id: 'LIST' }],
     }),
-    
     getProductById: builder.query({
       query: (id) => `/product/${id}`,
       providesTags: ["Product"],
@@ -80,7 +75,7 @@ export const productApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: product,
       }),
-      invalidatesTags: ["Product"],
+      invalidatesTags: ["Product", "Products", "Categories"],
     }),
     deleteProduct: builder.mutation({
       query: (id) => ({
@@ -98,4 +93,5 @@ export const {
   useAddProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  
 } = productApi;

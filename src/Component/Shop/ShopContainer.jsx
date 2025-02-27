@@ -7,9 +7,8 @@ import AllProducts from './AllProducts';
 const ShopContainer = () => {
   return (
     <div>
-        {/* <CategoryCard/> */}
-        <AllProducts/>
-        {/* <FilterOptions/> */}
+      <AllProducts/>
+      
     </div>
   );
 };

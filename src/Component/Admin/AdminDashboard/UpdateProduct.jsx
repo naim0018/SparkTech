@@ -6,7 +6,6 @@ import { useUpdateProductMutation } from "../../../redux/api/ProductApi";
 import { toast } from "react-toastify";
 import { useTheme } from "../../../ThemeContext";
 import { FaBox, FaTag, FaImage, FaCog, FaTruck, FaInfo, FaSearch, FaDollarSign, FaWarehouse, FaPlus } from 'react-icons/fa';
-
 // Import component sections
 import BasicInformation from "./AddProduct/Components/BasicInformation";
 import PriceInformation from "./AddProduct/Components/PriceInformation";
@@ -52,6 +51,7 @@ const UpdateProduct = ({ product, closeModal }) => {
     handleSubmit,
     reset,
     formState: { errors },
+    setValue
   } = useForm();
 
   // Set initial form values when product data is available
@@ -259,6 +259,7 @@ const UpdateProduct = ({ product, closeModal }) => {
                     control={control}
                     errors={errors}
                     isDarkMode={isDarkMode}
+                    setValue={setValue}
                   />
                 </div>
               ))}

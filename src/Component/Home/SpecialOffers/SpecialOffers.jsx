@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useGetAllProductsQuery } from "../../../redux/api/ProductApi";
 import Title from "../../../UI/Title";
-import { FaStar, FaHeart } from "react-icons/fa";
+import {  FaHeart } from "react-icons/fa";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { TbCurrencyTaka } from "react-icons/tb";
 import { useState, useEffect } from "react";
@@ -102,11 +102,7 @@ const SpecialOffers = () => {
               nextEl: '.swiper-button-next',
               prevEl: '.swiper-button-prev',
             }}
-            pagination={{ 
-              clickable: true, 
-              el: '.swiper-pagination',
-              type: 'bullets',
-            }}
+          
             autoplay={{
               delay: 2000,
               disableOnInteraction: false,
@@ -128,7 +124,7 @@ const SpecialOffers = () => {
                       <img
                         src={product.images[0]?.url}
                         alt={product.images[0]?.alt || product.basicInfo.title}
-                        className="w-full h-64 object-cover rounded-t-lg transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-80 object-cover rounded-t-lg transition-transform duration-300 group-hover:scale-105"
                       />
                       {product.price.discounted && (
                         <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-medium">
@@ -138,21 +134,7 @@ const SpecialOffers = () => {
                     </div>
 
                     <div className={`w-full p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                      <div className="flex items-center mb-2">
-                        {[...Array(5)].map((_, index) => (
-                          <FaStar
-                            key={index}
-                            className={`${
-                              index < product.rating.average ? "text-yellow-400" : isDarkMode ? "text-gray-600" : "text-gray-300"
-                            } w-4 h-4`}
-                          />
-                        ))}
-                        <span className={`ml-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          ({product.rating.count})
-                        </span>
-                      </div>
-
-                      <h2 className={`text-base font-semibold mb-2 line-clamp-2 h-12 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                     <h2 className={`text-base font-semibold mb-2 mt-10 line-clamp-2 h-12 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                         {product.basicInfo.title}
                       </h2>
 
@@ -191,7 +173,7 @@ const SpecialOffers = () => {
                           onClick={(e) => {
                             e.preventDefault();
                             handleAddToWishlist(product);
-                          }}
+                           }}
                           className={`p-2 rounded-lg transition-colors ${
                             wishlistItems.some(item => item._id === product._id)
                               ? 'bg-red-500 text-white'
@@ -208,26 +190,13 @@ const SpecialOffers = () => {
                 </div>
               </SwiperSlide>
             ))}
-            <div className="swiper-pagination"></div>
+            <div className="swiper-pagination swiper-pagination-white"></div>
+            <div className="swiper-button-next swiper-button-white"></div>
+            <div className="swiper-button-prev swiper-button-white"></div>
           </Swiper>
         </div>
       )}
-      <style>{`
-        .special-offers-swiper .swiper-pagination-bullet {
-          width: 10px;
-          height: 10px;
-          background: ${isDarkMode ? '#e2e8f0' : '#222934'};
-          opacity: 0.5;
-          transition: all 0.3s ease;
-        }
-        .special-offers-swiper .swiper-pagination-bullet-active {
-          opacity: 1;
-          background: ${isDarkMode ? '#e2e8f0' : '#222934'};
-        }
-        .special-offers-swiper .swiper-pagination {
-          bottom: 10px;
-        }
-      `}</style>
+      
     </div>
   );
 };

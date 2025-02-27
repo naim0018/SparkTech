@@ -3,8 +3,13 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-white;
+    @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-white min-h-screen;
+    overflow-y: scroll; /* Prevent layout shift */
   }
 }
 
@@ -31,3 +36,22 @@ h6 {
 p {
   @apply text-base text-gray-600;
 } */
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thumb-gray-300::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+    background-color: #D1D5DB;
+    border-radius: 3px;
+  }
+  
+  .dark .scrollbar-thumb-gray-600::-webkit-scrollbar-thumb {
+    background-color: #4B5563;
+  }
+}

@@ -11,7 +11,6 @@ const ProductCard = ({ product, isInView }) => {
     stiffness: 300,
     damping: 10
   });
-
   const controls = useAnimation();
   const { isDarkMode } = useTheme();
 

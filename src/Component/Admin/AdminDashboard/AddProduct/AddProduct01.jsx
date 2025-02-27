@@ -46,6 +46,7 @@ const AddProduct01 = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setValue
   } = useForm({
     defaultValues: {
       basicInfo: {
@@ -287,6 +288,7 @@ const AddProduct01 = () => {
                       control={control}
                       errors={errors}
                       isDarkMode={isDarkMode}
+                      setValue={setValue}
                     />
                   </div>
                 ))}

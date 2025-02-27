@@ -8,16 +8,15 @@
    - Dark mode support
    - Pagination support
 */
-
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useState } from 'react';
-// import ProductInput from './ProductInput';
 import { useDeleteProductMutation, useGetAllProductsQuery } from '../../../redux/api/ProductApi';
+import { useGetAllCategoriesQuery } from '../../../redux/api/CategoriesApi';
 
 import Swal from 'sweetalert2';
-import { fixedCategory } from '../../../utils/variables';
 import UpdateProduct from './UpdateProduct';
+
 
 const Products = () => {
   const [expandedProduct, setExpandedProduct] = useState(null);
@@ -27,6 +26,7 @@ const Products = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filters, setFilters] = useState({
     category: '',
+    subcategory: '',
     stockStatus: '',
     minPrice: 0,
     maxPrice: 10000,
@@ -34,13 +34,26 @@ const Products = () => {
     sortPrice: ''
   });
 
-  const { data, isLoading } = useGetAllProductsQuery({
+  const { data: productData, isLoading } = useGetAllProductsQuery({
     page: currentPage,
     limit: itemsPerPage,
-    ...filters
+    category: filters.category || undefined,
+    subcategory: filters.subcategory || undefined,
+    stockStatus: filters.stockStatus || undefined,
+    priceRange: filters.minPrice && filters.maxPrice ? [filters.minPrice, filters.maxPrice] : undefined,
+    search: filters.searchTerm || undefined,
+    sort: filters.sortPrice || undefined
   });
   const [deleteProduct] = useDeleteProductMutation();
+  const { data } = useGetAllCategoriesQuery();
+  const categories = data?.data || []
+  console.log({categories})
+  const products = productData?.products || [];
+  const pagination = productData?.pagination || {};
 
+  // Get subcategories for selected category
+  const selectedCategoryData = categories.find(cat => cat.name === filters.category);
+  const subcategories = selectedCategoryData?.subCategories || [];
   const toggleProductExpansion = (productId) => {
     setExpandedProduct(expandedProduct === productId ? null : productId);
   };
@@ -97,16 +110,18 @@ const Products = () => {
     const { name, value } = e.target;
     setFilters(prev => ({
       ...prev,
-      [name]: value
+      [name]: value === 'all' ? '' : value,
+      // Reset subcategory when category changes
+      ...(name === 'category' && {subcategory: ''})
     }));
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
   const handlePriceChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({
       ...prev,
-      [name]: Number(value)
+      [name]: value ? Number(value) : undefined
     }));
     setCurrentPage(1);
   };
@@ -120,7 +135,7 @@ const Products = () => {
     setCurrentPage(1);
   };
 
-  const totalPages = data?.pagination?.totalPages || 0;
+  const totalPages = pagination.totalPages || 0;
 
   if (isLoading) {
     return (
@@ -129,8 +144,6 @@ const Products = () => {
       </div>
     );
   }
-
-  const uniqueCategories = fixedCategory;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-2 sm:p-4 lg:p-8">
@@ -172,11 +185,29 @@ const Products = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               >
                 <option value="">All Categories</option>
-                {uniqueCategories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                {categories?.map(category => (
+                  <option key={category._id} value={category.name}>{category.name}</option>
                 ))}
               </select>
             </div>
+
+            {/* Show subcategories filter if available */}
+            {subcategories.length > 0 && (
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Subcategory</label>
+                <select
+                  name="subcategory"
+                  value={filters.subcategory?.name}
+                  onChange={handleFilterChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                  <option value="">All Subcategories</option>
+                  {subcategories.map(subcategory => (
+                    <option key={subcategory._id} value={subcategory.name}>{subcategory.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Stock Status</label>
@@ -255,7 +286,7 @@ const Products = () => {
         {/* Products Table/Grid Section */}
         <section className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
-            {data?.products?.length > 0 ? (
+            {products.length > 0 ? (
               <div className="min-w-full">
                 {/* Desktop View */}
                 <table className="hidden lg:table min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -282,8 +313,8 @@ const Products = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {data.products.map((product) => (
-                      <tr key={product._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                    {products.map((product) => (
+                      <tr key={product._id}>
                         <td className="px-4 sm:px-6 py-4">
                           <div className="flex items-center">
                             <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
@@ -371,7 +402,7 @@ const Products = () => {
 
                 {/* Mobile/Tablet View */}
                 <div className="lg:hidden space-y-4 p-4">
-                  {data.products.map((product) => (
+                  {products.map((product) => (
                     <div key={product._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transform transition-all duration-200 hover:shadow-lg">
                       <div className="p-4">
                         <div className="flex items-center justify-between">
@@ -465,7 +496,7 @@ const Products = () => {
                 disabled={currentPage === 1}
                 className={`px-3 py-1 rounded-md ${
                   currentPage === 1
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
                     : 'bg-blue-500 text-white hover:bg-blue-600'
                 } transition-colors duration-200`}
               >
@@ -479,7 +510,7 @@ const Products = () => {
                   className={`px-3 py-1 rounded-md ${
                     currentPage === pageNumber
                       ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                   } transition-colors duration-200`}
                 >
                   {pageNumber}
@@ -491,7 +522,7 @@ const Products = () => {
                 disabled={currentPage === totalPages}
                 className={`px-3 py-1 rounded-md ${
                   currentPage === totalPages
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
                     : 'bg-blue-500 text-white hover:bg-blue-600'
                 } transition-colors duration-200`}
               >

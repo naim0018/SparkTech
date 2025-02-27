@@ -46,6 +46,14 @@ const cartSlice = createSlice({
       }
       localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
     },
+    updateQuantity: (state, action) => {
+      const { itemKey, quantity } = action.payload;
+      const item = state.cartItems.find(item => item.itemKey === itemKey);
+      if (item) {
+        item.quantity = quantity;
+        localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
+      }
+    },
     removeFromCart: (state, action) => {
       const { itemKey } = action.payload;
       state.cartItems = state.cartItems.filter(item => item.itemKey !== itemKey);
@@ -80,6 +88,7 @@ export const {
   incrementQuantity,
   decrementQuantity,
   clearCart,
+  updateQuantity,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
