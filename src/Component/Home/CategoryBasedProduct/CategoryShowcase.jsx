@@ -16,17 +16,13 @@ import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import CartSidebar from '../../Common/CartSidebar';
-import WishlistSidebar from '../../Common/WishlistSidebar';
+
 
 const CategoryShowcase = ({category, products}) => {
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
   const wishlistItems = useSelector(state => state.wishlist.wishlistItems);
   const [swiper, setSwiper] = useState(null);
-  const [showCartSidebar, setShowCartSidebar] = useState(false);
-  const [showWishlistSidebar, setShowWishlistSidebar] = useState(false);
-
   const handleMouseEnter = () => {
     if (swiper?.autoplay?.running) {
       swiper.autoplay.stop();
@@ -48,8 +44,15 @@ const CategoryShowcase = ({category, products}) => {
       image: product.images[0].url,
       quantity: 1
     }));
-    setShowCartSidebar(true);
-    toast.success('Product added to cart!');
+    toast.success('Product added to cart!', {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   const toggleWishlist = (product, e) => {
@@ -58,7 +61,15 @@ const CategoryShowcase = ({category, products}) => {
     
     if (isInWishlist) {
       dispatch(removeFromWishlist(product._id));
-      toast.success('Removed from wishlist!');
+      toast.success('Removed from wishlist!', {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } else {
       dispatch(addToWishlist({
         _id: product._id,
@@ -66,15 +77,22 @@ const CategoryShowcase = ({category, products}) => {
         price: product.price.discounted || product.price.regular,
         image: product.images[0].url
       }));
-      setShowWishlistSidebar(true);
-      toast.success('Added to wishlist!');
+      toast.success('Added to wishlist!', {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
 
   return (
-    <div className={`container mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className={`container mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-white'} `}>
       <Title title={category} />
-      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="">
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
           spaceBetween={20}
@@ -103,7 +121,7 @@ const CategoryShowcase = ({category, products}) => {
         >
           {products.map((product) => (
             <SwiperSlide key={product._id}>
-              <div className={`flex flex-col items-center justify-center p-4 pt-8 group cursor-pointer transition duration-300 ease-in-out hover:shadow-lg ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-white'} rounded-lg`}>
+              <div className={`flex flex-col items-center justify-center p-4  group cursor-pointer transition duration-300 ease-in-out hover:shadow-lg ${isDarkMode ? 'hover:bg-gray-800 bg-gray-800' : 'hover:bg-white'} rounded-lg mb-5`}>
                 <Link to={`/product/${product._id}`} className="w-full flex flex-col items-center">
                   <div className="relative w-full">
                     <img
@@ -118,7 +136,7 @@ const CategoryShowcase = ({category, products}) => {
                     )}
                   </div>
 
-                  <div className={`w-full p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                  <div className={`w-full ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
                     <h2 className={`text-base font-semibold mb-2 mt-10 line-clamp-2 h-12 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                       {product.basicInfo.title}
                     </h2>
@@ -193,14 +211,7 @@ const CategoryShowcase = ({category, products}) => {
         }
         
       `}</style>
-      <CartSidebar 
-        isOpen={showCartSidebar} 
-        onClose={() => setShowCartSidebar(false)} 
-      />
-      <WishlistSidebar 
-        isOpen={showWishlistSidebar} 
-        onClose={() => setShowWishlistSidebar(false)} 
-      />
+     
     </div>
   )
 }

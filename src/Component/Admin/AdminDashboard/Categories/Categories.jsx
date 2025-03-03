@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from '../../../../ThemeContext';
-import { BiEdit, BiTrash, BiPlus, BiMove } from 'react-icons/bi';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { BiEdit, BiTrash, BiPlus } from 'react-icons/bi';
 import Swal from 'sweetalert2';
 import {
   useGetAllCategoriesQuery,
@@ -13,6 +12,7 @@ import {
   useUpdateSubCategoryMutation
 } from '../../../../redux/api/CategoriesApi';
 import PropTypes from 'prop-types';
+import CategoryList from './CategoryList';
 
 // Modal component for adding/editing subcategories
 const SubCategoryModal = ({ isOpen, onClose, onSubmit, initialData, mode = 'add' }) => {
@@ -162,6 +162,9 @@ const Categories = () => {
         confirmButtonColor: '#EF4444'
       });
     }
+  };
+  const handleEditCategory = (category) => {
+    setCategoryForm(category);
   };
 
   const handleDeleteSubCategory = async (categoryId, subCategoryName) => {
@@ -458,100 +461,18 @@ const Categories = () => {
         </form>
 
         {/* Categories List */}
-        <div className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-          {isLoading ? (
-            <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
-              <p className="text-lg">Loading categories...</p>
-            </div>
-          ) : !categories?.data?.length ? (
-            <div className="p-8 text-center">
-              <p className="text-lg text-gray-500">No categories found</p>
-            </div>
-          ) : (
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="categories">
-                {(provided) => (
-                  <ul 
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className="divide-y divide-gray-200 dark:divide-gray-700"
-                  >
-                    {categories.data.map((category, index) => (
-                      <Draggable key={category._id} draggableId={category._id} index={index}>
-                        {(provided, snapshot) => (
-                          <li
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={`p-6 ${
-                              snapshot.isDragging ? 'bg-gray-100 dark:bg-gray-700' : ''
-                            } hover:bg-gray-50 dark:hover:bg-gray-700/50 transition duration-200`}
-                          >
-                            <div className="flex items-center justify-between mb-6">
-                              <div className="flex items-center gap-6">
-                                <div
-                                  {...provided.dragHandleProps}
-                                  className="cursor-move p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition duration-200"
-                                >
-                                  <BiMove size={24} />
-                                </div>
-                                <img 
-                                  src={category.image} 
-                                  alt={category.name}
-                                  className="w-20 h-20 object-cover rounded-lg shadow-md"
-                                />
-                                <div>
-                                  <h3 className="text-xl font-bold mb-1">{category.name}</h3>
-                                  <p className="text-gray-500 dark:text-gray-400">
-                                    {category.description}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <button
-                                  onClick={() => setModalState({
-                                    isOpen: true,
-                                    mode: 'add',
-                                    categoryId: category._id,
-                                    subCategory: null
-                                  })}
-                                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200"
-                                >
-                                  <BiPlus size={20} /> Add Subcategory
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteCategory(category._id)}
-                                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition duration-200"
-                                >
-                                  <BiTrash size={24} />
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Subcategories */}
-                            {category.subCategories?.length > 0 && (
-                              <div className="ml-14">
-                                <h4 className="text-lg font-semibold mb-4">Subcategories</h4>
-                                <div className="grid gap-3">
-                                  {category.subCategories.map((sub, subIndex) => (
-                                    <div key={sub.name}>
-                                      {renderSubCategory(category, sub, subIndex)}
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </li>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </ul>
-                )}
-              </Droppable>
-            </DragDropContext>
-          )}
-        </div>
+        <CategoryList 
+        categories={categories}
+        handleEditCategory={handleEditCategory}
+        handleDeleteCategory={handleDeleteCategory}
+        handleDeleteSubCategory={handleDeleteSubCategory}
+        isDarkMode={isDarkMode}
+        isLoading={isLoading}
+        handleDragEnd={handleDragEnd}
+        setModalState={setModalState}
+        renderSubCategory={renderSubCategory}
+        
+        />
       </div>
 
       <SubCategoryModal

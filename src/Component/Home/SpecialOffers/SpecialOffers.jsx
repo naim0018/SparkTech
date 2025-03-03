@@ -14,7 +14,7 @@ import 'swiper/css/autoplay';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../../redux/features/CartSlice';
-import { addToWishlist } from '../../../redux/features/wishlistSlice';
+import { addToWishlist, removeFromWishlist } from '../../../redux/features/wishlistSlice';
 import { toast } from 'react-toastify';
 import { useTheme } from '../../../ThemeContext';
 
@@ -68,6 +68,19 @@ const SpecialOffers = () => {
   };
 
   const handleAddToWishlist = (product) => {
+
+    if (wishlistItems.some(item => item._id === product._id)) {
+      dispatch(removeFromWishlist(product._id));
+      toast.success('Removed from wishlist!', {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } else {
     dispatch(addToWishlist({
       _id: product._id,
       title: product.basicInfo.title,
@@ -83,7 +96,8 @@ const SpecialOffers = () => {
       draggable: true,
       progress: undefined,
     });
-  };
+  }
+};  
 
   return (
     <div className={`container mx-auto ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
@@ -118,7 +132,7 @@ const SpecialOffers = () => {
           >
             {products.map((product) => (
               <SwiperSlide key={product._id}>
-                <div className={`w-full flex flex-col items-center justify-center mb-10 p-4 pt-8 group cursor-pointer transition duration-300 ease-in-out hover:shadow-lg ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-white'} rounded-lg lg:rounded-lg`}>
+                <div className={`w-full flex flex-col items-center justify-center mb-10 p-4 group cursor-pointer transition duration-300 ease-in-out hover:shadow-lg ${isDarkMode ? 'hover:bg-gray-800 bg-gray-800' : 'hover:bg-white'} rounded-lg lg:rounded-lg mb-5`}>
                   <Link to={`/product/${product._id}`} className="w-full flex flex-col items-center">
                     <div className="relative w-full">
                       <img
@@ -190,7 +204,6 @@ const SpecialOffers = () => {
                 </div>
               </SwiperSlide>
             ))}
-            <div className="swiper-pagination swiper-pagination-white"></div>
             <div className="swiper-button-next swiper-button-white"></div>
             <div className="swiper-button-prev swiper-button-white"></div>
           </Swiper>

@@ -14,7 +14,6 @@ const buildQuery = (options) => {
     queryParams.append('stockStatus', options.stockStatus);
   }
   if (options.minPrice) {
-    console.log({options})
     queryParams.append('minPrice', options.minPrice);
   }
   if (options.maxPrice) {

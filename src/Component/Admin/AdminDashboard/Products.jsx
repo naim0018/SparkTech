@@ -47,7 +47,6 @@ const Products = () => {
   const [deleteProduct] = useDeleteProductMutation();
   const { data } = useGetAllCategoriesQuery();
   const categories = data?.data || []
-  console.log({categories})
   const products = productData?.products || [];
   const pagination = productData?.pagination || {};
 

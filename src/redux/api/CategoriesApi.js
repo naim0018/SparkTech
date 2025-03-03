@@ -38,13 +38,14 @@ const categoriesApi = baseApi.injectEndpoints({
                 url: `/categories/${categoryId}/subcategories`,
                 method: 'POST',
                 body: data
-            })
+            }) 
         }),
         deleteSubCategory: builder.mutation({
             query: ({categoryId, subCategoryName}) => ({
                 url: `/categories/${categoryId}/subcategories/${subCategoryName}`,
                 method: 'DELETE'
-            })
+            }),
+            invalidatesTags: ['Categories']
         }),
         updateCategoryOrder: builder.mutation({
             query: (data) => ({

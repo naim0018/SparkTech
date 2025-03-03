@@ -124,17 +124,20 @@ const AllProducts = () => {
       {/* Sort by Price */}
       <div className="lg:hidden">
         <h3 className="text-lg font-semibold mb-2 text-orange-500">Sort by Price</h3>
-        <select
-          value={filters.sortPrice}
-          onChange={(e) => handleFilterChange({ ...filters, sortPrice: e.target.value })}
-          className={`w-full p-2 border border-gray-300 rounded-lg ${
-            isDarkMode ? 'bg-gray-700 text-orange-300' : 'bg-white text-black'
-          }`}
-        >
-          <option value="">Default</option>
-          <option value="lowToHigh">Price: Low to High</option>
-          <option value="highToLow">Price: High to Low</option>
-        </select>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => handleFilterChange({ ...filters, sortPrice: 'lowToHigh' })}
+            className={`p-2 rounded-lg ${filters.sortPrice === 'lowToHigh' ? 'bg-orange-300 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
+          >
+            Low to High
+          </button>
+          <button
+            onClick={() => handleFilterChange({ ...filters, sortPrice: 'highToLow' })}
+            className={`p-2 rounded-lg ${filters.sortPrice === 'highToLow' ? 'bg-orange-300 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
+          >
+            High to Low
+          </button>
+        </div>
       </div>
 
       <div className="border-t border-gray-300 my-4 lg:hidden"></div>
@@ -142,36 +145,34 @@ const AllProducts = () => {
       {/* Stock Status Filter */}
       <div>
         <h3 className="text-lg font-semibold mb-2 text-orange-500">Stock Status</h3>
-        <div className="pr-2">
-          <div className="space-y-2">
-            <label className="flex items-center text-black">
-              <input
-                type="radio"
-                checked={filters.stockStatus === ''}
-                onChange={() => handleFilterChange({ ...filters, stockStatus: '' })}
-                className="mr-2"
-              />
-              All Status
-            </label>
-            <label className="flex items-center text-black">
-              <input
-                type="radio"
-                checked={filters.stockStatus === 'In Stock'}
-                onChange={() => handleFilterChange({ ...filters, stockStatus: 'In Stock' })}
-                className="mr-2"
-              />
-              In Stock
-            </label>
-            <label className="flex items-center text-black">
-              <input
-                type="radio"
-                checked={filters.stockStatus === 'Out of Stock'}
-                onChange={() => handleFilterChange({ ...filters, stockStatus: 'Out of Stock' })}
-                className="mr-2"
-              />
-              Out of Stock
-            </label>
-          </div>
+        <div className="flex flex-col space-y-2">
+          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === '' ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            <input
+              type="radio"
+              checked={filters.stockStatus === ''}
+              onChange={() => handleFilterChange({ ...filters, stockStatus: '' })}
+              className="mr-2"
+            />
+            All Status
+          </label>
+          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === 'In Stock' ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            <input
+              type="radio"
+              checked={filters.stockStatus === 'In Stock'}
+              onChange={() => handleFilterChange({ ...filters, stockStatus: 'In Stock' })}
+              className="mr-2"
+            />
+            In Stock
+          </label>
+          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === 'Out of Stock' ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            <input
+              type="radio"
+              checked={filters.stockStatus === 'Out of Stock'}
+              onChange={() => handleFilterChange({ ...filters, stockStatus: 'Out of Stock' })}
+              className="mr-2"
+            />
+            Out of Stock
+          </label>
         </div>
       </div>
 
@@ -180,46 +181,44 @@ const AllProducts = () => {
       {/* Category Filter */}
       <div>
         <h3 className="text-lg font-semibold mb-2 text-orange-500">Category</h3>
-        <div className="pr-2">
-          <div className="space-y-2">
-            <label className="flex items-center text-black">
-              <input
-                type="radio"
-                checked={filters.category === ''}
-                onChange={() => handleFilterChange({ ...filters, category: '', subcategory: '' })}
-                className="mr-2"
-              />
-              All Categories
-            </label>
+        <div className="flex flex-col space-y-2">
+          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.category === '' ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            <input
+              type="radio"
+              checked={filters.category === ''}
+              onChange={() => handleFilterChange({ ...filters, category: '', subcategory: '' })}
+              className="mr-2"
+            />
+            All Categories
+          </label>
             {categoriesData?.data?.map(category => (
-              <div key={category._id}>
-                <label className="flex items-center text-black">
-                  <input
-                    type="radio"
-                    checked={filters.category === category.name}
-                    onChange={() => handleFilterChange({ ...filters, category: category.name, subcategory: '' })}
-                    className="mr-2"
-                  />
-                  {category.name}
-                </label>
-                {filters.category === category.name && category.subCategories && category.subCategories.length > 0 && (
-                  <div className="ml-6 mt-2 space-y-2">
-                    {category.subCategories.map(subcategory => (
-                      <label key={subcategory.name} className="flex items-center text-black">
-                        <input
-                          type="radio"
-                          checked={filters.subcategory === subcategory.name}
-                          onChange={() => handleFilterChange({ ...filters, subcategory: subcategory.name })}
-                          className="mr-2"
-                        />
-                        {subcategory.name}
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+            <div key={category._id}>
+              <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.category === category.name ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                <input
+                  type="radio"
+                  checked={filters.category === category.name}
+                  onChange={() => handleFilterChange({ ...filters, category: category.name, subcategory: '' })}
+                  className="mr-2"
+                />
+                {category.name}
+              </label>
+              {filters.category === category.name && category.subCategories && category.subCategories.length > 0 && (
+                <div className="ml-6 mt-2 space-y-2">
+                  {category.subCategories.map(subcategory => (
+                    <label key={subcategory.name} className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.subcategory === subcategory.name ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                      <input
+                        type="radio"
+                        checked={filters.subcategory === subcategory.name}
+                        onChange={() => handleFilterChange({ ...filters, subcategory: subcategory.name })}
+                        className="mr-2"
+                      />
+                      {subcategory.name}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -242,7 +241,7 @@ const AllProducts = () => {
               onClick={() => handleFilterChange({ ...filters, category: category.name, subcategory: '' })}
               className={`${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'} 
                 flex-1 min-w-[160px] h-24 p-2 rounded-lg shadow-sm cursor-pointer transition-all duration-300 
-                ${filters.category === category.name ? 'ring-2 ring-orange-500' : ''}`}
+                ${filters.category === category.name ? 'ring-2 ring-orange-300' : ''}`}
             >
               <div className="h-full flex flex-col items-center justify-center text-center">
                 <img 
@@ -250,7 +249,7 @@ const AllProducts = () => {
                   alt={category.name}
                   className="w-10 h-10 object-contain mb-2"
                 />
-                <h3 className="text-xs font-medium line-clamp-1 text-orange-500">{category.name}</h3>
+                <h3 className={`text-xs font-medium line-clamp-1 ${isDarkMode ? 'text-white' : 'text-orange-300'}`}>{category.name}</h3>
               </div>
             </div>
           ))}
@@ -258,7 +257,7 @@ const AllProducts = () => {
 
         {/* Mobile filter button */}
         <button
-          className="lg:hidden w-full mb-4 p-3 flex items-center justify-center gap-2 rounded-lg bg-orange-500 text-white"
+          className="lg:hidden w-full mb-4 p-3 flex items-center justify-center gap-2 rounded-lg bg-orange-300 text-white"
           onClick={() => setShowFilters(!showFilters)}
         >
           <FaSearch className="text-lg" />
@@ -271,7 +270,7 @@ const AllProducts = () => {
             <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowFilters(false)}></div>
             <div className={`absolute right-0 top-0 h-full w-80 p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} overflow-y-auto`}>
               <button
-                className="absolute top-4 right-4 text-2xl text-orange-500"
+                className="absolute top-4 right-4 text-2xl text-orange-300"
                 onClick={() => setShowFilters(false)}
               >
                 ×
@@ -306,20 +305,21 @@ const AllProducts = () => {
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-400" />
               </div>
 
-              {/* Sort dropdown */}
+              {/* Sort buttons */}
               <div className="flex items-center space-x-4 w-full md:w-auto">
                 <span className="text-sm font-medium whitespace-nowrap text-orange-500">Sort by Price:</span>
-                <select
-                  value={filters.sortPrice}
-                  onChange={(e) => handleFilterChange({ ...filters, sortPrice: e.target.value })}
-                  className={`p-2 border border-gray-300 rounded-lg flex-grow md:flex-grow-0 ${
-                    isDarkMode ? 'bg-gray-700 text-orange-300' : 'bg-white text-black'
-                  }`}
+                <button
+                  onClick={() => handleFilterChange({ ...filters, sortPrice: 'lowToHigh' })}
+                  className={`p-2 rounded-lg ${filters.sortPrice === 'lowToHigh' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
                 >
-                  <option value="">Default</option>
-                  <option value="lowToHigh">Price: Low to High</option>
-                  <option value="highToLow">Price: High to Low</option>
-                </select>
+                  Low to High
+                </button>
+                <button
+                  onClick={() => handleFilterChange({ ...filters, sortPrice: 'highToLow' })}
+                  className={`p-2 rounded-lg ${filters.sortPrice === 'highToLow' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
+                >
+                  High to Low
+                </button>
               </div>
             </div>
 
@@ -344,7 +344,7 @@ const AllProducts = () => {
                 ) : productsData?.products?.length === 0 ? (
                   // No products found message
                   <div className="col-span-full flex flex-col justify-center items-center">
-                    <div className={`text-center ${isDarkMode ? 'text-orange-300' : 'text-black'}`}>
+                    <div className={`text-center ${isDarkMode ? 'text-orange-600' : 'text-black'}`}>
                       <h3 className="text-3xl font-bold mb-4">Oops! No Products Found</h3>
                       <p className="text-lg">We couldn&apos;t find any products matching your criteria.</p>
                       <p className="mt-2">Please try adjusting your filters or search terms.</p>

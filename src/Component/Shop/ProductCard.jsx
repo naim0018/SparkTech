@@ -137,7 +137,7 @@ const ProductCard = ({ product }) => {
           {/* Price Section with Enhanced Background */}
           <div className={`${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'} p-4 rounded-xl shadow-sm`}>
             <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center gap-2">
                 <span className="text-2xl font-bold flex items-center text-orange-500">
                   <TbCurrencyTaka className="text-2xl" />
                   {Math.ceil(product?.price?.discounted || product?.price?.regular)}
@@ -149,11 +149,7 @@ const ProductCard = ({ product }) => {
                   </span>
                 )}
               </div>
-              {product?.price?.discounted && (
-                <div className="text-sm text-green-500 font-medium">
-                  Save {Math.round(((product.price.regular - product.price.discounted) / product.price.regular) * 100)}%
-                </div>
-              )}
+              
             </div>
           </div>
         </div>

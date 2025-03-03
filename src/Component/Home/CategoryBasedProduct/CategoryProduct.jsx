@@ -41,7 +41,7 @@ const CategoryProduct = () => {
         }));
 
     return (
-        <div className="my-5 space-y-20 ">
+        <div className="my-5  space-y-20 ">
             {categoryCollections.map(categoryProducts => 
                 <CategoryShowcase 
                     key={categoryProducts.category} 
