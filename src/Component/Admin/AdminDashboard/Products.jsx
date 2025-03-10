@@ -309,6 +309,9 @@ const Products = () => {
                       <th scope="col" className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Actions
                       </th>
+                      <th scope="col" className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                        Landing Page
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -394,6 +397,16 @@ const Products = () => {
                             </Link>
                           </div>
                         </td>
+                        <td className="px-4 sm:px-6 py-4 text-right">
+                          <div className="flex justify-end space-x-2 sm:space-x-4">
+                            <button
+                              onClick={() => window.location.href = `/landing-page/${product._id}`}
+                              className="bg-green-600 text-white hover:bg-green-700 dark:bg-green-500 dark:text-gray-200 dark:hover:bg-green-400 font-medium py-2 px-4 rounded transition-transform duration-200 transform hover:scale-105"
+                            >
+                              LandingPage
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -473,6 +486,12 @@ const Products = () => {
                                 <FaEye className="w-4 h-4 sm:w-5 sm:h-5" />
                               </Link>
                             </div>
+                            <button
+                              onClick={() => window.location.href = `/landing-page/${product._id}`}
+                              className="bg-green-600 text-white hover:bg-green-700 dark:bg-green-500 dark:text-gray-200 dark:hover:bg-green-400 font-medium py-2 px-4 rounded transition-transform duration-200 transform hover:scale-105"
+                            >
+                              Landing Page
+                            </button>
                           </div>
                         )}
                       </div>

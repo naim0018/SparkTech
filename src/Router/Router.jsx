@@ -15,6 +15,8 @@ import Dashboard from "../Layout/DashboardLayout/DashboardLayout";
 import ProtectedRoute from "../Layout/ProtectedRoute";
 import Unauthorized from "../Component/ErrorPage/Unauthorized";
 import Error from "../Component/Checkout/Error";
+import LandingPage from "../Component/Admin/AdminDashboard/LandingPage/LandingPage";
+
 
 export const router = createBrowserRouter([
     {
@@ -77,5 +79,9 @@ export const router = createBrowserRouter([
     {
         path: 'unauthorized',
         element: <Unauthorized/>
+    },
+    {
+        path: 'landing-page/:productId',
+        element: <LandingPage/>
     }
 ])

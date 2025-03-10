@@ -40,8 +40,8 @@ const Cart = ({ toggleCart }) => {
             </div>
           ) : (
             <ul className="space-y-4">
-              {cartItems.map((item) => (
-                <li key={item.itemKey} className={`${isDarkMode ? 'bg-gray-700' : 'bg-white'} rounded-lg shadow-md p-4 border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+              {cartItems.map((item,index) => (
+                <li key={index} className={`${isDarkMode ? 'bg-gray-700' : 'bg-white'} rounded-lg shadow-md p-4 border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                   <div className="flex items-start space-x-4">
                     <div className="w-24 h-24 flex-shrink-0">
                       <img src={item.image} alt={item.name} className="w-full h-full object-contain rounded-md" />

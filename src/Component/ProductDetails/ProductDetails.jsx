@@ -55,7 +55,7 @@ const ProductView = () => {
       setCurrentImage(product.images[0]);
     }
   }, [product]);
-
+  
   // Loading state
   if (isLoading) return (
     <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex justify-center items-start pt-20">
@@ -68,7 +68,6 @@ const ProductView = () => {
 
   const handleVariantSelect = (groupName, variant) => {
     const newSelectedVariants = new Map(selectedVariants);
-    
     if (selectedVariants.get(groupName)?.value === variant.value) {
       newSelectedVariants.delete(groupName);
       let newPrice = product.price.discounted || product.price.regular;
@@ -78,6 +77,7 @@ const ProductView = () => {
         }
       });
       setCurrentPrice(newPrice);
+      console.log(newPrice)
       const lastSelectedVariant = Array.from(newSelectedVariants.values()).pop();
       if (lastSelectedVariant?.image?.url) {
         setCurrentImage({
@@ -123,7 +123,7 @@ const ProductView = () => {
       price: variant.price,
       image: variant.image
     }));
-
+    
     dispatch(addToCart({
       id: product._id,
       name: product.basicInfo.title,
@@ -478,10 +478,11 @@ const ProductView = () => {
                 <CheckoutForm 
                   resetCheckout={() => {
                     setShowOrderModal(false);
-                    setSelectedPayment('bkash');
+                    setSelectedPayment('cod');
                   }}
                   selectedPayment={selectedPayment}
                   setSelectedPayment={setSelectedPayment}
+                  totalPrice={currentPrice * quantity}
                 />
               </div>
             </div>

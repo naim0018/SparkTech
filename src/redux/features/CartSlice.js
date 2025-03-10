@@ -20,19 +20,30 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action) => {
-      const { id, name, price, image, quantity, selectedVariants } = action.payload;
-      
+    
+      const { id, name, price:basePrice, image, quantity, selectedVariants } = action.payload;
       // Create a unique key that includes all variants
       const variantKey = selectedVariants?.length > 0
         ? `${id}-${selectedVariants.map(v => `${v.group}-${v.value}`).join('-')}`
         : id;
       
-      const existingItemIndex = state.cartItems.findIndex(
-        item => item.itemKey === variantKey
+      const existingItemIndex = state?.cartItems?.findIndex(
+        item => item?.itemKey === variantKey
       );
 
+      let price = basePrice;
+      if (selectedVariants?.length > 0) {
+        selectedVariants.forEach(variant => {
+          const variantItem = variant?.items?.find(item => item?.value === variant?.value);
+          if (variantItem && variantItem?.price) {
+            price += variantItem?.price;
+          }
+        });
+      }
+      
       if (existingItemIndex >= 0) {
         state.cartItems[existingItemIndex].quantity += quantity;
+        state.cartItems[existingItemIndex].price = price;
       } else {
         state.cartItems.push({
           id,

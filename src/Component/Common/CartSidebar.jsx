@@ -3,12 +3,11 @@ import { removeFromCart, incrementQuantity, decrementQuantity } from '../../redu
 import { FaTimes, FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
 import { TbCurrencyTaka } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-
 import PropTypes from 'prop-types';
 const CartSidebar = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.cartItems);
-
+  console.log(cartItems)
   const totalAmount = cartItems.reduce((total, item) => 
     total + (item.price * item.quantity), 0
   );
@@ -20,7 +19,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
   const handleDecrement = (itemKey) => {
     dispatch(decrementQuantity({ itemKey }));
   };
-  
+ 
   return (
     <div className={`fixed inset-y-0 right-0 w-full md:w-96 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
       isOpen ? 'translate-x-0' : 'translate-x-full'
@@ -37,14 +36,27 @@ const CartSidebar = ({ isOpen, onClose }) => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {cartItems.map(item => (
-            <div key={item.itemKey} className="flex gap-4 p-2 border-b dark:border-gray-700">
+          {cartItems.map((item,index) => (
+            <div key={index} className="flex gap-4 p-2 border-b dark:border-gray-700">
               <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded" />
               <div className="flex-1">
                 <h3 className="font-medium dark:text-white">{item.name}</h3>
-                <div className="flex items-center mt-2">
-                  <TbCurrencyTaka className="w-4 h-4 dark:text-white" />
-                  <span className="dark:text-white">{item.price}</span>
+                <div className="flex items-center justify-between mt-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-600 dark:text-gray-300 text-sm">Base Price:</span>
+                    <div className="flex items-center text-orange-600 dark:text-orange-400 font-medium">
+                      <TbCurrencyTaka className="w-4 h-4" />
+                      <span>{item.price}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-600 dark:text-gray-300 text-sm">Total:</span>
+                    <div className="flex items-center text-green-600 dark:text-green-400 font-medium">
+                      <TbCurrencyTaka className="w-4 h-4" />
+                      <span>{item.price * item.quantity}</span>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <button

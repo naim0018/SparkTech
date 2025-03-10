@@ -5,10 +5,11 @@ import { incrementQuantity, decrementQuantity, removeFromCart } from '../../redu
 const OrderSummary = ({ paymentStatus }) => {
   const dispatch = useDispatch()
   const cartItems = useSelector((state) => state.cart?.cartItems)
+  console.log(cartItems)
   const cartTotal = useSelector((state) => state.cart?.cartItems?.reduce((total, item) => total + item?.price * item?.quantity, 0))
   const shippingCost = 0
   const taxRate = 0
-  const totalAmount = cartTotal + shippingCost + (cartTotal * taxRate)
+  const totalAmount = cartTotal + shippingCost 
 
   const handleIncrement = (itemKey) => {
     dispatch(incrementQuantity({ itemKey }))
