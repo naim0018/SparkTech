@@ -77,7 +77,7 @@ const ProductView = () => {
         }
       });
       setCurrentPrice(newPrice);
-      console.log(newPrice)
+     
       const lastSelectedVariant = Array.from(newSelectedVariants.values()).pop();
       if (lastSelectedVariant?.image?.url) {
         setCurrentImage({
@@ -478,7 +478,6 @@ const ProductView = () => {
                 <CheckoutForm 
                   resetCheckout={() => {
                     setShowOrderModal(false);
-                    setSelectedPayment('cod');
                   }}
                   selectedPayment={selectedPayment}
                   setSelectedPayment={setSelectedPayment}

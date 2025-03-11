@@ -53,7 +53,7 @@ const CheckoutSection = ({ orderDetails, handleSubmit, onQuantityChange, onVaria
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-green-100">
+    <div id="checkout" className="bg-white rounded-3xl shadow-xl overflow-hidden border border-green-100">
       <div className="grid grid-cols-1 md:grid-cols-2">
          {/* Checkout Form */}
          <form onSubmit={handleFormSubmit} onChange={checkFormValidity} className="p-4 md:p-10 bg-white order-2 md:order-none">

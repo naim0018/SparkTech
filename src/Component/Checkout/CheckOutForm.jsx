@@ -1,93 +1,31 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useForm } from 'react-hook-form'
 import { useCreateOrderMutation } from '../../redux/api/OrderApi'
 import { clearCart } from '../../redux/features/CartSlice'
-import { useLocation } from 'react-router-dom'
-import Swal from 'sweetalert2'
-import PropTypes from 'prop-types'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { Helmet } from 'react-helmet'
 import OrderSuccessModal from '../Admin/AdminDashboard/LandingPage/OrderSuccessModal'
+import PropTypes from 'prop-types'
 
-function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setPaymentStatus }) {
-  const { setValue } = useForm()
+const CheckoutForm = ({ onOrderSuccess }) => {
   const dispatch = useDispatch()
   const [createOrder, { isLoading }] = useCreateOrderMutation()
   const cartItems = useSelector((state) => state.cart?.cartItems)
-  
   const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const location = useLocation()
-  // const navigate = useNavigate()
-  // const [bkashPaymentSuccess, setBkashPaymentSuccess] = useState(false)
   const [successOrderDetails, setSuccessOrderDetails] = useState(null)
   const [deliveryLocation, setDeliveryLocation] = useState('insideDhaka')
-
-  useEffect(() => {
-    setSelectedPayment('bkash')
-  }, [setSelectedPayment])
-
-  useEffect(() => {
-    const savedFormData = localStorage.getItem('checkoutFormData')
-    if (savedFormData) {
-      const parsedData = JSON.parse(savedFormData)
-      Object.keys(parsedData).forEach(key => {
-        setValue(key, parsedData[key])
-      })
-    }
-  }, [setValue])
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search)
-    const message = searchParams.get('message')
-    const trxID = searchParams.get('trxID')
-    const amount = searchParams.get('amount')
-
-    if (message === 'Successful') {
-      setSelectedPayment('bkash')
-      setPaymentStatus('bkash')
-      Swal.fire({
-        title: 'Payment Successful!',
-        text: `Transaction ID: ${trxID}\nAmount Paid: ${amount} BDT`,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      })
-    }
-  }, [location, setSelectedPayment])
-
-  // const handleBkashPayment = async () => {
-  //   if (bkashPaymentSuccess) return
-    
-  //   setSelectedPayment('bkash')
-  //   try {
-  //     const response = await createBkashPayment({
-  //       amount: cartTotal,
-  //       currency: "BDT",
-  //       intent: "sale",
-  //       merchantInvoiceNumber: "Inv" + Math.random().toString(36).substring(2, 7),
-  //       userEmail: user?.email
-  //     }).unwrap()
-
-  //     if (response?.bkashURL) {
-  //       window.location.href = response.bkashURL
-  //     }
-  //   } catch (error) {
-  //     console.error('Bkash payment error:', error)
-  //     toast.error('Failed to initiate bKash payment')
-  //   }
-  // }
-
-  // const handleCodPayment = () => {
-  //   if (bkashPaymentSuccess) return
-  //   setSelectedPayment('cod')
-  //   setPaymentStatus('cod')
-  // }
+  const navigate = useNavigate()
 
   const calculateTotalAmount = () => {
     const productTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
     const deliveryCharge = deliveryLocation === 'insideDhaka' ? 80 : 150
     return productTotal + deliveryCharge
+  }
+
+  const handleCancel = () => {
+    setShowSuccessModal(false)
+    navigate('/')
   }
 
   const onSubmit = async (e) => {
@@ -111,15 +49,15 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
             quantity: item.quantity,
             itemKey: item.itemKey,
             price: item.price,
-            selectedVariants: Object.fromEntries(
-              (item.selectedVariants || []).map(variant => [
-                variant.group,
-                {
-                  value: variant.value,
-                  price: variant.price || 0
-                }
-              ])
-            )
+            selectedVariants: Array.isArray(item.selectedVariants) 
+              ? item.selectedVariants.reduce((obj, variant) => ({
+                  ...obj,
+                  [variant.group]: {
+                    value: variant.value,
+                    price: variant.price || 0
+                  }
+                }), {})
+              : item.selectedVariants || {}
           })),
           totalAmount: calculateTotalAmount(),
           status: "pending",
@@ -129,11 +67,11 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
             phone: formData.phone,
             address: formData.address,
             country: "Bangladesh",
-            paymentMethod: selectedPayment,
+            paymentMethod: "cash on delivery",
             notes: formData.notes || ""
           },
           paymentInfo: {
-            paymentMethod: selectedPayment,
+            paymentMethod: "cash on delivery",
             status: "pending",
             amount: calculateTotalAmount(),
             transactionId: "",
@@ -147,17 +85,17 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
 
       const response = await createOrder(orderData).unwrap()
       
-      // Set success details and show modal
-      setSuccessOrderDetails({
+      const orderDetails = {
         orderId: response.data._id,
         productPrice: calculateTotalAmount() - (deliveryLocation === 'insideDhaka' ? 80 : 150),
         deliveryCharge: deliveryLocation === 'insideDhaka' ? 80 : 150,
         totalAmount: calculateTotalAmount()
-      })
-      setShowSuccessModal(true)
+      }
+
+      onOrderSuccess(orderDetails)
       
-      // Clear cart
       dispatch(clearCart())
+      localStorage.setItem('lastOrderId', response.data._id)
 
     } catch (error) {
       toast.error(
@@ -172,26 +110,9 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
     }
   }
 
-  // const handleGoHome = () => {
-  //   setShowSuccessModal(false)
-  //   resetCheckout()
-  //   navigate('/')
-  // }
-
-  const handleCancel = () => {
-    setShowSuccessModal(false)
-    resetCheckout()
-  }
-
   return (
     <>
-      <Helmet>
-        <title>Checkout | BestBuy4uBD</title>
-        <meta name="description" content="Complete your purchase securely. Enter shipping and payment details to place your order." />
-        <meta name="keywords" content="checkout, payment, shipping, order completion" />
-      </Helmet>
       <form onSubmit={onSubmit} className="space-y-6">
-        {/* Personal Information */}
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -299,10 +220,7 @@ function CheckoutForm({ resetCheckout, selectedPayment, setSelectedPayment, setP
 }
 
 CheckoutForm.propTypes = {
-  resetCheckout: PropTypes.func.isRequired,
-  selectedPayment: PropTypes.string,
-  setSelectedPayment: PropTypes.func.isRequired,
-  setPaymentStatus: PropTypes.func.isRequired
+  onOrderSuccess: PropTypes.func.isRequired
 }
 
 export default CheckoutForm

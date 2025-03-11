@@ -1,46 +1,62 @@
 /* eslint-disable react/prop-types */
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux'
-  
+
 const OrderSummary = () => {
   const cartItems = useSelector((state) => state.cart?.cartItems)
-  
-  const deliveryCharge = 80; // Default to inside Dhaka
-  const subtotal = cartItems?.reduce((total, item) => total + item?.price * item?.quantity, 0) || 0;
-  const total = subtotal + deliveryCharge;
+  const deliveryCharge = 80 // Default to inside Dhaka
+  const subtotal = cartItems?.reduce((total, item) => total + item.price * item.quantity, 0) || 0
+  const total = subtotal + deliveryCharge
 
+  const renderVariants = (variants) => {
+    if (!variants) return null;
+    
+    if (Array.isArray(variants)) {
+      return variants.map((variant, idx) => (
+        <span key={idx} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+          {variant.value}
+        </span>
+      ));
+    }
 
-
+    return Object.entries(variants).map(([group, variant]) => (
+      <span key={group} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+        {variant.value}
+      </span>
+    ));
+  };
 
   return (
-    <div className="p-8 bg-gradient-to-br from-green-50 via-white to-green-50">
-      <h2 className="text-2xl font-bold text-gray-800 mb-8">অর্ডার সামারি</h2>
+    <>
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 flex items-center">
+        <span className="bg-green-100 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center mr-3 md:mr-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </span>
+        অর্ডার সামারি
+      </h2>
 
       <div className="space-y-6">
         {/* Products List */}
         <div className="space-y-4">
           {cartItems?.map((item) => (
-            <div key={item?.itemKey} className="flex gap-4 bg-white p-4 rounded-xl shadow-sm">
+            <div key={item.itemKey} className="flex gap-4 bg-white p-4 rounded-xl shadow-sm">
               <img 
-                src={item?.image} 
-                alt={item?.name}
+                src={item.image} 
+                alt={item.name}
                 className="w-20 h-20 object-cover rounded-lg"
               />
               <div className="flex-1">
-                <h3 className="font-medium text-gray-800">{item?.name}</h3>
-                <p className="text-sm text-gray-500">৳{item?.price} × {item?.quantity}</p>
-                {item.selectedVariants && item.selectedVariants.length > 0 && (
+                <h3 className="font-medium text-gray-800">{item.name}</h3>
+                <p className="text-sm text-gray-500">৳{item.price} × {item.quantity}</p>
+                {item.selectedVariants && (
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {item.selectedVariants.map((variant, idx) => (
-                      <span key={idx} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
-                        {variant.value}
-                      </span>
-                    ))}
+                    {renderVariants(item.selectedVariants)}
                   </div>
                 )}
               </div>
               <div className="text-right">
-                <span className="font-medium">৳{item?.price * item?.quantity}</span>
+                <span className="font-medium">৳{item.price * item.quantity}</span>
               </div>
             </div>
           ))}
@@ -75,12 +91,8 @@ const OrderSummary = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
-
-OrderSummary.propTypes = {
-  selectedPayment: PropTypes.string.isRequired
-};
 
 export default OrderSummary

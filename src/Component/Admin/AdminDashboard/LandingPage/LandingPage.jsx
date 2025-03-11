@@ -226,6 +226,13 @@ const LandingPage = () => {
     }
   };
 
+  const scrollToCheckout = () => {
+    const checkoutSection = document.getElementById('checkout');
+    if (checkoutSection) {
+      checkoutSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
       <ToastContainer
@@ -373,9 +380,9 @@ const LandingPage = () => {
                 </div>
               </div>
 
-              {/* অর্ডার বাটন */}
+              {/* Order Button */}
               <button
-                onClick={handleSubmit}
+                onClick={scrollToCheckout}
                 className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white py-4 px-8 rounded-xl text-lg font-medium hover:from-green-700 hover:to-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 অর্ডার করুন
