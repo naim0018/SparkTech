@@ -165,14 +165,14 @@ const LandingPage = () => {
             paymentMethod: formData.paymentMethod,
             notes: formData.notes || ""
           },
-          paymentInfo: {
-            paymentMethod: "cash on delivery",
-            status: "pending",
-            amount: calculateTotalAmount(formData.courierCharge),
-            transactionId: "",
-            paymentDate: new Date().toISOString(),
-            bkashNumber: ""
-          },
+          // paymentInfo: {
+          //   paymentMethod: "cash on delivery",
+          //   status: "pending",
+          //   amount: calculateTotalAmount(formData.courierCharge),
+          //   transactionId: "",
+          //   paymentDate: new Date().toISOString(),
+          //   bkashNumber: ""
+          // },
           courierCharge: formData.courierCharge,
           cuponCode: formData.cuponCode || ""
           
