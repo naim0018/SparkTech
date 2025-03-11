@@ -6,7 +6,11 @@ import { Helmet } from "react-helmet";
 import CheckoutSection from "./CheckoutSection";
 import { useDispatch } from "react-redux";
 import { addToCart, clearCart } from "../../../../redux/features/CartSlice";
-
+import { useCreateOrderMutation } from "../../../../redux/api/OrderApi";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import OrderSuccessModal from './OrderSuccessModal';
 
 const LandingPage = () => {
   const { productId } = useParams();
@@ -17,7 +21,13 @@ const LandingPage = () => {
   const [currentSlider, setCurrentSlider] = useState(0);
   const [selectedVariants, setSelectedVariants] = useState(new Map());
   const [currentPrice, setCurrentPrice] = useState(0);
-  const [currentImage, setCurrentImage] = useState(null);
+  const [currentImage, setCurrentImage] = useState(product?.images[0]?.url);
+  const [quantity, setQuantity] = useState(1);
+
+  const [createOrder, { isLoading: isOrderLoading }] = useCreateOrderMutation();
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successOrderDetails, setSuccessOrderDetails] = useState(null);
 
   useEffect(() => {
     if (product) {
@@ -25,43 +35,58 @@ const LandingPage = () => {
       if (typeof initialPrice === 'number' && !isNaN(initialPrice)) {
         setCurrentPrice(initialPrice);
       } else {
-        console.error('Invalid initial price:', initialPrice);
         setCurrentPrice(0);
       }
       setSelectedVariants(new Map());
       setCurrentImage(product.images[0]);
-      dispatch(addToCart(product)); // Add product to cart on load
     }
     return () => {
       if (product) {
-        dispatch(clearCart()); // Remove product from cart when leaving the page
+        dispatch(clearCart());
       }
     };
   }, [product, dispatch]);
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-48">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen flex justify-center items-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500"></div>
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-red-500">Oops! There was an error loading the product: {error.message}</div>;
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <div className="bg-red-100 p-6 rounded-lg">
+          <p className="text-red-600 text-lg">Error loading product: {error.message}</p>
+        </div>
+      </div>
+    );
   }
 
   if (!product) {
-    return <div className="text-red-500">Sorry, the product you are looking for was not found.</div>;
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <div className="bg-yellow-100 p-6 rounded-lg">
+          <p className="text-yellow-700 text-lg">Product not found</p>
+        </div>
+      </div>
+    );
   }
-  
-  const carouselImages = product?.images;
-  const prevSlider = () => {
-    setCurrentSlider((prev) => (prev === 0 ? carouselImages.length - 1 : prev - 1));
+
+  const handleQuantityChange = (newQuantity) => {
+    setQuantity(newQuantity);
   };
 
-  const nextSlider = () => {
-    setCurrentSlider((prev) => (prev === carouselImages.length - 1 ? 0 : prev + 1));
+  const handleIncrement = () => {
+    setQuantity(prev => prev + 1);
+  };
+
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      setQuantity(prev => prev - 1);
+    }
   };
 
   const handleVariantSelect = (groupName, variant) => {
@@ -72,19 +97,13 @@ const LandingPage = () => {
       let newPrice = product.price.discounted || product.price.regular;
       newSelectedVariants.forEach((selectedVariant) => {
         if (selectedVariant.price && selectedVariant.price > 0) {
-          newPrice = selectedVariant.price; 
+          newPrice = selectedVariant.price;
         }
       });
       setCurrentPrice(newPrice);
-      const lastSelectedVariant = Array.from(newSelectedVariants.values()).pop();
-      if (lastSelectedVariant?.image?.url) {
-        setCurrentImage({
-          url: lastSelectedVariant.image.url,
-          alt: lastSelectedVariant.image.alt || product.images[0].alt
-        });
-      } else {
-        setCurrentImage(product.images[0]);
-      }
+      const remainingVariants = Array.from(newSelectedVariants.values());
+      const lastVariantWithImage = remainingVariants.reverse().find(v => v.image?.url);
+      setCurrentImage(lastVariantWithImage?.image || product.images[0]);
     } else {
       newSelectedVariants.set(groupName, {
         value: variant.value,
@@ -95,151 +114,286 @@ const LandingPage = () => {
         .map(v => v.price)
         .filter(price => typeof price === 'number' && !isNaN(price) && price > 0);
       if (variantPrices.length > 0) {
-        const highestPrice = Math.max(...variantPrices);
-        setCurrentPrice(highestPrice);
+        setCurrentPrice(Math.max(...variantPrices));
       } else {
         setCurrentPrice(product.price.discounted || product.price.regular);
       }
       if (variant.image?.url) {
-        setCurrentImage({
-          url: variant.image.url,
-          alt: variant.image.alt || product.images[0].alt
-        });
+        setCurrentImage(variant.image);
       }
     }
     setSelectedVariants(newSelectedVariants);
   };
 
+  const orderDetails = {
+    title: product?.basicInfo?.title,
+    price: currentPrice,
+    variants: selectedVariants,
+    quantity: quantity,
+    image: currentImage,
+    product: product
+  };
+
+  const handleSubmit = async (formData) => {
+    try {
+      const orderData = {
+        body: {
+          items: [{
+            product: productId,
+            image: currentImage?.url,
+            quantity: quantity,
+            itemKey: `${productId}-${Date.now()}`,
+            price: currentPrice,
+            selectedVariants: Object.fromEntries(
+              Array.from(selectedVariants.entries()).map(([group, variant]) => [
+                group,
+                {
+                  value: variant.value,
+                  price: variant.price || 0
+                }
+              ])
+            )
+          }],
+          totalAmount: calculateTotalAmount(formData.courierCharge),
+          status: "pending",
+          billingInformation: {
+            name: formData.name,
+            email: formData.email || "no-email@example.com",
+            phone: formData.phone,
+            address: formData.address,
+            country: "Bangladesh",
+            paymentMethod: formData.paymentMethod,
+            notes: formData.notes || ""
+          },
+          paymentInfo: {
+            paymentMethod: "cash on delivery",
+            status: "pending",
+            amount: calculateTotalAmount(formData.courierCharge),
+            transactionId: "",
+            paymentDate: new Date().toISOString(),
+            bkashNumber: ""
+          },
+          courierCharge: formData.courierCharge,
+          cuponCode: formData.cuponCode || ""
+          
+        }
+      };
+
+      function calculateTotalAmount(courierChargeType) {
+        const productTotal = currentPrice * quantity;
+        const deliveryCharge = courierChargeType === 'insideDhaka' ? 80 : 150;
+        return productTotal + deliveryCharge;
+      }
+
+      const response = await createOrder(orderData).unwrap();
+      
+      // Set success order details and show modal
+      setSuccessOrderDetails({
+        orderId: response.data._id,
+        productPrice: currentPrice * quantity,
+        deliveryCharge: formData.courierCharge === 'insideDhaka' ? 80 : 150,
+        totalAmount: orderData.body.totalAmount
+      });
+      setShowSuccessModal(true);
+      
+      // Reset form and state
+      setQuantity(1);
+      setSelectedVariants(new Map());
+      setCurrentPrice(product.price.discounted || product.price.regular);
+      setCurrentImage(product.images[0]);
+
+    } catch (error) {
+      // Error Toast
+      toast.error(
+        <div>
+          <h3 className="font-bold text-red-800">দুঃখিত! অর্ডার সম্পন্ন করা যায়নি।</h3>
+          {error.data?.message && (
+            <p className="text-sm text-red-600 mt-1">কারণ: {error.data.message}</p>
+          )}
+        </div>,
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          className: "bg-red-50 border border-red-200",
+        }
+      );
+      console.error("Order creation failed:", error);
+    }
+  };
+
   return (
-    <div className="container mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Helmet>
         <title>{product?.seo.metaTitle}</title>
-        <meta name="description" content={product?.seo.metaDescription} />
+        <meta name="description" content={product?.seo.metaDescription}/>
         <meta name="slug" content={product?.seo.metaSlug} />
       </Helmet>
-      <div className="grid grid-cols-2 h-[90vh]">
-      <div className={`relative mt-6 overflow-hidden rounded-lg `}>
-        {/* Carousel container */}
-        <div
-          className="flex transition-transform duration-500 ease-linear h-full"
-          style={{ transform: `translateX(-${currentSlider * 100}%)` }}
-        >
-          {carouselImages?.map((slide, idx) => (
-            <img
-              key={idx}
-              src={slide.url}
-              className="min-w-full h-[90vh] object-cover"
-              alt={slide.alt}
-            />
-          ))}
-        </div>
 
-        {/* Navigation buttons */}
-        <button
-          onClick={prevSlider}
-          className={`absolute top-1/2 left-2 sm:left-4 transform -translate-y-1/2 bg-black/30 text-white p-1 sm:p-2 rounded-full hover:bg-black/50 transition text-sm sm:text-base`}
-        >
-          &#10094;
-        </button>
-        <button
-          onClick={nextSlider}
-          className={`absolute top-1/2 right-2 sm:right-4 transform -translate-y-1/2 bg-black/30 text-white p-1 sm:p-2 rounded-full hover:bg-black/50 transition text-sm sm:text-base`}
-        >
-          &#10095;
-        </button>
+      {/* Success Modal */}
+      {successOrderDetails && (
+        <OrderSuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
+          orderDetails={successOrderDetails}
+        />
+      )}
 
-        {/* Indicators */}
-        <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2">
-          {carouselImages.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlider(idx)}
-              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
-                currentSlider === idx 
-                  ? "bg-white w-4 sm:w-8"
-                  : "bg-white/50"
-              }`}
-            ></button>
-          ))}
-        </div>
-      </div>
-      <div className=" mt-6 rounded-lg">
-        <div className="p-5">
-        <h1 className="text-5xl font-bold">{product?.basicInfo.title}</h1>
-        <h1 className="text-3xl font-bold py-5 mt-10 text-gray-800">বিস্তারিত বিবরণ</h1>
-        <p className="text-2xl text-gray-500 my-2 text-justify">{product?.basicInfo.description}</p>
-        </div>
-        
-        {/* Variant Selection */}
-        {product.variants && product.variants.length > 0 && (
-          <div className="p-5">
-            <h2 className="text-2xl font-bold">Select Variants:</h2>
-            <div className="grid grid-cols-2 gap-2">
-              {product.variants.map((variantGroup) => (
-                <div key={variantGroup.group} className="space-y-3">
-                  <h3 className="font-medium text-gray-700">{variantGroup.group}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {variantGroup.items.map((variant) => (
-                      <button
-                        key={variant.value}
-                        onClick={() => handleVariantSelect(variantGroup.group, variant)}
-                        className={`px-4 py-2 rounded-lg transition-all ${
-                          selectedVariants.get(variantGroup.group)?.value === variant.value
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 hover:bg-gray-300'
-                        }`}
-                      >
-                        {variant.value}
-                        {variant.price > 0 && (
-                          <span className={`ml-1 text-sm ${
-                            selectedVariants.get(variantGroup.group)?.value === variant.value
-                              ? 'text-blue-200'
-                              : 'text-gray-500'
-                          }`}>
-                            +৳{variant.price}
-                          </span>
-                        )}
-                      </button>
-                    ))}
+      <div className="container   mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-green-100">
+          <div className="grid lg:grid-cols-2 gap-0">
+            {/* ছবি গ্যালারি */}
+            <div className="relative p-8 bg-gradient-to-br from-green-50 to-white border">
+              <div className=" rounded-2xl overflow-hidden shadow-lg">
+                <img
+                  src={currentImage?.url}
+                  alt={currentImage?.alt || product?.basicInfo.title}
+                  className="object-cover aspect-square mx-auto transform transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+              
+              <div className="mt-6 grid grid-cols-4 gap-4">
+                {product?.images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImage(img)}
+                    className={`relative rounded-xl overflow-hidden shadow-md transition-all duration-300 ${
+                      currentImage?.url === img.url 
+                        ? 'ring-2 ring-green-500 transform scale-105' 
+                        : 'hover:opacity-75 hover:scale-95'
+                    }`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.alt}
+                      className="w-full h-24 object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* পণ্যের তথ্য */}
+            <div className="p-8">
+              <div className="mb-8">
+                <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">
+                  {product?.basicInfo.title}
+                </h1>
+                <p className="text-gray-600 leading-relaxed">
+                  {product?.basicInfo.description}
+                </p>
+              </div>
+
+              {/* মূল্য */}
+              <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-6 mb-8 shadow-inner">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-xl text-gray-700">মূল্য:</span>
+                  <div className="text-right">
+                    <span className="text-4xl font-bold text-green-600">
+                      ৳{(currentPrice * quantity).toLocaleString()}
+                    </span>
+                    {product?.price.regular > currentPrice && (
+                      <span className="ml-2 text-xl line-through text-red-400">
+                        ৳{(product?.price.regular * quantity).toLocaleString()}
+                      </span>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+              </div>
 
-        {/* Display Selected Variant Group */}
-        {selectedVariants.size > 0 && (
-          <div className="p-5">
-            <h3 className="text-xl font-bold">Selected Variant: {Array.from(selectedVariants.keys()).join(', ')}</h3>
-            <p className="text-sm text-gray-600 mt-1 animate-pulse">{Array.from(selectedVariants.values()).map(v => v.value).join(', ')}</p>
-          </div>
-        )}
-        <div className="p-5">
-          <div className="flex gap-10 justify-center items-center bg-green-100 p-5 rounded-lg shadow-lg border border-gray-300">
-            <h1 className="text-3xl font-bold mb-2 text-gray-800">দাম মাত্র</h1>
-            <div className="flex items-center justify-center">
-              <span className="text-green-700 text-3xl font-extrabold flex items-center justify-center gap-2">{currentPrice} <span className="text-gray-500 text-lg">টাকা</span></span>
-              <span className="text-lg line-through ml-4 text-red-500 font-bold flex items-center justify-center gap-2">{product?.price.regular} </span>
+              {/* ভেরিয়েন্ট */}
+              {product?.variants && product.variants.length > 0 && (
+                <div className="space-y-6 mb-8">
+                  {product.variants.map((variantGroup) => (
+                    <div key={variantGroup.group}>
+                      <h3 className="text-lg font-medium text-gray-900 mb-4">
+                        {variantGroup.group}
+                      </h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        {variantGroup.items.map((variant) => (
+                          <button
+                            key={variant.value}
+                            onClick={() => handleVariantSelect(variantGroup.group, variant)}
+                            className={`flex items-center justify-between px-4 py-3 rounded-xl border-2 transition-all duration-300 ${
+                              selectedVariants.get(variantGroup.group)?.value === variant.value
+                                ? 'border-green-500 bg-green-50 text-green-700 shadow-md transform scale-105'
+                                : 'border-gray-200 hover:border-green-300 hover:shadow-lg'
+                            }`}
+                          >
+                            <span>{variant.value}</span>
+                            {variant.price > 0 && (
+                              <span className="text-sm font-medium">
+                                +৳{variant.price.toLocaleString()}
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* পরিমাণ */}
+              <div className="mb-8">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">পরিমাণ</h3>
+                <div className="inline-flex items-center border-2 border-gray-200 rounded-xl shadow-sm">
+                  <button 
+                    onClick={handleDecrement}
+                    className="px-4 py-2 text-xl text-gray-600 hover:bg-gray-50 rounded-l-xl transition-colors"
+                    disabled={quantity <= 1}
+                  >
+                    −
+                  </button>
+                  <span className="px-6 py-2 text-xl font-medium border-x-2 border-gray-200">
+                    {quantity}
+                  </span>
+                  <button 
+                    onClick={handleIncrement}
+                    className="px-4 py-2 text-xl text-gray-600 hover:bg-gray-50 rounded-r-xl transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* অর্ডার বাটন */}
+              <button
+                onClick={handleSubmit}
+                className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white py-4 px-8 rounded-xl text-lg font-medium hover:from-green-700 hover:to-green-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                অর্ডার করুন
+              </button>
             </div>
-            <p className="text-sm text-gray-600 mt-1 animate-pulse">Limited time offer!</p>
           </div>
         </div>
-          <div className="p-5">
-            <h1 className="text-3xl font-bold py-5 text-gray-800 text-center bg-green-100 p-5 rounded-lg shadow-lg border border-gray-300 cursor-pointer">অর্ডার করতে এখানে ক্লিক করুন।</h1>
-          </div>
-          {/* Checkout Form */}
-          <div className="p-5">
-           
-          </div>
-      </div>
-      </div>
-      <div className="">
-        <CheckoutSection
-          product={product}
-          selectedVariants={selectedVariants}
-          currentPrice={currentPrice}
-        />
+
+        {/* চেকআউট সেকশন */}
+        <div className="mt-8">
+          <CheckoutSection
+            orderDetails={orderDetails}
+            handleSubmit={handleSubmit}
+            onQuantityChange={handleQuantityChange}
+            onVariantChange={handleVariantSelect}
+            isLoading={isOrderLoading}
+          />
+        </div>
       </div>
     </div>
   );

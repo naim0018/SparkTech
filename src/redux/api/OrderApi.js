@@ -6,7 +6,7 @@ export const orderApi = baseApi.injectEndpoints({
       query: (orderData) => ({
         url: '/order/create-order',
         method: 'POST',
-        body: orderData,
+        body: orderData.body,
       }),
       invalidatesTags: ['Orders'],
     }),
