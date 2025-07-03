@@ -606,7 +606,7 @@ const LandingPage = () => {
         <section className="bg-gradient-to-r from-green-600 to-green-500 rounded-3xl p-12 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">Ready to Order?</h2>
           <p className="text-xl mb-8 opacity-90">
-            Don't miss out on this amazing product. Order now and get it delivered to your doorstep!
+            Don&apos;t miss out on this amazing product. Order now and get it delivered to your doorstep!
           </p>
           <button
             onClick={scrollToCheckout}
