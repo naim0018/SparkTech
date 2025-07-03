@@ -437,14 +437,7 @@ const LandingPage = () => {
                   )}
                 </ul>
               </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-1">SEO</h4>
-                <ul className="text-gray-600 text-sm space-y-1">
-                  <li>Meta Title: {product.seo?.metaTitle}</li>
-                  <li>Meta Description: {product.seo?.metaDescription}</li>
-                  <li>Slug: {product.seo?.slug}</li>
-                </ul>
-              </div>
+            
             </div>
             {/* Reviews */}
             {product.reviews?.length > 0 && (
