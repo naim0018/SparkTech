@@ -83,7 +83,7 @@ const LandingPage = () => {
     // Price calculation: base + sum of variant prices
     let price = product.price.discounted || product.price.regular
     newSelectedVariants.forEach((v) => {
-      if (typeof v.price === "number" && !isNaN(v.price)) price += v.price
+      if (typeof v.price === "number" && !isNaN(v.price)) price = v.price
     })
     setCurrentPrice(price)
 
