@@ -67,41 +67,50 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Link to={`/product/${product?._id}`} className="block">
-      <div className={`group relative ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1`}>
+    <Link to={`/product/${product?._id}`} className="block group">
+      <div className={`relative rounded-3xl overflow-hidden shadow-lg border transition-all duration-400 hover:-translate-y-1
+        ${isDarkMode
+          ? 'bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#134e4a] border-[#1e293b] hover:shadow-emerald-900/40'
+          : 'bg-white border-emerald-100 hover:shadow-emerald-300/40'
+        }`
+      }>
         {/* Image Section */}
-        <div className="relative h-60 overflow-hidden">
+        <div className={`relative flex items-center justify-center
+          ${isDarkMode
+            ? 'bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#134e4a]'
+            : 'bg-gradient-to-br from-emerald-50 via-white to-green-50'
+          }`
+        }>
           <img 
             src={product?.images?.[0]?.url} 
             alt={product?.basicInfo?.title}
-            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-full transition-transform duration-500 group-hover:scale-105"
           />
-          
-          {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
-            {product?.price?.discounted && (
-              <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                -{product?.price?.savingsPercentage?.toFixed(0)}%
-              </span>
-            )}
-            {product?.additionalInfo?.isOnSale && (
-              <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                Sale
-              </span>
-            )}
-          </div>
-
-          {/* Quick Action Buttons */}
-          <div className="absolute -bottom-12 left-0 right-0 flex justify-center gap-3 group-hover:bottom-4 transition-all duration-300">
+          {/* Discount Badge */}
+          {product?.price?.discounted && (
+            <span className={`absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow`}>
+              -{product?.price?.savingsPercentage?.toFixed(0) || Math.round(100 - (product?.price?.discounted / product?.price?.regular) * 100)}%
+            </span>
+          )}
+          {/* Sale Badge */}
+          {product?.additionalInfo?.isOnSale && (
+            <span className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow">
+              Sale
+            </span>
+          )}
+          {/* Quick Action Buttons (hover only) */}
+          <div className="absolute bottom-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button
               onClick={handleAddToCart}
-              className="bg-white/90 hover:bg-orange-500 hover:text-white text-gray-900 p-3 rounded-full shadow-lg transition-colors"
+              className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition-colors"
+              title="Add to Cart"
             >
               <FaShoppingCart className="text-lg" />
             </button>
             <button
               onClick={handleToggleWishlist}
-              className={`${isInWishlist ? 'bg-red-500 text-white' : 'bg-white/90 hover:bg-red-500 hover:text-white text-gray-900'} p-3 rounded-full shadow-lg transition-colors`}
+              className={`p-3 rounded-full shadow-lg transition-colors ${isInWishlist ? 'bg-red-500 text-white' : (isDarkMode ? 'bg-[#1e293b] hover:bg-red-500 hover:text-white text-emerald-100' : 'bg-white hover:bg-red-500 hover:text-white text-gray-900')}`}
+              title={isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
             >
               <FaHeart className="text-lg" />
             </button>
@@ -109,16 +118,17 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Content Section */}
-        <div className="p-4">
+        <div className="p-5">
           {/* Category and Status Badge Row */}
-          <div className="flex items-center gap-2 mb-3">
-            <span className={`text-xs px-2 py-1 rounded-full ${isDarkMode ? 'bg-gray-700 text-orange-400' : 'bg-orange-100 text-orange-600'} font-medium`}>
+          <div className="flex items-center gap-2 mb-2">
+            <span className={`text-xs px-2 py-1 rounded-full font-medium
+              ${isDarkMode ? 'bg-[#1e293b] text-emerald-100' : 'bg-emerald-100 text-emerald-700'}`}>
               {product?.basicInfo?.category}
             </span>
             <span className={`text-xs px-2 py-1 rounded-full flex items-center ${
               product?.stockStatus === 'In Stock' 
-                ? (isDarkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-600')
-                : (isDarkMode ? 'bg-red-900/30 text-red-400' : 'bg-red-100 text-red-600')
+                ? (isDarkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700')
+                : (isDarkMode ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-600')
             }`}>
               {product?.stockStatus === 'In Stock' ? (
                 <>
@@ -130,28 +140,37 @@ const ProductCard = ({ product }) => {
           </div>
 
           {/* Title with Two Line Limit */}
-          <h3 className={`font-medium text-sm leading-relaxed mb-2 h-20  ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} hover:text-orange-500 transition-colors`}>
+          <h3 className={`font-semibold text-base leading-tight mb-2 h-12 group-hover:text-green-400 transition-colors line-clamp-2
+            ${isDarkMode ? 'text-emerald-100' : 'text-gray-800'}`}>
             {product?.basicInfo?.title}
           </h3>
 
-          {/* Price Section with Enhanced Background */}
-          <div className={`${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'} p-4 rounded-xl shadow-sm`}>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-2xl font-bold flex items-center text-orange-500">
-                  <TbCurrencyTaka className="text-2xl" />
-                  {Math.ceil(product?.price?.discounted || product?.price?.regular)}
-                </span>
-                {product?.price?.discounted && (
-                  <span className={`text-base line-through flex items-center ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                    <TbCurrencyTaka />
-                    {Math.ceil(product?.price?.regular)}
-                  </span>
-                )}
-              </div>
-              
-            </div>
+          {/* Price Section */}
+          <div className="flex items-center gap-2 mb-4">
+            <span className={`text-xl font-bold flex items-center ${isDarkMode ? 'text-emerald-200' : 'text-green-600'}`}>
+              <TbCurrencyTaka className="text-xl" />
+              {Math.ceil(product?.price?.discounted || product?.price?.regular)}
+            </span>
+            {product?.price?.discounted && (
+              <span className={`text-base line-through flex items-center ${isDarkMode ? 'text-emerald-700' : 'text-gray-400'}`}>
+                <TbCurrencyTaka />
+                {Math.ceil(product?.price?.regular)}
+              </span>
+            )}
           </div>
+
+          {/* Visible Add to Cart Button */}
+          <button
+            onClick={handleAddToCart}
+            className={`w-full mt-2 py-2 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200
+              ${isDarkMode
+                ? 'bg-[#1e293b] hover:bg-green-700 text-emerald-100'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+              }`}
+          >
+            <FaShoppingCart className="text-lg" />
+            Add to Cart
+          </button>
         </div>
       </div>
     </Link>

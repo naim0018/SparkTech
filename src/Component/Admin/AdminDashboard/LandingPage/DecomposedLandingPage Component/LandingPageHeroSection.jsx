@@ -2,6 +2,7 @@
 
 import TrustSignals from "./TrustSignals";
 
+
 const LandingPageHeroSection = ({
   product,
   currentImage,
@@ -138,6 +139,8 @@ const LandingPageHeroSection = ({
                 </div>
               )}
             </div>
+
+       
 
             {/* Key Features */}
             {product.basicInfo.keyFeatures?.length > 0 && (

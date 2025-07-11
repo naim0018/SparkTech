@@ -2,7 +2,7 @@
 
 /* eslint-disable no-unused-vars */
 
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import { useGetProductByIdQuery } from "../../../../redux/api/ProductApi"
 import { useState, useEffect } from "react"
 import { Helmet } from "react-helmet"
@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css"
 import OrderSuccessModal from "./OrderSuccessModal"
 import LandingPageHeroSection from "./DecomposedLandingPage Component/LandingPageHeroSection"
 import LandingPageProductDetails from "./DecomposedLandingPage Component/LandingPageProductDetails"
+import { FaHome } from "react-icons/fa"
 
 const LandingPage = () => {
   const { productId } = useParams()
@@ -206,6 +207,18 @@ const LandingPage = () => {
   // --- Main Render ---
   return (
     <div className="min-h-screen bg-white">
+      {/* Home Icon Button */}
+      <div className="fixed top-6 left-6 z-50">
+        <Link
+          to="/"
+          className="flex items-center gap-2 bg-white border border-gray-200 shadow-lg rounded-full px-4 py-2 hover:bg-green-50 transition-colors"
+          title="হোম পেজে যান"
+        >
+          <FaHome className="h-6 w-6 text-green-600" />
+          <span className="hidden md:inline text-green-700 font-bold">হোম</span>
+        </Link>
+      </div>
+
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} theme="light" />
 
       <Helmet>

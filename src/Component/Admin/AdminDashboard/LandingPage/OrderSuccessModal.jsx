@@ -2,9 +2,11 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import confetti from 'canvas-confetti';
+import { useNavigate } from 'react-router-dom';
 
 const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
   const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen) {
@@ -33,6 +35,10 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
       className: "bg-blue-50 border border-blue-200",
     });
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleGoHome = () => {
+    navigate("/");
   };
 
   return (
@@ -114,6 +120,12 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
               className="w-full py-4 text-lg bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all duration-300 border border-gray-200 transform hover:scale-[1.02] shadow-md"
             >
               ঠিক আছে
+            </button>
+            <button
+              onClick={handleGoHome}
+              className="w-full py-4 text-lg bg-blue-50 text-blue-700 rounded-xl font-medium hover:bg-blue-100 transition-all duration-300 border border-blue-200 transform hover:scale-[1.02] shadow-md"
+            >
+              হোম পেজে যান
             </button>
           </div>
         </div>

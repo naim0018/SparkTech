@@ -1,6 +1,6 @@
 // Importing necessary dependencies and components
 import { useState } from "react";
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaFilter } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from "./ProductCard";
 import { useTheme } from "../../ThemeContext";
@@ -99,23 +99,30 @@ const AllProducts = () => {
     );
   }
 
+  // Color variables
+  const primaryColor = "green";
+  const accentColor = "emerald";
+
+  // Only show categories that have at least one product
+  const categoriesWithProducts = categoriesData?.data?.filter(category =>
+    productsData?.products?.some(product => product.basicInfo?.category === category.name)
+  ) || [];
+
   // Filter sidebar content
   const FilterSidebar = () => (
     <div className="space-y-6">
       {/* Search input with icon */}
       <div className="lg:hidden">
-        <h3 className="text-lg font-semibold mb-2 text-orange-500">Search</h3>
+        <h3 className={`text-lg font-semibold mb-2 text-${primaryColor}-600`}>Search</h3>
         <div className="relative">
           <input
             type="text"
             placeholder="Search by title or category..."
             value={filters.searchTerm}
             onChange={(e) => handleFilterChange({ ...filters, searchTerm: e.target.value })}
-            className={`w-full p-3 pl-10 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500 ${
-              isDarkMode ? 'bg-gray-700 text-orange-300 placeholder-gray-400' : 'bg-white text-black placeholder-gray-500'
-            }`}
+            className={`w-full p-3 pl-10 border border-${primaryColor}-200 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-${accentColor}-500 bg-white text-black placeholder-${primaryColor}-400`}
           />
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-400" />
+          <FaSearch className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-${accentColor}-400`} />
         </div>
       </div>
 
@@ -123,17 +130,17 @@ const AllProducts = () => {
 
       {/* Sort by Price */}
       <div className="lg:hidden">
-        <h3 className="text-lg font-semibold mb-2 text-orange-500">Sort by Price</h3>
+        <h3 className="text-lg font-semibold mb-2 text-green-600">Sort by Price</h3>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => handleFilterChange({ ...filters, sortPrice: 'lowToHigh' })}
-            className={`p-2 rounded-lg ${filters.sortPrice === 'lowToHigh' ? 'bg-orange-300 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
+            className={`p-2 rounded-lg ${filters.sortPrice === 'lowToHigh' ? 'bg-green-600 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
           >
             Low to High
           </button>
           <button
             onClick={() => handleFilterChange({ ...filters, sortPrice: 'highToLow' })}
-            className={`p-2 rounded-lg ${filters.sortPrice === 'highToLow' ? 'bg-orange-300 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
+            className={`p-2 rounded-lg ${filters.sortPrice === 'highToLow' ? 'bg-green-600 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
           >
             High to Low
           </button>
@@ -144,9 +151,9 @@ const AllProducts = () => {
 
       {/* Stock Status Filter */}
       <div>
-        <h3 className="text-lg font-semibold mb-2 text-orange-500">Stock Status</h3>
+        <h3 className={`text-lg font-semibold mb-2 text-${primaryColor}-600`}>Stock Status</h3>
         <div className="flex flex-col space-y-2">
-          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === '' ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === '' ? `bg-${accentColor}-100` : ' '} text-black`}>
             <input
               type="radio"
               checked={filters.stockStatus === ''}
@@ -155,7 +162,7 @@ const AllProducts = () => {
             />
             All Status
           </label>
-          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === 'In Stock' ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === 'In Stock' ? `bg-${accentColor}-100` : ''} text-black`}>
             <input
               type="radio"
               checked={filters.stockStatus === 'In Stock'}
@@ -164,7 +171,7 @@ const AllProducts = () => {
             />
             In Stock
           </label>
-          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === 'Out of Stock' ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === 'Out of Stock' ? `bg-${accentColor}-100` : ''} text-black`}>
             <input
               type="radio"
               checked={filters.stockStatus === 'Out of Stock'}
@@ -180,9 +187,9 @@ const AllProducts = () => {
 
       {/* Category Filter */}
       <div>
-        <h3 className="text-lg font-semibold mb-2 text-orange-500">Category</h3>
+        <h3 className={`text-lg font-semibold mb-2 text-${primaryColor}-600`}>Category</h3>
         <div className="flex flex-col space-y-2">
-          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.category === '' ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.category === '' ? `bg-${accentColor}-100` : ''} ${isDarkMode ? 'text-emerald-100' : 'text-black'}`}>
             <input
               type="radio"
               checked={filters.category === ''}
@@ -191,9 +198,9 @@ const AllProducts = () => {
             />
             All Categories
           </label>
-            {categoriesData?.data?.map(category => (
+          {categoriesWithProducts.map(category => (
             <div key={category._id}>
-              <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.category === category.name ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+              <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.category === category.name ? `bg-${accentColor}-100` : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
                 <input
                   type="radio"
                   checked={filters.category === category.name}
@@ -205,7 +212,7 @@ const AllProducts = () => {
               {filters.category === category.name && category.subCategories && category.subCategories.length > 0 && (
                 <div className="ml-6 mt-2 space-y-2">
                   {category.subCategories.map(subcategory => (
-                    <label key={subcategory.name} className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.subcategory === subcategory.name ? 'bg-orange-500 ' : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                    <label key={subcategory.name} className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.subcategory === subcategory.name ? `bg-${accentColor}-100` : ''} ${isDarkMode ? 'text-emerald-100' : 'text-black'}`}>
                       <input
                         type="radio"
                         checked={filters.subcategory === subcategory.name}
@@ -225,7 +232,7 @@ const AllProducts = () => {
   );
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-orange-200' : 'bg-gray-100 text-black'}`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#134e4a] text-emerald-100' : 'bg-white text-black'}`}>
       <Helmet>
         <title>All Products | BestBuy4uBD</title>
         <meta name="description" content="Browse our complete collection of electronics, gadgets, and accessories. Filter by category, price range, and stock status." />
@@ -235,13 +242,16 @@ const AllProducts = () => {
         {/* Page title */}
         {/* Show Categories */}
         <div className="flex items-center gap-4 mb-6 overflow-x-auto p-2">
-          {categoriesData?.data?.map(category => (
+          {categoriesWithProducts.map(category => (
             <div
               key={category._id}
               onClick={() => handleFilterChange({ ...filters, category: category.name, subcategory: '' })}
-              className={`${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50'} 
-                flex-1 min-w-[160px] h-24 p-2 rounded-lg shadow-sm cursor-pointer transition-all duration-300 
-                ${filters.category === category.name ? 'ring-2 ring-orange-300' : ''}`}
+              className={`${
+                isDarkMode
+                  ? 'bg-neutral-800 hover:bg-neutral-700'
+                  : 'bg-white hover:bg-emerald-50'
+              } flex-1 min-w-[160px] h-24 p-2 rounded-lg shadow-sm cursor-pointer transition-all duration-300 
+                ${filters.category === category.name ? 'ring-2 ring-emerald-400' : ''}`}
             >
               <div className="h-full flex flex-col items-center justify-center text-center">
                 <img 
@@ -249,7 +259,7 @@ const AllProducts = () => {
                   alt={category.name}
                   className="w-10 h-10 object-contain mb-2"
                 />
-                <h3 className={`text-xs font-medium line-clamp-1 ${isDarkMode ? 'text-white' : 'text-orange-300'}`}>{category.name}</h3>
+                <h3 className={`text-xs font-medium line-clamp-1 ${isDarkMode ? 'text-emerald-200' : 'text-emerald-600'}`}>{category.name}</h3>
               </div>
             </div>
           ))}
@@ -257,10 +267,10 @@ const AllProducts = () => {
 
         {/* Mobile filter button */}
         <button
-          className="lg:hidden w-full mb-4 p-3 flex items-center justify-center gap-2 rounded-lg bg-orange-300 text-white"
+          className="lg:hidden w-full mb-4 p-3 flex items-center justify-center gap-2 rounded-lg bg-emerald-600 text-white"
           onClick={() => setShowFilters(!showFilters)}
         >
-          <FaSearch className="text-lg" />
+          <FaFilter className="text-lg" />
           <span>Filters & Search</span>
         </button>
 
@@ -268,9 +278,9 @@ const AllProducts = () => {
         {showFilters && (
           <div className="fixed inset-0 z-50 lg:hidden">
             <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowFilters(false)}></div>
-            <div className={`absolute right-0 top-0 h-full w-80 p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} overflow-y-auto`}>
+            <div className={`absolute right-0 top-0 h-full w-80 p-4 ${isDarkMode ? 'bg-green-900' : 'bg-white'} overflow-y-auto`}>
               <button
-                className="absolute top-4 right-4 text-2xl text-orange-300"
+                className="absolute top-4 right-4 text-2xl text-emerald-400"
                 onClick={() => setShowFilters(false)}
               >
                 ×
@@ -283,14 +293,14 @@ const AllProducts = () => {
         {/* Main grid layout */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Desktop filter sidebar */}
-          <div className={`hidden lg:block lg:col-span-1 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded-lg shadow-lg mb-4 lg:mb-0`}>
+          <div className={`hidden lg:block lg:col-span-1 ${isDarkMode ? 'bg-neutral-800' : 'bg-white'} p-4 rounded-lg shadow-lg mb-4 lg:mb-0`}>
             <FilterSidebar />
           </div>
             
           {/* Main Content */}
           <div className="lg:col-span-4">
             {/* Top bar for search and sort - Only visible on desktop */}
-            <div className={`hidden lg:flex flex-col md:flex-row justify-between items-center gap-4 mb-8 p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg`}>
+            <div className={`hidden lg:flex flex-col md:flex-row justify-between items-center gap-4 mb-8 p-4 ${isDarkMode ? 'bg-neutral-800' : 'bg-white'} rounded-lg shadow-lg`}>
               {/* Search input with icon */}
               <div className="relative w-full md:w-96">
                 <input
@@ -298,25 +308,25 @@ const AllProducts = () => {
                   placeholder="Search by title or category..."
                   value={filters.searchTerm}
                   onChange={(e) => handleFilterChange({ ...filters, searchTerm: e.target.value })}
-                  className={`w-full p-3 pl-10 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-orange-500 ${
-                    isDarkMode ? 'bg-gray-700 text-orange-300 placeholder-gray-400' : 'bg-white text-black placeholder-gray-500'
+                  className={`w-full p-3 pl-10 border border-green-200 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-emerald-500 ${
+                    isDarkMode ? 'bg-neutral-900 text-emerald-200 placeholder-emerald-400' : 'bg-white text-black placeholder-emerald-400'
                   }`}
                 />
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-400" />
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-emerald-400" />
               </div>
 
               {/* Sort buttons */}
               <div className="flex items-center space-x-4 w-full md:w-auto">
-                <span className="text-sm font-medium whitespace-nowrap text-orange-500">Sort by Price:</span>
+                <span className="text-sm font-medium whitespace-nowrap text-emerald-600">Sort by Price:</span>
                 <button
                   onClick={() => handleFilterChange({ ...filters, sortPrice: 'lowToHigh' })}
-                  className={`p-2 rounded-lg ${filters.sortPrice === 'lowToHigh' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
+                  className={`p-2 rounded-lg ${filters.sortPrice === 'lowToHigh' ? 'bg-emerald-600 text-white' : 'bg-green-100 text-black'} transition duration-200`}
                 >
                   Low to High
                 </button>
                 <button
                   onClick={() => handleFilterChange({ ...filters, sortPrice: 'highToLow' })}
-                  className={`p-2 rounded-lg ${filters.sortPrice === 'highToLow' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
+                  className={`p-2 rounded-lg ${filters.sortPrice === 'highToLow' ? 'bg-emerald-600 text-white' : 'bg-green-100 text-black'} transition duration-200`}
                 >
                   High to Low
                 </button>
@@ -334,17 +344,17 @@ const AllProducts = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded-lg shadow-md`}
+                      className={`${isDarkMode ? 'bg-neutral-800' : 'bg-white'} p-4 rounded-lg shadow-md`}
                     >
-                      <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} h-48 mb-4 rounded animate-pulse`}></div>
-                      <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} h-4 w-3/4 mb-2 rounded animate-pulse`}></div>
-                      <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} h-4 w-1/2 rounded animate-pulse`}></div>
+                      <div className={`${isDarkMode ? 'bg-neutral-900' : 'bg-emerald-100'} h-48 mb-4 rounded animate-pulse`}></div>
+                      <div className={`${isDarkMode ? 'bg-neutral-900' : 'bg-emerald-100'} h-4 w-3/4 mb-2 rounded animate-pulse`}></div>
+                      <div className={`${isDarkMode ? 'bg-neutral-900' : 'bg-emerald-100'} h-4 w-1/2 rounded animate-pulse`}></div>
                     </motion.div>
                   ))
                 ) : productsData?.products?.length === 0 ? (
                   // No products found message
                   <div className="col-span-full flex flex-col justify-center items-center">
-                    <div className={`text-center ${isDarkMode ? 'text-orange-600' : 'text-black'}`}>
+                    <div className={`text-center ${isDarkMode ? 'text-emerald-400' : 'text-black'}`}>
                       <h3 className="text-3xl font-bold mb-4">Oops! No Products Found</h3>
                       <p className="text-lg">We couldn&apos;t find any products matching your criteria.</p>
                       <p className="mt-2">Please try adjusting your filters or search terms.</p>
@@ -383,12 +393,12 @@ const AllProducts = () => {
                     className={`w-10 h-10 rounded-full flex items-center justify-center ${
                       pageNumber === currentPage
                         ? isDarkMode
-                          ? 'bg-orange-600 text-white'
-                          : 'bg-black text-white'
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-green-900 text-white'
                         : isDarkMode
-                        ? 'bg-gray-700 text-orange-200 hover:bg-gray-600'
-                        : 'bg-white text-black hover:bg-gray-100'
-                    } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''} border ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}
+                        ? 'bg-green-900 text-emerald-200 hover:bg-emerald-900'
+                        : 'bg-white text-black hover:bg-emerald-100'
+                    } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''} border ${isDarkMode ? 'border-emerald-900' : 'border-emerald-200'}`}
                   >
                     {pageNumber}
                   </button>
