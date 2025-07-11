@@ -10,6 +10,7 @@ import { Helmet } from 'react-helmet';
 
 const Cart = ({ toggleCart }) => {
   const cartItems = useSelector((state) => state.cart.cartItems) || [];
+  console.log(cartItems)
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
   const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);

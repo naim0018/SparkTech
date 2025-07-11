@@ -21,8 +21,7 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
     
-      const { id, name, basePrice, image, quantity, selectedVariants } = action.payload;
-      
+      const { id, name, price:basePrice, image, quantity, selectedVariants } = action.payload;
       // Create a unique key that includes all variants
       const variantKey = selectedVariants?.length > 0
         ? `${id}-${selectedVariants.map(v => `${v.group}-${v.value}`).join('-')}`
@@ -34,6 +33,7 @@ const cartSlice = createSlice({
 
       // Calculate the price based on selected variants
       let price = basePrice;
+      
       if (selectedVariants?.length > 0) {
         selectedVariants.forEach(variant => {
           const variantItem = variant.items.find(item => item.value === variant.value);
@@ -42,7 +42,7 @@ const cartSlice = createSlice({
           }
         });
       }
-
+      
       if (existingItemIndex >= 0) {
         state.cartItems[existingItemIndex].quantity += quantity;
       } else {
@@ -50,7 +50,7 @@ const cartSlice = createSlice({
           id,
           itemKey: variantKey,
           name,
-          price,
+          price : price,
           image,
           quantity,
           selectedVariants

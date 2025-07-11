@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 
 const CheckoutSection = ({ orderDetails, handleSubmit, onQuantityChange, onVariantChange, isLoading }) => {
+  console.log(orderDetails)
+
   const { title, variants, price, quantity, image, product } = orderDetails;
   const [formValid, setFormValid] = useState(false);
   const [deliveryCharge, setDeliveryCharge] = useState(80); // Default to inside Dhaka

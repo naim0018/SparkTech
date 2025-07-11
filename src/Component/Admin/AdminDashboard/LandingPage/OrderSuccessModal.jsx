@@ -1,9 +1,21 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import confetti from 'canvas-confetti';
 
 const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#4CAF50', '#FFC107', '#2196F3']
+      });
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -30,11 +42,11 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
         <div className="fixed inset-0 bg-black opacity-40" onClick={onClose}></div>
 
         {/* Modal */}
-        <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full mx-auto p-8">
+        <div className="relative bg-gradient-to-br from-white to-green-50 rounded-3xl shadow-2xl max-w-2xl w-full mx-auto p-10 border border-green-100">
           {/* Success Icon */}
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
-              <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center transform hover:scale-105 transition-transform duration-300 shadow-lg">
+              <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -42,15 +54,15 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
 
           {/* Content */}
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
               অর্ডার সফলভাবে সম্পন্ন হয়েছে!
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-lg text-gray-600 mb-8">
               আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে। অনুগ্রহ করে অর্ডার আইডিটি সংরক্ষণ করুন।
             </p>
 
             {/* Order Details */}
-            <div className="bg-green-50 rounded-xl p-6 mb-6">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-8 mb-8 shadow-inner border border-green-100">
               <div className="space-y-3 text-left">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">অর্ডার আইডি:</span>
@@ -93,13 +105,13 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
           <div className="flex flex-col gap-3">
             <button
               onClick={handleCopyOrderId}
-              className="w-full py-3 bg-green-100 text-green-700 rounded-xl font-medium hover:bg-green-200 transition-colors"
+              className="w-full py-4 text-lg bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-medium hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg"
             >
               অর্ডার আইডি কপি করুন
             </button>
             <button
               onClick={onClose}
-              className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+              className="w-full py-4 text-lg bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all duration-300 border border-gray-200 transform hover:scale-[1.02] shadow-md"
             >
               ঠিক আছে
             </button>
@@ -121,4 +133,4 @@ OrderSuccessModal.propTypes = {
   }).isRequired
 };
 
-export default OrderSuccessModal; 
+export default OrderSuccessModal;
