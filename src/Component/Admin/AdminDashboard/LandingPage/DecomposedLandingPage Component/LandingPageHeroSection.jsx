@@ -23,7 +23,7 @@ const LandingPageHeroSection = ({
    const savings = hasDiscount
     ? product.price.regular - product.price.discounted
     : 0;
-    
+
   const savingsPercent = hasDiscount
     ? Math.round((savings / regularPrice) * 100)
     : 0;
@@ -34,7 +34,7 @@ const LandingPageHeroSection = ({
       : "bg-red-500 text-white";
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 via-white to-green-50">
+    <div className="bg-gradient-to-br from-slate-50 via-white to-green-50 border border-gray-200 rounded-3xl p-8 lg:p-16">
       <div className="container mx-auto px-4 py-8 lg:py-16">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Product Images */}
