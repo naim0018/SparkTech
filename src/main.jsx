@@ -10,11 +10,13 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ThemeProvider } from './ThemeContext'
 import { PersistGate } from 'redux-persist/integration/react'
 
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
       <ThemeProvider>
         <PersistGate loading={null} persistor={persistor}>
+         
           <RouterProvider router={router} />
           <ToastContainer />
         </PersistGate>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { FaShoppingCart, FaHeart, FaExclamationTriangle, FaSearch, FaShippingFast, FaShieldAlt, FaUndo } from 'react-icons/fa';
 import { TbCurrencyTaka } from 'react-icons/tb';
 import { useGetProductByIdQuery } from '../../redux/api/ProductApi';
@@ -12,6 +12,7 @@ import { useTheme } from '../../ThemeContext';
 import ProductImages from './ProductImages';
 import { Helmet } from 'react-helmet';
 import CheckoutForm from '../Checkout/CheckOutForm';
+import { use } from 'react';
 
 const ProductView = () => {
   const { productId } = useParams();
@@ -39,7 +40,7 @@ const ProductView = () => {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isLoading]);
+  }, [isLoading,productId]);
 
   // Initialize price and reset variants when product changes
   useEffect(() => {
