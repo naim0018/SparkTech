@@ -43,11 +43,7 @@ const Mainlayout = () => {
         {showGoToTop && (
           <motion.button
             onClick={scrollToTop}
-            className={`fixed bottom-16 right-16 ${
-              isDarkMode 
-                ? 'bg-gradient-to-r from-gray-700 to-gray-900 text-white'
-                : 'bg-gradient-to-r from-gray-800 to-black text-white'
-            } p-3 rounded-full shadow-lg hover:from-gray-900 hover:to-gray-800 transition duration-300`}
+            className={`fixed bottom-16 right-16 bg-gradient-to-r from-primary to-primary-dark text-white p-3 rounded-full shadow-lg hover:from-secondary hover:to-secondary-dark transition duration-300`}
             aria-label="Go to top"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}

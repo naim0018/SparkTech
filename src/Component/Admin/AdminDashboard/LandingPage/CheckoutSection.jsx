@@ -2,12 +2,15 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 
 const CheckoutSection = ({ orderDetails, handleSubmit, onQuantityChange, onVariantChange, isLoading }) => {
-  console.log(orderDetails)
-
+  
   const { title, variants, price, quantity, image, product } = orderDetails;
   const [formValid, setFormValid] = useState(false);
   const [deliveryCharge, setDeliveryCharge] = useState(80); // Default to inside Dhaka
-
+  const cuponCodeAmount = {
+    "FreeShippingDhaka": 80,
+    "FreeShippingBD": 150,
+    "BestBuy":50,
+  }
   const handleQuantityDecrease = () => {
     if (quantity > 1) {
       onQuantityChange(quantity - 1);
@@ -20,7 +23,6 @@ const CheckoutSection = ({ orderDetails, handleSubmit, onQuantityChange, onVaria
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    
     // Get form data with notes
     const formData = {
       name: e.target.name.value,
@@ -41,6 +43,16 @@ const CheckoutSection = ({ orderDetails, handleSubmit, onQuantityChange, onVaria
   };
 
   const calculateTotalPrice = () => {
+    if(cuponCodeAmount){  
+      if(Object.keys(cuponCodeAmount).includes(orderDetails.cuponCode)){
+        const discount = cuponCodeAmount[orderDetails.cuponCode];
+        const subtotal = price * quantity;
+        const total = subtotal + deliveryCharge - discount;
+        return total > 0 ? total : 0; // Ensure total doesn't go negative
+      }
+    }
+
+
     const subtotal = price * quantity;
     return subtotal + deliveryCharge;
   };
@@ -299,6 +311,10 @@ const CheckoutSection = ({ orderDetails, handleSubmit, onQuantityChange, onVaria
                   <span className="text-gray-600">ডেলিভারি চার্জ:</span>
                   <span className="font-medium">৳{deliveryCharge}</span>
                 </div>
+                <div className="flex justify-between items-center text-sm md:text-base">
+                  <span className="text-gray-600">কুপন কোড:</span>
+                  <span className="font-medium">৳{}</span>
+                </div>
                 <div className="flex justify-between items-center bg-green-50 p-3 md:p-4 rounded-xl">
                   <span className="text-base md:text-lg font-medium text-gray-700">মোট মূল্য</span>
                   <span className="text-xl md:text-2xl font-bold text-green-600">৳{calculateTotalPrice()}</span>
@@ -344,7 +360,12 @@ CheckoutSection.propTypes = {
     price: PropTypes.number.isRequired,
     quantity: PropTypes.number.isRequired,
     image: PropTypes.object,
-    product: PropTypes.object
+    product: PropTypes.object,
+    deliveryCharge: PropTypes.number,
+    totalAmount: PropTypes.number,
+    cuponCode: PropTypes.string,
+    discount: PropTypes.number,
+    subtotal: PropTypes.number,
   }).isRequired,
   handleSubmit: PropTypes.func.isRequired,
   onQuantityChange: PropTypes.func.isRequired,

@@ -19,37 +19,38 @@ import OrderSuccessModal from '../Admin/AdminDashboard/LandingPage/OrderSuccessM
 /* Main checkout component that manages the checkout steps and payment selection */
 export default function Checkout() {
   const cartItems = useSelector((state) => state.cart?.cartItems)
-  const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const [successOrderDetails, setSuccessOrderDetails] = useState(null)
+  // const [showSuccessModal, setShowSuccessModal] = useState(false)
+  // const [successOrderDetails, setSuccessOrderDetails] = useState(null)
 
   // Redirect if cart is empty
   if (!cartItems?.length) {
     return <Navigate to="/" replace />
   }
 
-  const handleOrderSuccess = (orderDetails) => {
-    setSuccessOrderDetails(orderDetails)
-    setShowSuccessModal(true)
-  }
+  // const handleOrderSuccess = (orderDetails) => {
+  //   setSuccessOrderDetails(orderDetails)
+  //   // setShowSuccessModal(true)
+  // }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-8">
+    <div className="min-h-screen py-8 bg-gradient-to-b from-green-50 to-white">
       <ToastContainer />
-      <div className="container mx-auto px-4">
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-green-100">
+      <div className="container px-4 mx-auto">
+        <div className="overflow-hidden bg-white border border-green-100 shadow-2xl rounded-3xl">
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Checkout Form */}
-            <div className="p-4 md:p-10 bg-white order-2 md:order-none">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 flex items-center">
-                <span className="bg-green-100 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center mr-3 md:mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="order-2 p-4 bg-white md:p-10 md:order-none ">
+              <h1 className="flex items-center mb-6 text-2xl font-bold text-gray-800 md:text-3xl md:mb-8">
+                <span className="flex items-center justify-center w-8 h-8 mr-3 bg-green-100 rounded-full md:w-10 md:h-10 md:mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-green-600 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </span>
                 চেকআউট
               </h1>
-              <CheckoutForm onOrderSuccess={handleOrderSuccess} />
+              {/* <CheckoutForm onOrderSuccess={handleOrderSuccess} /> */}
+              <CheckoutForm />
             </div>
 
             {/* Order Summary */}
@@ -61,13 +62,13 @@ export default function Checkout() {
       </div>
 
       {/* Success Modal */}
-      {successOrderDetails && (
+      {/* {successOrderDetails && (
         <OrderSuccessModal
           isOpen={showSuccessModal}
           onClose={() => setShowSuccessModal(false)}
           orderDetails={successOrderDetails}
         />
-      )}
+      )} */}
     </div>
   )
 }

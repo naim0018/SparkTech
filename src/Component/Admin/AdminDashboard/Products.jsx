@@ -17,7 +17,6 @@ import { useGetAllCategoriesQuery } from '../../../redux/api/CategoriesApi';
 import Swal from 'sweetalert2';
 import UpdateProduct from './UpdateProduct';
 
-
 const Products = () => {
   const [expandedProduct, setExpandedProduct] = useState(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);

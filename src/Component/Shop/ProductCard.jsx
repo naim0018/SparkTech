@@ -75,47 +75,55 @@ const ProductCard = ({ product }) => {
         }`
       }>
         {/* Image Section */}
-        <div className={`relative flex items-center justify-center
-          ${isDarkMode
-            ? 'bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#134e4a]'
-            : 'bg-gradient-to-br from-emerald-50 via-white to-green-50'
-          }`
-        }>
-          <img 
-            src={product?.images?.[0]?.url} 
-            alt={product?.basicInfo?.title}
-            className="w-full h-full transition-transform duration-500 group-hover:scale-105"
-          />
-          {/* Discount Badge */}
-          {product?.price?.discounted && (
-            <span className={`absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow`}>
-              -{product?.price?.savingsPercentage?.toFixed(0) || Math.round(100 - (product?.price?.discounted / product?.price?.regular) * 100)}%
-            </span>
-          )}
-          {/* Sale Badge */}
-          {product?.additionalInfo?.isOnSale && (
-            <span className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow">
-              Sale
-            </span>
-          )}
-          {/* Quick Action Buttons (hover only) */}
-          <div className="absolute bottom-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button
-              onClick={handleAddToCart}
-              className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition-colors"
-              title="Add to Cart"
-            >
-              <FaShoppingCart className="text-lg" />
-            </button>
-            <button
-              onClick={handleToggleWishlist}
-              className={`p-3 rounded-full shadow-lg transition-colors ${isInWishlist ? 'bg-red-500 text-white' : (isDarkMode ? 'bg-[#1e293b] hover:bg-red-500 hover:text-white text-emerald-100' : 'bg-white hover:bg-red-500 hover:text-white text-gray-900')}`}
-              title={isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-            >
-              <FaHeart className="text-lg" />
-            </button>
-          </div>
-        </div>
+        <div
+  className={`relative flex items-center justify-center mb-4 overflow-hidden rounded-lg gap-4
+    ${isDarkMode
+      ? 'bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#134e4a]'
+      : 'bg-gradient-to-br from-emerald-50 via-white to-green-50'
+    }`}
+>
+  <img
+    src={product?.images?.[0]?.url}
+    alt={product?.basicInfo?.title}
+    className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-105"
+  />
+  {/* Discount Badge */}
+  {product?.price?.discounted && (
+    <span className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow">
+      -{product?.price?.savingsPercentage?.toFixed(0) || Math.round(100 - (product?.price?.discounted / product?.price?.regular) * 100)}%
+    </span>
+  )}
+  {/* Sale Badge */}
+  {product?.additionalInfo?.isOnSale && (
+    <span className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow">
+      Sale
+    </span>
+  )}
+  {/* Quick Action Buttons (hover only) */}
+  <div className="absolute bottom-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+    <button
+      onClick={handleAddToCart}
+      className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition-colors"
+      title="Add to Cart"
+    >
+      <FaShoppingCart className="text-lg" />
+    </button>
+    <button
+      onClick={handleToggleWishlist}
+      className={`p-3 rounded-full shadow-lg transition-colors ${
+        isInWishlist
+          ? 'bg-red-500 text-white'
+          : isDarkMode
+          ? 'bg-[#1e293b] hover:bg-red-500 hover:text-white text-emerald-100'
+          : 'bg-white hover:bg-red-500 hover:text-white text-gray-900'
+      }`}
+      title={isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+    >
+      <FaHeart className="text-lg" />
+    </button>
+  </div>
+</div>
+
 
         {/* Content Section */}
         <div className="p-5">

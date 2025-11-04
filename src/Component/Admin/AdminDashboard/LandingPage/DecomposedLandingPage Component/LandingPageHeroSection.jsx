@@ -36,7 +36,7 @@ const LandingPageHeroSection = ({
 
   return (
     <div className="bg-gradient-to-br from-slate-50 via-white to-green-50 border border-gray-200 rounded-3xl p-8 lg:p-16">
-      <div className="container mx-auto px-4 py-8 lg:py-16">
+      <div className="container mx-auto px-4 py-8 ">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Product Images */}
           <div className="space-y-4">
@@ -230,7 +230,7 @@ const LandingPageHeroSection = ({
             {/* CTA Button */}
             <button
               onClick={scrollToCheckout}
-              className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white py-4 px-8 rounded-2xl text-xl font-bold hover:from-green-700 hover:to-green-600 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
+              className="animate-bounce w-full bg-gradient-to-r from-green-600 to-green-500 text-white py-4 px-8 rounded-2xl text-xl font-bold hover:from-green-700 hover:to-green-600 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
             >
               🛒 অর্ডার করুন এখনই (Order Now)
             </button>

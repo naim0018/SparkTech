@@ -6,51 +6,51 @@ import Specifications from "./Specifications";
 // import VariantImageGallery from "./VariantImageGallery"; // <-- Import the component
 
 const ProductDescription = ({ description }) => (
-  <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 hover:shadow-2xl transition-shadow duration-300">
+  <div className="p-8 transition-shadow duration-300 bg-white border border-gray-100 shadow-xl rounded-3xl hover:shadow-2xl">
     <div className="flex items-center gap-3 mb-6">
-      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-        <span className="text-green-600 text-xl">📋</span>
+      <div className="flex items-center justify-center w-10 h-10 bg-green-100 rounded-full">
+        <span className="text-xl text-green-600">📋</span>
       </div>
       <h3 className="text-2xl font-bold text-gray-900">পণ্যের বর্ণনা</h3>
     </div>
-    <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+    <div className="leading-relaxed prose prose-lg text-gray-700 max-w-none">
       {description.split("\n").map((paragraph, idx) => (
-        <p key={idx} className="mb-4 text-gray-600 leading-loose">{paragraph}</p>
+        <p key={idx} className="mb-4 leading-loose text-gray-600">{paragraph}</p>
       ))}
     </div>
   </div>
 );
 
 const PolicyAndShipping = ({ shippingDetails, additionalInfo }) => (
-  <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 hover:shadow-2xl transition-shadow duration-300">
+  <div className="p-8 transition-shadow duration-300 bg-white border border-gray-100 shadow-xl rounded-3xl hover:shadow-2xl">
     <div className="space-y-8">
       {/* শিপিং তথ্য */}
       <div>
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-            <span className="text-blue-600 text-xl">📦</span>
+          <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full">
+            <span className="text-xl text-blue-600">📦</span>
           </div>
           <h3 className="text-2xl font-bold text-gray-900">শিপিং তথ্য</h3>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gray-50 p-4 rounded-2xl">
-            <p className="text-sm text-gray-500 mb-1">ডাইমেনশন</p>
+          <div className="p-4 bg-gray-50 rounded-2xl">
+            <p className="mb-1 text-sm text-gray-500">ডাইমেনশন</p>
             <p className="font-medium text-gray-900">
               {shippingDetails.length} x {shippingDetails.width} x {shippingDetails.height} {shippingDetails.dimensionUnit}
             </p>
           </div>
-          <div className="bg-gray-50 p-4 rounded-2xl">
-            <p className="text-sm text-gray-500 mb-1">ওজন</p>
+          <div className="p-4 bg-gray-50 rounded-2xl">
+            <p className="mb-1 text-sm text-gray-500">ওজন</p>
             <p className="font-medium text-gray-900">
               {shippingDetails.weight} {shippingDetails.weightUnit}
             </p>
           </div>
         </div>
         {additionalInfo?.estimatedDelivery && (
-          <div className="mt-4 bg-blue-50 p-4 rounded-2xl">
-            <p className="text-sm text-blue-800 font-medium mb-2">আনুমানিক ডেলিভারি</p>
+          <div className="p-4 mt-4 bg-blue-50 rounded-2xl">
+            <p className="mb-2 text-sm font-medium text-blue-800">আনুমানিক ডেলিভারি</p>
             {additionalInfo.estimatedDelivery.split("\n").map((line, idx) => (
-              <p key={idx} className="text-blue-600 text-sm">{line}</p>
+              <p key={idx} className="text-sm text-blue-600">{line}</p>
             ))}
           </div>
         )}
@@ -59,14 +59,14 @@ const PolicyAndShipping = ({ shippingDetails, additionalInfo }) => (
       {additionalInfo?.returnPolicy && (
         <div>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-              <span className="text-purple-600 text-xl">↩️</span>
+            <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-full">
+              <span className="text-xl text-purple-600">↩️</span>
             </div>
             <h3 className="text-2xl font-bold text-gray-900">রিটার্ন নীতিমালা</h3>
           </div>
-          <div className="bg-purple-50 p-6 rounded-2xl space-y-2">
+          <div className="p-6 space-y-2 bg-purple-50 rounded-2xl">
             {additionalInfo.returnPolicy.split("\n").map((line, idx) => (
-              <p key={idx} className="text-purple-600 text-sm">{line}</p>
+              <p key={idx} className="text-sm text-purple-600">{line}</p>
             ))}
           </div>
         </div>
@@ -75,14 +75,14 @@ const PolicyAndShipping = ({ shippingDetails, additionalInfo }) => (
       {additionalInfo?.warranty && (
         <div>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-              <span className="text-yellow-600 text-xl">🔧</span>
+            <div className="flex items-center justify-center w-10 h-10 bg-yellow-100 rounded-full">
+              <span className="text-xl text-yellow-600">🔧</span>
             </div>
             <h3 className="text-2xl font-bold text-gray-900">ওয়ারেন্টি</h3>
           </div>
-          <div className="bg-yellow-50 p-6 rounded-2xl space-y-2">
+          <div className="p-6 space-y-2 bg-yellow-50 rounded-2xl">
             {additionalInfo.warranty.split("\n").map((line, idx) => (
-              <p key={idx} className="text-yellow-600 text-sm">{line}</p>
+              <p key={idx} className="text-sm text-yellow-600">{line}</p>
             ))}
           </div>
         </div>
@@ -93,19 +93,19 @@ const PolicyAndShipping = ({ shippingDetails, additionalInfo }) => (
 
 // const KeyFeatures = ({ features }) => (
 //   features?.length > 0 && (
-//     <section className="max-w-7xl mx-auto bg-gradient-to-br from-green-50 via-white to-emerald-50 rounded-3xl p-12">
-//       <div className="text-center mb-16">
-//         <span className="text-green-600 font-semibold mb-2 block">ফিচারসমূহ</span>
-//         <h2 className="text-4xl font-bold text-gray-900 mb-4">মূল বৈশিষ্ট্য</h2>
-//         <p className="text-gray-600 max-w-2xl mx-auto">এই পণ্যের বিশেষত্ব জানুন</p>
+//     <section className="p-12 mx-auto max-w-7xl bg-gradient-to-br from-green-50 via-white to-emerald-50 rounded-3xl">
+//       <div className="mb-16 text-center">
+//         <span className="block mb-2 font-semibold text-green-600">ফিচারসমূহ</span>
+//         <h2 className="mb-4 text-4xl font-bold text-gray-900">মূল বৈশিষ্ট্য</h2>
+//         <p className="max-w-2xl mx-auto text-gray-600">এই পণ্যের বিশেষত্ব জানুন</p>
 //       </div>
-//       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+//       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 //         {features.map((feature, idx) => (
-//           <div key={idx} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-green-100">
-//             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-//               <span className="text-green-600 font-bold text-xl">{idx + 1}</span>
+//           <div key={idx} className="p-6 transition-shadow duration-300 bg-white border border-green-100 shadow-lg rounded-2xl hover:shadow-xl">
+//             <div className="flex items-center justify-center w-12 h-12 mb-4 bg-green-100 rounded-full">
+//               <span className="text-xl font-bold text-green-600">{idx + 1}</span>
 //             </div>
-//             <p className="text-gray-800 font-medium leading-relaxed">{feature}</p>
+//             <p className="font-medium leading-relaxed text-gray-800">{feature}</p>
 //           </div>
 //         ))}
 //       </div>
@@ -117,21 +117,21 @@ const PolicyAndShipping = ({ shippingDetails, additionalInfo }) => (
 
 // const Specifications = ({ specifications }) => (
 //   specifications?.length > 0 && (
-//     <section className="max-w-7xl mx-auto">
-//       <div className="text-center mb-16">
-//         <span className="text-green-600 font-semibold mb-2 block">স্পেসিফিকেশন</span>
-//         <h2 className="text-4xl font-bold text-gray-900 mb-4">প্রযুক্তিগত তথ্য</h2>
-//         <p className="text-gray-600 max-w-2xl mx-auto">সম্পূর্ণ প্রযুক্তিগত স্পেসিফিকেশন</p>
+//     <section className="mx-auto max-w-7xl">
+//       <div className="mb-16 text-center">
+//         <span className="block mb-2 font-semibold text-green-600">স্পেসিফিকেশন</span>
+//         <h2 className="mb-4 text-4xl font-bold text-gray-900">প্রযুক্তিগত তথ্য</h2>
+//         <p className="max-w-2xl mx-auto text-gray-600">সম্পূর্ণ প্রযুক্তিগত স্পেসিফিকেশন</p>
 //       </div>
-//       <div className="grid md:grid-cols-2 gap-8">
+//       <div className="grid gap-8 md:grid-cols-2">
 //         {specifications.map((spec, idx) => (
-//           <div key={idx} className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 hover:shadow-2xl transition-shadow duration-300">
-//             <h3 className="text-2xl font-bold text-gray-900 mb-6">{spec.group}</h3>
+//           <div key={idx} className="p-8 transition-shadow duration-300 bg-white border border-gray-100 shadow-xl rounded-3xl hover:shadow-2xl">
+//             <h3 className="mb-6 text-2xl font-bold text-gray-900">{spec.group}</h3>
 //             <div className="space-y-4">
 //               {spec.items.map((item, i) => (
-//                 <div key={i} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
+//                 <div key={i} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
 //                   <span className="font-medium text-gray-700">{item.name}</span>
-//                   <span className="text-gray-900 font-semibold">{item.value}</span>
+//                   <span className="font-semibold text-gray-900">{item.value}</span>
 //                 </div>
 //               ))}
 //             </div>
@@ -144,21 +144,21 @@ const PolicyAndShipping = ({ shippingDetails, additionalInfo }) => (
 
 const CustomerReviews = ({ reviews }) => (
   reviews?.length > 0 && (
-    <section className="max-w-7xl mx-auto bg-gradient-to-br from-gray-50 to-white rounded-3xl p-12">
-      <div className="text-center mb-16">
-        <span className="text-green-600 font-semibold mb-2 block">গ্রাহক মতামত</span>
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">কাস্টমার রিভিউ</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">আমাদের গ্রাহকদের মতামত দেখুন</p>
+    <section className="p-12 mx-auto max-w-7xl bg-gradient-to-br from-gray-50 to-white rounded-3xl">
+      <div className="mb-16 text-center">
+        <span className="block mb-2 font-semibold text-green-600">গ্রাহক মতামত</span>
+        <h2 className="mb-4 text-4xl font-bold text-gray-900">কাস্টমার রিভিউ</h2>
+        <p className="max-w-2xl mx-auto text-gray-600">আমাদের গ্রাহকদের মতামত দেখুন</p>
       </div>
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid gap-8 md:grid-cols-2">
         {reviews.map((review, idx) => (
-          <div key={idx} className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300">
+          <div key={idx} className="p-8 transition-shadow duration-300 bg-white shadow-lg rounded-2xl hover:shadow-xl">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 font-bold text-2xl">{review.user.charAt(0).toUpperCase()}</span>
+              <div className="flex items-center justify-center bg-green-100 rounded-full w-14 h-14">
+                <span className="text-2xl font-bold text-green-600">{review.user.charAt(0).toUpperCase()}</span>
               </div>
               <div>
-                <h4 className="font-bold text-xl text-gray-900">{review.user}</h4>
+                <h4 className="text-xl font-bold text-gray-900">{review.user}</h4>
                 <div className="flex items-center gap-1 mt-1">
                   {[...Array(5)].map((_, i) => (
                     <span key={i} className={`text-2xl ${i < review.rating ? "text-yellow-400" : "text-gray-200"}`}>★</span>
@@ -167,7 +167,7 @@ const CustomerReviews = ({ reviews }) => (
               </div>
               <span className="ml-auto text-sm text-gray-500">{new Date(review.date).toLocaleDateString("bn-BD")}</span>
             </div>
-            <p className="text-gray-700 leading-relaxed italic">{review.comment}</p>
+            <p className="italic leading-relaxed text-gray-700">{review.comment}</p>
           </div>
         ))}
       </div>
@@ -176,11 +176,11 @@ const CustomerReviews = ({ reviews }) => (
 );
 
 // const FloatingCTA = ({ currentPrice, quantity, scrollToCheckout }) => (
-//   <div className="fixed bottom-8 left-0 right-0 flex justify-center z-50 px-4">
-//     <div className="w-full max-w-7xl flex justify-center">
+//   <div className="fixed left-0 right-0 z-50 flex justify-center px-4 bottom-8">
+//     <div className="flex justify-center w-full max-w-7xl">
 //       <button
 //         onClick={scrollToCheckout}
-//         className="bg-green-600 text-white px-8 py-4 rounded-full text-lg font-bold shadow-2xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+//         className="flex items-center gap-2 px-8 py-4 text-lg font-bold text-white transition-all duration-300 transform bg-green-600 rounded-full shadow-2xl hover:bg-green-700 hover:scale-105"
 //       >
 //         <span>🛒 অর্ডার করুন</span>
 //         <span className="text-2xl font-bold">৳{(currentPrice * quantity).toLocaleString("bn-BD")}</span>
@@ -196,14 +196,14 @@ const LandingPageProductDetails = ({
   //   scrollToCheckout
 }) => {
   return (
-    <div className="container mx-auto px-4 py-12 space-y-20">
+    <div className="container px-4 py-12 mx-auto space-y-20">
       {/* পণ্যের বিস্তারিত */}
       <section className="mx-auto">
-        <div className="text-center mb-16">
-          <span className="text-green-600 font-semibold mb-2 block">পণ্যের বিস্তারিত</span>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">পণ্যের বর্ণনা, স্পেসিফিকেশন, শিপিং এখানে দেখুন।</h2>
+        <div className="mb-16 text-center">
+          <span className="block mb-2 font-semibold text-green-600">পণ্যের বিস্তারিত</span>
+          <h2 className="mb-4 text-4xl font-bold text-gray-900">পণ্যের বর্ণনা, স্পেসিফিকেশন, শিপিং এখানে দেখুন।</h2>
         </div>
-        <div className="grid lg:grid-cols-2 gap-10">
+        <div className="grid gap-10 lg:grid-cols-2">
           <ProductDescription description={product.basicInfo.description} />
           <PolicyAndShipping shippingDetails={product.shippingDetails} additionalInfo={product.additionalInfo} />
         </div>

@@ -42,16 +42,16 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4">
+    <div className="z-50 fixed inset-0 w-full overflow-y-auto">
+      <div className="flex justify-center items-center px-4 min-h-screen">
         {/* Backdrop */}
         <div className="fixed inset-0 bg-black opacity-40" onClick={onClose}></div>
 
         {/* Modal */}
-        <div className="relative bg-gradient-to-br from-white to-green-50 rounded-3xl shadow-2xl max-w-2xl w-full mx-auto p-10 border border-green-100">
+        <div className="relative bg-gradient-to-br from-white to-green-50 shadow-2xl mx-auto p-10 border border-green-100 rounded-3xl w-full max-w-6xl">
           {/* Success Icon */}
           <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center transform hover:scale-105 transition-transform duration-300 shadow-lg">
+            <div className="flex justify-center items-center bg-gradient-to-br from-green-400 to-green-600 shadow-lg rounded-full w-24 h-24 hover:scale-105 transition-transform duration-300 transform">
               <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
               </svg>
@@ -59,16 +59,16 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
           </div>
 
           {/* Content */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+          <div className="mb-8 text-center">
+            <h2 className="mb-4 font-bold text-gray-800 text-3xl">
               অর্ডার সফলভাবে সম্পন্ন হয়েছে!
             </h2>
-            <p className="text-lg text-gray-600 mb-8">
+            <p className="mb-8 text-gray-600 text-lg">
               আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে। অনুগ্রহ করে অর্ডার আইডিটি সংরক্ষণ করুন।
             </p>
 
             {/* Order Details */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-8 mb-8 shadow-inner border border-green-100">
+            <div className="bg-white/80 shadow-inner backdrop-blur-sm mb-8 p-8 border border-green-100 rounded-xl">
               <div className="space-y-3 text-left">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">অর্ডার আইডি:</span>
@@ -76,7 +76,7 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
                     <span className="font-medium text-green-700">{orderDetails.orderId}</span>
                     <button
                       onClick={handleCopyOrderId}
-                      className="p-2 hover:bg-green-100 rounded-full transition-colors"
+                      className="hover:bg-green-100 p-2 rounded-full transition-colors"
                       title="Copy Order ID"
                     >
                       {copied ? (
@@ -99,7 +99,7 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
                   <span className="text-gray-600">ডেলিভারি চার্জ:</span>
                   <span className="font-medium">৳{orderDetails.deliveryCharge}</span>
                 </div>
-                <div className="flex justify-between text-lg font-bold text-green-700 pt-2 border-t border-green-200">
+                <div className="flex justify-between pt-2 border-green-200 border-t font-bold text-green-700 text-lg">
                   <span>মোট মূল্য:</span>
                   <span>৳{orderDetails.totalAmount}</span>
                 </div>
@@ -111,19 +111,19 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
           <div className="flex flex-col gap-3">
             <button
               onClick={handleCopyOrderId}
-              className="w-full py-4 text-lg bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-medium hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg"
+              className="bg-gradient-to-r from-green-500 hover:from-green-600 to-green-600 hover:to-green-700 shadow-lg py-4 rounded-xl w-full font-medium text-white text-lg hover:scale-[1.02] transition-all duration-300 transform"
             >
               অর্ডার আইডি কপি করুন
             </button>
             <button
               onClick={onClose}
-              className="w-full py-4 text-lg bg-white text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all duration-300 border border-gray-200 transform hover:scale-[1.02] shadow-md"
+              className="bg-white hover:bg-gray-50 shadow-md py-4 border border-gray-200 rounded-xl w-full font-medium text-gray-700 text-lg hover:scale-[1.02] transition-all duration-300 transform"
             >
               ঠিক আছে
             </button>
             <button
               onClick={handleGoHome}
-              className="w-full py-4 text-lg bg-blue-50 text-blue-700 rounded-xl font-medium hover:bg-blue-100 transition-all duration-300 border border-blue-200 transform hover:scale-[1.02] shadow-md"
+              className="bg-blue-50 hover:bg-blue-100 shadow-md py-4 border border-blue-200 rounded-xl w-full font-medium text-blue-700 text-lg hover:scale-[1.02] transition-all duration-300 transform"
             >
               হোম পেজে যান
             </button>

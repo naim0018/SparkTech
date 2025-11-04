@@ -24,8 +24,8 @@ const NavItem = ({ item, onClick }) => (
     to={`/${item.path}`}
     onClick={onClick}
     className={({ isActive }) =>
-      `px-4 md:px-5 py-2.5 rounded-lg transition-all duration-300 relative group text-gray-200 hover:text-white ${
-        isActive ? "after:content-[''] after:absolute after:left-4 after:right-4 after:-bottom-1 after:h-0.5 after:bg-white" : ""
+      `px-4 md:px-5 py-2.5 rounded-lg transition-all duration-300 relative group text-neutral-300 hover:text-white ${
+        isActive ? "after:content-[''] after:absolute after:left-4 after:right-4 after:-bottom-1 after:h-0.5 after:bg-primary" : ""
       }`
     }
   >
@@ -47,7 +47,7 @@ const MobileNav = ({ isOpen, navbar, setIsOpen }) => {
       initial={{ x: "100%" }}
       animate={{ x: isOpen ? 0 : "100%" }}
       transition={{ type: "spring", damping: 20 }}
-      className={`fixed z-40 top-0 right-0 lg:hidden bg-gradient-to-b from-[#1a2234] to-[#222934] w-full sm:w-2/5 h-screen p-4 sm:p-6 shadow-2xl`}
+      className={`fixed z-40 top-0 right-0 lg:hidden bg-gradient-to-b from-neutral-800 to-neutral-900 w-full sm:w-2/5 h-screen p-4 sm:p-6 shadow-2xl`}
     >
       <div className="mt-16 flex flex-col gap-3">
         {navbar.map((item) => (
@@ -80,17 +80,17 @@ const DesktopNav = ({ navbar }) => (
 const CategoryButton = () => (
   <motion.div
     whileHover={{ scale: 1.02 }}
-    className="flex items-center justify-between w-[306px] px-5 py-2.5 bg-gradient-to-r from-[#2c3544] to-[#333d4b] cursor-pointer  shadow-black/10 group"
+    className="flex items-center justify-between w-[306px] px-5 py-2.5 bg-gradient-to-r from-neutral-700 to-neutral-800 cursor-pointer  shadow-black/10 group"
   >
     <div className="text-white flex items-center gap-3">
-      <MdGridView className="text-lg text-blue-400 group-hover:text-blue-300 transition-colors" />
+      <MdGridView className="text-lg text-primary group-hover:text-primary-light transition-colors" />
       <p className="text-base font-medium">Categories</p>
     </div>
     <motion.div
       animate={{ rotate: 90 }}
       transition={{ duration: 0.2 }}
     >
-      <TfiAngleRight className="text-blue-400 text-sm group-hover:text-blue-300 transition-colors" />
+      <TfiAngleRight className="text-primary text-sm group-hover:text-primary-light transition-colors" />
     </motion.div>
   </motion.div>
 );
@@ -114,12 +114,12 @@ const SaleInfo = () => (
     <motion.div 
       whileHover={{ rotate: 360 }}
       transition={{ duration: 0.5 }}
-      className="size-11 bg-gradient-to-br from-[#333D4C] to-[#2c3544] rounded-full flex items-center justify-center shadow-lg"
+      className="size-11 bg-gradient-to-br from-neutral-700 to-neutral-800 rounded-full flex items-center justify-center shadow-lg"
     >
-      <PiPercentBold className="text-[#F55266] text-xl" />
+      <PiPercentBold className="text-secondary text-xl" />
     </motion.div>
     <div>
-      <p className="text-xs font-normal text-blue-200/80">Only this month</p>
+      <p className="text-xs font-normal text-neutral-400">Only this month</p>
       <p className="text-base font-medium text-white">Super Sale 20%</p>
     </div>
   </div>
@@ -160,7 +160,7 @@ const UserActions = ({ toggleCart, cartItems, toggleWishlist }) => {
       <div className="relative" ref={dropdownRef}>
         <button 
           onClick={() => setShowUserDropdown(!showUserDropdown)}
-          className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-full hover:bg-[#333D4C] transition-colors border border-white/20"
+          className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-full hover:bg-neutral-700 transition-colors border border-white/20"
         >
           {user ? (
             <>
@@ -184,18 +184,18 @@ const UserActions = ({ toggleCart, cartItems, toggleWishlist }) => {
 
         {/* Dropdown Menu */}
         {showUserDropdown && (
-          <div className="absolute right-0 mt-2 w-36 sm:w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+          <div className="absolute right-0 mt-2 w-36 sm:w-48 bg-neutral-100 rounded-lg shadow-lg py-2 z-50">
             {user ? (
               <>
                 <NavLink
                   to={`/${user.role}/dashboard`}
-                  className="block px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:bg-blue-50 transition-colors"
+                  className="block px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-neutral-700 hover:bg-primary-light transition-colors"
                 >
                   Dashboard
                 </NavLink>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:bg-blue-50 transition-colors"
+                  className="w-full text-left px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-neutral-700 hover:bg-primary-light transition-colors"
                 >
                   Logout
                 </button>
@@ -203,7 +203,7 @@ const UserActions = ({ toggleCart, cartItems, toggleWishlist }) => {
             ) : (
               <NavLink
                 to="/login"
-                className="block px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:bg-blue-50 transition-colors"
+                className="block px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-neutral-700 hover:bg-primary-light transition-colors"
               >
                 Login/Signup
               </NavLink>
@@ -214,10 +214,10 @@ const UserActions = ({ toggleCart, cartItems, toggleWishlist }) => {
 
       {/* Wishlist */}
       <button
-        className="relative p-1.5 sm:p-2 rounded-full bg-[#333D4C] hover:bg-[#3a4556] transition-colors"
+        className="relative p-1.5 sm:p-2 rounded-full bg-neutral-700 hover:bg-neutral-600 transition-colors"
         onClick={toggleWishlist}
       >
-        <span className="absolute -top-2 -right-2 bg-blue-500 text-white w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm rounded-full flex items-center justify-center">
+        <span className="absolute -top-2 -right-2 bg-primary text-white w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm rounded-full flex items-center justify-center">
           {wishlistItems.length}
         </span>
         <MdFavorite className="text-xl sm:text-2xl text-white" />
@@ -225,10 +225,10 @@ const UserActions = ({ toggleCart, cartItems, toggleWishlist }) => {
 
       {/* Cart */}
       <button
-        className="relative p-1.5 sm:p-2 rounded-full bg-[#333D4C] hover:bg-[#3a4556] transition-colors"
+        className="relative p-1.5 sm:p-2 rounded-full bg-neutral-700 hover:bg-neutral-600 transition-colors"
         onClick={toggleCart}
       >
-        <span className="absolute -top-2 -right-2 bg-blue-500 text-white w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm rounded-full flex items-center justify-center">
+        <span className="absolute -top-2 -right-2 bg-primary text-white w-5 h-5 sm:w-6 sm:h-6 text-xs sm:text-sm rounded-full flex items-center justify-center">
           {cartItems.length}
         </span>
         <IoCartOutline className="text-xl sm:text-2xl text-white" />
@@ -264,7 +264,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-[#222934] relative shadow-md">
+      <nav className="bg-neutral-800 relative shadow-md">
         <div className="container mx-auto flex items-center justify-between lg:flex-row px-3 sm:px-5 py-3 sm:p-5">
           <div className="flex items-center gap-2 sm:gap-[15px] lg:gap-0 lg:justify-between lg:w-fit pb-0 sm:pb-2">
             <div className="lg:hidden relative z-50 " onClick={() => setIsOpen(!isOpen)}>
@@ -315,7 +315,7 @@ const Navbar = () => {
         <motion.nav 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="fixed top-0 left-0 right-0 bg-[#222934] shadow-md z-50 transition-all duration-300"
+          className="fixed top-0 left-0 right-0 bg-neutral-800 shadow-md z-50 transition-all duration-300"
         >
           <div className="container mx-auto flex items-center justify-between px-3 sm:px-5 py-2 sm:py-3">
             <div className="flex items-center gap-4">
