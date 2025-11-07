@@ -90,7 +90,6 @@ const CheckoutForm = () => {
       };
 
       const response = await createOrder(orderData).unwrap();
-      console.log(response);
       if (response.success) {
         const orderDetails = {
           orderId: response.data._id,

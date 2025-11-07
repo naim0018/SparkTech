@@ -29,18 +29,44 @@ const LandingPage = () => {
   const [createOrder, { isLoading: isOrderLoading }] = useCreateOrderMutation()
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [successOrderDetails, setSuccessOrderDetails] = useState(null)
-
-  useEffect(() => {
-    if (product) {
-      const initialPrice = product.price.discounted || product.price.regular
-      setCurrentPrice(typeof initialPrice === "number" && !isNaN(initialPrice) ? initialPrice : 0)
-      setSelectedVariants(new Map())
-      setCurrentImage(product.images[0])
+  const [couponCode, setCouponCode] = useState("")
+  const [appliedCoupon, setAppliedCoupon] = useState({ code: "", discount: 0 })
+  const [discount, setDiscount] = useState(0)
+  const applyCoupon = () => {
+    const availableCoupons = {
+      FreeShippingDhaka: 80,
+      FreeShippingBD: 150,
+      BestBuy: 50,
     }
+
+    if (availableCoupons[couponCode]) {
+      const newDiscount = availableCoupons[couponCode]
+      setDiscount(newDiscount)
+      setAppliedCoupon({ code: couponCode, discount: newDiscount })
+      toast.success(`Successfully applied coupon: ${couponCode}`)
+    } else {
+      setDiscount(0)
+      setAppliedCoupon({ code: "", discount: 0 })
+      toast.error("Invalid coupon code.")
+    }
+  }
+
+   useEffect(()=>{
+    
+    localStorage.setItem("appliedCoupon", JSON.stringify({ code: appliedCoupon.code, discount: appliedCoupon.discount }))
+       },[appliedCoupon])
+      
+      useEffect(() => {
+        if (product) {
+          const initialPrice = product.price.discounted || product.price.regular
+          setCurrentPrice(typeof initialPrice === "number" && !isNaN(initialPrice) ? initialPrice : 0)
+          setSelectedVariants(new Map())
+          setCurrentImage(product.images[0])
+        }
     return () => {
       if (product) dispatch(clearCart())
     }
-  }, [product, dispatch])
+}, [product, dispatch])
 
   if (isLoading) {
     return (
@@ -102,6 +128,13 @@ const LandingPage = () => {
   const handleIncrement = () => setQuantity((q) => q + 1)
   const handleDecrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1))
 
+  const calculateTotalAmount = (courierChargeType, currentDiscount) => {
+    const productTotal = currentPrice * quantity
+    const deliveryCharge = courierChargeType === "insideDhaka" ? 80 : 150
+    const total = productTotal + deliveryCharge - currentDiscount
+    return total > 0 ? total : 0
+  }
+
   // --- Order Logic ---
   const orderDetails = {
     title: product?.basicInfo?.title,
@@ -110,10 +143,14 @@ const LandingPage = () => {
     quantity,
     image: currentImage,
     product,
+    discount,
+    totalAmount: calculateTotalAmount(null, discount),
   }
+
 
   const handleSubmit = async (formData) => {
     try {
+      const totalAmount = calculateTotalAmount(formData.courierCharge, discount)
       const orderData = {
         body: {
           items: [
@@ -131,7 +168,7 @@ const LandingPage = () => {
               ),
             },
           ],
-          totalAmount: calculateTotalAmount(formData.courierCharge),
+          totalAmount: totalAmount,
           status: "pending",
           billingInformation: {
             name: formData.name,
@@ -143,14 +180,9 @@ const LandingPage = () => {
             notes: formData.notes || "",
           },
           courierCharge: formData.courierCharge,
-          cuponCode: formData.cuponCode || "",
+          cuponCode: appliedCoupon.code || "",
+          discount: appliedCoupon.discount || 0,
         },
-      }
-
-      function calculateTotalAmount(courierChargeType) {
-        const productTotal = currentPrice * quantity
-        const deliveryCharge = courierChargeType === "insideDhaka" ? 80 : 150
-        return productTotal + deliveryCharge
       }
 
       const response = await createOrder(orderData).unwrap()
@@ -158,13 +190,17 @@ const LandingPage = () => {
         orderId: response.data._id,
         productPrice: currentPrice * quantity,
         deliveryCharge: formData.courierCharge === "insideDhaka" ? 80 : 150,
-        totalAmount: orderData.body.totalAmount,
+        totalAmount: totalAmount,
+        appliedCoupon: appliedCoupon,
       })
       setShowSuccessModal(true)
       setQuantity(1)
       setSelectedVariants(new Map())
       setCurrentPrice(product.price.discounted || product.price.regular)
       setCurrentImage(product.images[0])
+      setCouponCode("")
+      setAppliedCoupon({ code: "", discount: 0 })
+      setDiscount(0)
     } catch (error) {
       toast.error(
         <div>
@@ -232,6 +268,7 @@ const LandingPage = () => {
           isOpen={showSuccessModal}
           onClose={() => setShowSuccessModal(false)}
           orderDetails={successOrderDetails}
+          
         />
       )}
 
@@ -270,6 +307,9 @@ const LandingPage = () => {
             onQuantityChange={setQuantity}
             onVariantChange={handleVariantSelect}
             isLoading={isOrderLoading}
+            couponCode={couponCode}
+            setCouponCode={setCouponCode}
+            applyCoupon={applyCoupon}
           />
         </div>
       </div>

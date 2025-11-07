@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
-
   useEffect(() => {
     if (isOpen) {
       confetti({
@@ -19,7 +18,9 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  };
 
   const handleCopyOrderId = () => {
     navigator.clipboard.writeText(orderDetails.orderId);
@@ -34,7 +35,7 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
       progress: undefined,
       className: "bg-blue-50 border border-blue-200",
     });
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 1000);
   };
 
   const handleGoHome = () => {
@@ -99,6 +100,14 @@ const OrderSuccessModal = ({ isOpen, onClose, orderDetails }) => {
                   <span className="text-gray-600">ডেলিভারি চার্জ:</span>
                   <span className="font-medium">৳{orderDetails.deliveryCharge}</span>
                 </div>
+                {
+                  orderDetails.appliedCoupon && orderDetails.appliedCoupon.discount > 0 && (
+                    <div className="flex justify-between">
+                  <span className="text-gray-600">ডিস্কাউন্ট:</span>
+                  <span className="font-medium">{orderDetails.appliedCoupon.code} : ৳{orderDetails.appliedCoupon.discount}</span>
+                </div>
+                  )
+                }
                 <div className="flex justify-between pt-2 border-green-200 border-t font-bold text-green-700 text-lg">
                   <span>মোট মূল্য:</span>
                   <span>৳{orderDetails.totalAmount}</span>
@@ -141,8 +150,12 @@ OrderSuccessModal.propTypes = {
     orderId: PropTypes.string.isRequired,
     productPrice: PropTypes.number.isRequired,
     deliveryCharge: PropTypes.number.isRequired,
-    totalAmount: PropTypes.number.isRequired
-  }).isRequired
+    totalAmount: PropTypes.number.isRequired,
+    appliedCoupon: PropTypes.shape({
+      code: PropTypes.string,
+      discount: PropTypes.number,
+    }),
+  }).isRequired,
 };
 
 export default OrderSuccessModal;
