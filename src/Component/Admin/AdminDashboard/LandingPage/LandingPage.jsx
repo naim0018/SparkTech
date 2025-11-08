@@ -39,6 +39,8 @@ const LandingPage = () => {
       BestBuy: 50,
     }
 
+    
+
     if (availableCoupons[couponCode]) {
       const newDiscount = availableCoupons[couponCode]
       setDiscount(newDiscount)
