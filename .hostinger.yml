@@ -1,0 +1,9 @@
+deployment:
+  tasks:
+    - export NODE_VERSION=18
+    - curl -fsSL https://deb.nodesource.com/setup_$NODE_VERSION.x | bash -
+    - apt-get install -y nodejs
+    - npm install
+    - npm run build
+    - rm -rf ~/public_html/*
+    - cp -r dist/* ~/public_html/
