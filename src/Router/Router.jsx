@@ -17,71 +17,68 @@ import Unauthorized from "../Component/ErrorPage/Unauthorized";
 import Error from "../Component/Checkout/Error";
 import LandingPage from "../Component/Admin/AdminDashboard/LandingPage/LandingPage";
 
-
 export const router = createBrowserRouter([
-    {
-        path:'/',
-        element:<App/>,
-        errorElement:<ErrorPage/>,
-        children:[
-            {
-                index:true,
-                element:<Home/>
-            },
-            {
-                path: 'product/:productId',
-                element: <ProductDetails/>
-            },
-            {
-                path: 'checkout',
-                element: <Checkout/>
-            },
-            {
-                path:'error',
-                element:<Error/>
-            },
-            
-            ...routeGenerator(navbarRoute)
-        ],
-    },
-    {
-        path:'admin/dashboard',
-        element: (
-            <ProtectedRoute allowedRoles={['admin']}>
-                <Dashboard/>
-            </ProtectedRoute>
-        ),
-        children:[
-            {
-                index: true,
-                element: <AdminDashboard/>
-            },
-            ...routeGenerator(adminRoute)
-        ]
-    },
-    {
-        path:'user/dashboard',
-        element: (
-            <ProtectedRoute allowedRoles={['user']}>
-                <Dashboard/>
-            </ProtectedRoute>
-        ),
-        children:[
-            ...routeGenerator(userRoute)
-        ]
-    },
-    {
-        icon:<FaSignInAlt/>,
-        name:'Login',
-        path:'login',
-        element:<LogIn/>
-    },
-    {
-        path: 'unauthorized',
-        element: <Unauthorized/>
-    },
-    {
-        path: 'landing-page/:productId',
-        element: <LandingPage/>
-    }
-])
+  {
+    path: "/",
+    element: <App />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "product/:productId",
+        element: <ProductDetails />,
+      },
+      {
+        path: "checkout",
+        element: <Checkout />,
+      },
+      {
+        path: "error",
+        element: <Error />,
+      },
+
+      ...routeGenerator(navbarRoute),
+    ],
+  },
+  {
+    path: "admin/dashboard",
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <AdminDashboard />,
+      },
+      ...routeGenerator(adminRoute),
+    ],
+  },
+  {
+    path: "user/dashboard",
+    element: (
+      <ProtectedRoute allowedRoles={["user"]}>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
+    children: [...routeGenerator(userRoute)],
+  },
+  {
+    icon: <FaSignInAlt />,
+    name: "Login",
+    path: "login",
+    element: <LogIn />,
+  },
+  {
+    path: "unauthorized",
+    element: <Unauthorized />,
+  },
+  {
+    path: "landing-page/:productId",
+    element: <LandingPage />,
+  },
+]);

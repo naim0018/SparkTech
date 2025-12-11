@@ -1,26 +1,30 @@
-import { useState, useMemo } from 'react';
-import { useGetAllProductsQuery } from '../../redux/api/ProductApi';
-import ProductCard from '../Shop/ProductCard';
-import { useTheme } from '../../ThemeContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Helmet } from 'react-helmet';
+import { useState, useMemo } from "react";
+import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
+import ProductCard from "../Shop/ProductCard";
+import { useTheme } from "../../ThemeContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { Helmet } from "react-helmet";
 
 const BestDeals = () => {
   const { isDarkMode } = useTheme();
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(12);
 
-  const { data: productsData, isLoading, isError } = useGetAllProductsQuery({
+  const {
+    data: productsData,
+    isLoading,
+    isError,
+  } = useGetAllProductsQuery({
     page: currentPage,
-    limit: productsPerPage
+    limit: productsPerPage,
   });
   // Filter products that are on sale and have a discount
   const saleProducts = useMemo(() => {
     if (!productsData?.products) return [];
-    return productsData.products.filter(product => 
-      product.additionalInfo.isOnSale ||
-      product.price.discounted < product.price.regular
-
+    return productsData.products.filter(
+      (product) =>
+        product.additionalInfo.isOnSale ||
+        product.price.discounted < product.price.regular
     );
   }, [productsData?.products]);
 
@@ -30,7 +34,10 @@ const BestDeals = () => {
   // Get current page products
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = saleProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = saleProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
 
   if (isLoading) {
     return (
@@ -42,9 +49,7 @@ const BestDeals = () => {
 
   if (isError) {
     return (
-      <div className="text-center text-red-500 py-8">
-        Error loading deals
-      </div>
+      <div className="text-center text-red-500 py-8">Error loading deals</div>
     );
   }
 
@@ -52,12 +57,20 @@ const BestDeals = () => {
     <>
       <Helmet>
         <title>Best Deals | BestBuy4uBD</title>
-        <meta name="description" content="Shop our best deals and biggest discounts on electronics and gadgets. Find amazing savings on top products." />
-        <meta name="keywords" content="best deals, discounts, sales, electronics deals, BestBuy4uBD" />
+        <meta
+          name="description"
+          content="Shop our best deals and biggest discounts on electronics and gadgets. Find amazing savings on top products."
+        />
+        <meta
+          name="keywords"
+          content="best deals, discounts, sales, electronics deals, BestBuy4uBD"
+        />
       </Helmet>
-      <div className={`max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-12 ${
-        isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'
-      }`}>
+      <div
+        className={`max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-12 ${
+          isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-800"
+        }`}
+      >
         <h2 className="text-3xl font-bold mb-8 text-center">Best Deals</h2>
         <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
           Products with the biggest discounts
@@ -81,7 +94,14 @@ const BestDeals = () => {
                     <div className="relative">
                       {product.price.discounted < product.price.regular && (
                         <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md z-10">
-                          {Math.round(product.price.savingsPercentage || ((product.price.regular - product.price.discounted) / product.price.regular) * 100)}% OFF
+                          {Math.round(
+                            product.price.savingsPercentage ||
+                              ((product.price.regular -
+                                product.price.discounted) /
+                                product.price.regular) *
+                                100
+                          )}
+                          % OFF
                         </div>
                       )}
                       <ProductCard product={product} />
@@ -100,10 +120,10 @@ const BestDeals = () => {
                     onClick={() => setCurrentPage(idx + 1)}
                     className={`px-4 py-2 rounded-lg ${
                       currentPage === idx + 1
-                        ? 'bg-blue-500 text-white'
+                        ? "bg-blue-500 text-white"
                         : isDarkMode
-                        ? 'bg-gray-700 text-gray-200'
-                        : 'bg-gray-200 text-gray-700'
+                        ? "bg-gray-700 text-gray-200"
+                        : "bg-gray-200 text-gray-700"
                     } hover:opacity-80 transition-opacity`}
                   >
                     {idx + 1}

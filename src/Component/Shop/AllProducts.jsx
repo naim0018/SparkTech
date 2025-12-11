@@ -1,12 +1,12 @@
 // Importing necessary dependencies and components
 import { useState } from "react";
-import { FaSearch, FaFilter } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
+import { FaSearch, FaFilter } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "./ProductCard";
 import { useTheme } from "../../ThemeContext";
 import { useGetAllProductsQuery } from "../../redux/api/ProductApi";
 import { useSearchParams } from "react-router-dom";
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
 import { useGetAllCategoriesQuery } from "../../redux/api/CategoriesApi";
 
 // Main component for displaying all products
@@ -16,29 +16,33 @@ const AllProducts = () => {
 
   // Get and set search params
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   // State variables for filtering and pagination
-  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get("page")) || 1
+  );
   const [productsPerPage] = useState(12);
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
-    searchTerm: searchParams.get('search') || '',
-    category: searchParams.get('category') || '',
-    subcategory: searchParams.get('subcategory') || '',
-    stockStatus: searchParams.get('stockStatus') || '',
-    sortPrice: searchParams.get('sort') || ''
+    searchTerm: searchParams.get("search") || "",
+    category: searchParams.get("category") || "",
+    subcategory: searchParams.get("subcategory") || "",
+    stockStatus: searchParams.get("stockStatus") || "",
+    sortPrice: searchParams.get("sort") || "",
   });
 
   // Update URL search params when filters change
   const updateSearchParams = (newFilters) => {
     const params = new URLSearchParams();
-    
-    if (newFilters.searchTerm) params.set('search', newFilters.searchTerm);
-    if (newFilters.category) params.set('category', newFilters.category);
-    if (newFilters.subcategory) params.set('subcategory', newFilters.subcategory);
-    if (newFilters.stockStatus) params.set('stockStatus', newFilters.stockStatus);
-    if (newFilters.sortPrice) params.set('sort', newFilters.sortPrice);
-    if (currentPage > 1) params.set('page', currentPage.toString());
+
+    if (newFilters.searchTerm) params.set("search", newFilters.searchTerm);
+    if (newFilters.category) params.set("category", newFilters.category);
+    if (newFilters.subcategory)
+      params.set("subcategory", newFilters.subcategory);
+    if (newFilters.stockStatus)
+      params.set("stockStatus", newFilters.stockStatus);
+    if (newFilters.sortPrice) params.set("sort", newFilters.sortPrice);
+    if (currentPage > 1) params.set("page", currentPage.toString());
 
     setSearchParams(params);
   };
@@ -51,12 +55,20 @@ const AllProducts = () => {
     ...(filters.category && { category: filters.category }),
     ...(filters.subcategory && { subcategory: filters.subcategory }),
     ...(filters.stockStatus && { stockStatus: filters.stockStatus }),
-    sort: filters.sortPrice === "lowToHigh" ? "price.regular" : 
-          filters.sortPrice === "highToLow" ? "-price.regular" : "-createdAt"
+    sort:
+      filters.sortPrice === "lowToHigh"
+        ? "price.regular"
+        : filters.sortPrice === "highToLow"
+        ? "-price.regular"
+        : "-createdAt",
   };
 
   // Use RTK Query hook with the updated params
-  const { data: productsData, isLoading, error } = useGetAllProductsQuery(queryParams);
+  const {
+    data: productsData,
+    isLoading,
+    error,
+  } = useGetAllProductsQuery(queryParams);
 
   // Fetch categories data
   const { data: categoriesData } = useGetAllCategoriesQuery();
@@ -69,32 +81,39 @@ const AllProducts = () => {
   };
 
   // Loading state - Shows animated loading spinner
-  if (isLoading) return (
-    <div className={`flex justify-center items-center h-screen ${isDarkMode ? 'text-orange-500' : 'text-black'}`}>
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1.2, 1, 1],
-          rotate: [0, 180, 180, 0, 0],
-          borderRadius: ["25%", "25%", "50%", "50%", "25%"],
-        }}
-        transition={{
-          duration: 2,
-          ease: "easeInOut",
-          times: [0, 0.2, 0.5, 0.8, 1],
-          repeat: Infinity,
-          repeatDelay: 1
-        }}
-        className="w-16 h-16 border-4 border-orange-500"
-      />
-    </div>
-  );
+  if (isLoading)
+    return (
+      <div
+        className={`flex justify-center items-center h-screen ${
+          isDarkMode ? "text-orange-500" : "text-black"
+        }`}
+      >
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1.2, 1, 1],
+            rotate: [0, 180, 180, 0, 0],
+            borderRadius: ["25%", "25%", "50%", "50%", "25%"],
+          }}
+          transition={{
+            duration: 2,
+            ease: "easeInOut",
+            times: [0, 0.2, 0.5, 0.8, 1],
+            repeat: Infinity,
+            repeatDelay: 1,
+          }}
+          className="w-16 h-16 border-4 border-orange-500"
+        />
+      </div>
+    );
 
   // Error state - Shows error message if data fetching fails
   if (error) {
-    console.error('Error loading products:', error);
+    console.error("Error loading products:", error);
     return (
       <div className="text-center py-8">
-        <p className="text-orange-500">Error loading products. Please try again later.</p>
+        <p className="text-orange-500">
+          Error loading products. Please try again later.
+        </p>
       </div>
     );
   }
@@ -104,25 +123,34 @@ const AllProducts = () => {
   const accentColor = "emerald";
 
   // Only show categories that have at least one product
-  const categoriesWithProducts = categoriesData?.data?.filter(category =>
-    productsData?.products?.some(product => product.basicInfo?.category === category.name)
-  ) || [];
+  const categoriesWithProducts =
+    categoriesData?.data?.filter((category) =>
+      productsData?.products?.some(
+        (product) => product.basicInfo?.category === category.name
+      )
+    ) || [];
 
   // Filter sidebar content
   const FilterSidebar = () => (
     <div className="space-y-6">
       {/* Search input with icon */}
       <div className="lg:hidden">
-        <h3 className={`text-lg font-semibold mb-2 text-${primaryColor}-600`}>Search</h3>
+        <h3 className={`text-lg font-semibold mb-2 text-${primaryColor}-600`}>
+          Search
+        </h3>
         <div className="relative">
           <input
             type="text"
             placeholder="Search by title or category..."
             value={filters.searchTerm}
-            onChange={(e) => handleFilterChange({ ...filters, searchTerm: e.target.value })}
+            onChange={(e) =>
+              handleFilterChange({ ...filters, searchTerm: e.target.value })
+            }
             className={`w-full p-3 pl-10 border border-${primaryColor}-200 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-${accentColor}-500 bg-white text-black placeholder-${primaryColor}-400`}
           />
-          <FaSearch className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-${accentColor}-400`} />
+          <FaSearch
+            className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-${accentColor}-400`}
+          />
         </div>
       </div>
 
@@ -130,17 +158,31 @@ const AllProducts = () => {
 
       {/* Sort by Price */}
       <div className="lg:hidden">
-        <h3 className="text-lg font-semibold mb-2 text-green-600">Sort by Price</h3>
+        <h3 className="text-lg font-semibold mb-2 text-green-600">
+          Sort by Price
+        </h3>
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => handleFilterChange({ ...filters, sortPrice: 'lowToHigh' })}
-            className={`p-2 rounded-lg ${filters.sortPrice === 'lowToHigh' ? 'bg-green-600 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
+            onClick={() =>
+              handleFilterChange({ ...filters, sortPrice: "lowToHigh" })
+            }
+            className={`p-2 rounded-lg ${
+              filters.sortPrice === "lowToHigh"
+                ? "bg-green-600 text-white"
+                : "bg-gray-200 text-black"
+            } transition duration-200`}
           >
             Low to High
           </button>
           <button
-            onClick={() => handleFilterChange({ ...filters, sortPrice: 'highToLow' })}
-            className={`p-2 rounded-lg ${filters.sortPrice === 'highToLow' ? 'bg-green-600 text-white' : 'bg-gray-200 text-black'} transition duration-200`}
+            onClick={() =>
+              handleFilterChange({ ...filters, sortPrice: "highToLow" })
+            }
+            className={`p-2 rounded-lg ${
+              filters.sortPrice === "highToLow"
+                ? "bg-green-600 text-white"
+                : "bg-gray-200 text-black"
+            } transition duration-200`}
           >
             High to Low
           </button>
@@ -151,31 +193,53 @@ const AllProducts = () => {
 
       {/* Stock Status Filter */}
       <div>
-        <h3 className={`text-lg font-semibold mb-2 text-${primaryColor}-600`}>Stock Status</h3>
+        <h3 className={`text-lg font-semibold mb-2 text-${primaryColor}-600`}>
+          Stock Status
+        </h3>
         <div className="flex flex-col space-y-2">
-          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === '' ? `bg-${accentColor}-100` : ' '} text-black`}>
+          <label
+            className={`flex items-center p-2 rounded-lg cursor-pointer ${
+              filters.stockStatus === "" ? `bg-${accentColor}-100` : " "
+            } text-black`}
+          >
             <input
               type="radio"
-              checked={filters.stockStatus === ''}
-              onChange={() => handleFilterChange({ ...filters, stockStatus: '' })}
+              checked={filters.stockStatus === ""}
+              onChange={() =>
+                handleFilterChange({ ...filters, stockStatus: "" })
+              }
               className="mr-2"
             />
             All Status
           </label>
-          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === 'In Stock' ? `bg-${accentColor}-100` : ''} text-black`}>
+          <label
+            className={`flex items-center p-2 rounded-lg cursor-pointer ${
+              filters.stockStatus === "In Stock" ? `bg-${accentColor}-100` : ""
+            } text-black`}
+          >
             <input
               type="radio"
-              checked={filters.stockStatus === 'In Stock'}
-              onChange={() => handleFilterChange({ ...filters, stockStatus: 'In Stock' })}
+              checked={filters.stockStatus === "In Stock"}
+              onChange={() =>
+                handleFilterChange({ ...filters, stockStatus: "In Stock" })
+              }
               className="mr-2"
             />
             In Stock
           </label>
-          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.stockStatus === 'Out of Stock' ? `bg-${accentColor}-100` : ''} text-black`}>
+          <label
+            className={`flex items-center p-2 rounded-lg cursor-pointer ${
+              filters.stockStatus === "Out of Stock"
+                ? `bg-${accentColor}-100`
+                : ""
+            } text-black`}
+          >
             <input
               type="radio"
-              checked={filters.stockStatus === 'Out of Stock'}
-              onChange={() => handleFilterChange({ ...filters, stockStatus: 'Out of Stock' })}
+              checked={filters.stockStatus === "Out of Stock"}
+              onChange={() =>
+                handleFilterChange({ ...filters, stockStatus: "Out of Stock" })
+              }
               className="mr-2"
             />
             Out of Stock
@@ -187,43 +251,81 @@ const AllProducts = () => {
 
       {/* Category Filter */}
       <div>
-        <h3 className={`text-lg font-semibold mb-2 text-${primaryColor}-600`}>Category</h3>
+        <h3 className={`text-lg font-semibold mb-2 text-${primaryColor}-600`}>
+          Category
+        </h3>
         <div className="flex flex-col space-y-2">
-          <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.category === '' ? `bg-${accentColor}-100` : ''} ${isDarkMode ? 'text-emerald-100' : 'text-black'}`}>
+          <label
+            className={`flex items-center p-2 rounded-lg cursor-pointer ${
+              filters.category === "" ? `bg-${accentColor}-100` : ""
+            } ${isDarkMode ? "text-emerald-100" : "text-black"}`}
+          >
             <input
               type="radio"
-              checked={filters.category === ''}
-              onChange={() => handleFilterChange({ ...filters, category: '', subcategory: '' })}
+              checked={filters.category === ""}
+              onChange={() =>
+                handleFilterChange({
+                  ...filters,
+                  category: "",
+                  subcategory: "",
+                })
+              }
               className="mr-2"
             />
             All Categories
           </label>
-          {categoriesWithProducts.map(category => (
+          {categoriesWithProducts.map((category) => (
             <div key={category._id}>
-              <label className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.category === category.name ? `bg-${accentColor}-100` : ''} ${isDarkMode ? 'text-white' : 'text-black'}`}>
+              <label
+                className={`flex items-center p-2 rounded-lg cursor-pointer ${
+                  filters.category === category.name
+                    ? `bg-${accentColor}-100`
+                    : ""
+                } ${isDarkMode ? "text-white" : "text-black"}`}
+              >
                 <input
                   type="radio"
                   checked={filters.category === category.name}
-                  onChange={() => handleFilterChange({ ...filters, category: category.name, subcategory: '' })}
+                  onChange={() =>
+                    handleFilterChange({
+                      ...filters,
+                      category: category.name,
+                      subcategory: "",
+                    })
+                  }
                   className="mr-2"
                 />
                 {category.name}
               </label>
-              {filters.category === category.name && category.subCategories && category.subCategories.length > 0 && (
-                <div className="ml-6 mt-2 space-y-2">
-                  {category.subCategories.map(subcategory => (
-                    <label key={subcategory.name} className={`flex items-center p-2 rounded-lg cursor-pointer ${filters.subcategory === subcategory.name ? `bg-${accentColor}-100` : ''} ${isDarkMode ? 'text-emerald-100' : 'text-black'}`}>
-                      <input
-                        type="radio"
-                        checked={filters.subcategory === subcategory.name}
-                        onChange={() => handleFilterChange({ ...filters, subcategory: subcategory.name })}
-                        className="mr-2"
-                      />
-                      {subcategory.name}
-                    </label>
-                  ))}
-                </div>
-              )}
+              {filters.category === category.name &&
+                category.subCategories &&
+                category.subCategories.length > 0 && (
+                  <div className="ml-6 mt-2 space-y-2">
+                    {category.subCategories.map((subcategory) => (
+                      <label
+                        key={subcategory.name}
+                        className={`flex items-center p-2 rounded-lg cursor-pointer ${
+                          filters.subcategory === subcategory.name
+                            ? `bg-${accentColor}-100`
+                            : ""
+                        } ${isDarkMode ? "text-emerald-100" : "text-black"}`}
+                      >
+                        <input
+                          type="radio"
+                          checked={filters.subcategory === subcategory.name}
+                          onChange={() =>
+                            handleFilterChange({
+                              ...filters,
+                              subcategory: subcategory.name,
+                            })
+                          }
+                          className="mr-2"
+                        />
+                        {subcategory.name}
+                      </label>
+                    ))}
+                  </div>
+                )}
             </div>
           ))}
         </div>
@@ -232,34 +334,62 @@ const AllProducts = () => {
   );
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#134e4a] text-emerald-100' : 'bg-white text-black'}`}>
+    <div
+      className={`min-h-screen ${
+        isDarkMode
+          ? "bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#134e4a] text-emerald-100"
+          : "bg-white text-black"
+      }`}
+    >
       <Helmet>
         <title>All Products | BestBuy4uBD</title>
-        <meta name="description" content="Browse our complete collection of electronics, gadgets, and accessories. Filter by category, price range, and stock status." />
-        <meta name="keywords" content="electronics, gadgets, products, online shopping, BestBuy4uBD" />
+        <meta
+          name="description"
+          content="Browse our complete collection of electronics, gadgets, and accessories. Filter by category, price range, and stock status."
+        />
+        <meta
+          name="keywords"
+          content="electronics, gadgets, products, online shopping, BestBuy4uBD"
+        />
       </Helmet>
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page title */}
         {/* Show Categories */}
         <div className="flex items-center gap-4 mb-6 overflow-x-auto p-2">
-          {categoriesWithProducts.map(category => (
+          {categoriesWithProducts.map((category) => (
             <div
               key={category._id}
-              onClick={() => handleFilterChange({ ...filters, category: category.name, subcategory: '' })}
+              onClick={() =>
+                handleFilterChange({
+                  ...filters,
+                  category: category.name,
+                  subcategory: "",
+                })
+              }
               className={`${
                 isDarkMode
-                  ? 'bg-neutral-800 hover:bg-neutral-700'
-                  : 'bg-white hover:bg-emerald-50'
+                  ? "bg-neutral-800 hover:bg-neutral-700"
+                  : "bg-white hover:bg-emerald-50"
               } flex-1 min-w-[160px] h-24 p-2 rounded-lg shadow-sm cursor-pointer transition-all duration-300 
-                ${filters.category === category.name ? 'ring-2 ring-emerald-400' : ''}`}
+                ${
+                  filters.category === category.name
+                    ? "ring-2 ring-emerald-400"
+                    : ""
+                }`}
             >
               <div className="h-full flex flex-col items-center justify-center text-center">
-                <img 
-                  src={category.image} 
+                <img
+                  src={category.image}
                   alt={category.name}
                   className="w-10 h-10 object-contain mb-2"
                 />
-                <h3 className={`text-xs font-medium line-clamp-1 ${isDarkMode ? 'text-emerald-200' : 'text-emerald-600'}`}>{category.name}</h3>
+                <h3
+                  className={`text-xs font-medium line-clamp-1 ${
+                    isDarkMode ? "text-emerald-200" : "text-emerald-600"
+                  }`}
+                >
+                  {category.name}
+                </h3>
               </div>
             </div>
           ))}
@@ -277,8 +407,15 @@ const AllProducts = () => {
         {/* Mobile filters modal */}
         {showFilters && (
           <div className="fixed inset-0 z-50 lg:hidden">
-            <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowFilters(false)}></div>
-            <div className={`absolute right-0 top-0 h-full w-80 p-4 ${isDarkMode ? 'bg-green-900' : 'bg-white'} overflow-y-auto`}>
+            <div
+              className="absolute inset-0 bg-black bg-opacity-50"
+              onClick={() => setShowFilters(false)}
+            ></div>
+            <div
+              className={`absolute right-0 top-0 h-full w-80 p-4 ${
+                isDarkMode ? "bg-green-900" : "bg-white"
+              } overflow-y-auto`}
+            >
               <button
                 className="absolute top-4 right-4 text-2xl text-emerald-400"
                 onClick={() => setShowFilters(false)}
@@ -289,27 +426,42 @@ const AllProducts = () => {
             </div>
           </div>
         )}
-        
+
         {/* Main grid layout */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Desktop filter sidebar */}
-          <div className={`hidden lg:block lg:col-span-1 ${isDarkMode ? 'bg-neutral-800' : 'bg-white'} p-4 rounded-lg shadow-lg mb-4 lg:mb-0`}>
+          <div
+            className={`hidden lg:block lg:col-span-1 ${
+              isDarkMode ? "bg-neutral-800" : "bg-white"
+            } p-4 rounded-lg shadow-lg mb-4 lg:mb-0`}
+          >
             <FilterSidebar />
           </div>
-            
+
           {/* Main Content */}
           <div className="lg:col-span-4">
             {/* Top bar for search and sort - Only visible on desktop */}
-            <div className={`hidden lg:flex flex-col md:flex-row justify-between items-center gap-4 mb-8 p-4 ${isDarkMode ? 'bg-neutral-800' : 'bg-white'} rounded-lg shadow-lg`}>
+            <div
+              className={`hidden lg:flex flex-col md:flex-row justify-between items-center gap-4 mb-8 p-4 ${
+                isDarkMode ? "bg-neutral-800" : "bg-white"
+              } rounded-lg shadow-lg`}
+            >
               {/* Search input with icon */}
               <div className="relative w-full md:w-96">
                 <input
                   type="text"
                   placeholder="Search by title or category..."
                   value={filters.searchTerm}
-                  onChange={(e) => handleFilterChange({ ...filters, searchTerm: e.target.value })}
+                  onChange={(e) =>
+                    handleFilterChange({
+                      ...filters,
+                      searchTerm: e.target.value,
+                    })
+                  }
                   className={`w-full p-3 pl-10 border border-green-200 rounded-lg shadow-sm transition-all duration-300 focus:ring-2 focus:ring-emerald-500 ${
-                    isDarkMode ? 'bg-neutral-900 text-emerald-200 placeholder-emerald-400' : 'bg-white text-black placeholder-emerald-400'
+                    isDarkMode
+                      ? "bg-neutral-900 text-emerald-200 placeholder-emerald-400"
+                      : "bg-white text-black placeholder-emerald-400"
                   }`}
                 />
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-emerald-400" />
@@ -317,16 +469,30 @@ const AllProducts = () => {
 
               {/* Sort buttons */}
               <div className="flex items-center space-x-4 w-full md:w-auto">
-                <span className="text-sm font-medium whitespace-nowrap text-emerald-600">Sort by Price:</span>
+                <span className="text-sm font-medium whitespace-nowrap text-emerald-600">
+                  Sort by Price:
+                </span>
                 <button
-                  onClick={() => handleFilterChange({ ...filters, sortPrice: 'lowToHigh' })}
-                  className={`p-2 rounded-lg ${filters.sortPrice === 'lowToHigh' ? 'bg-emerald-600 text-white' : 'bg-green-100 text-black'} transition duration-200`}
+                  onClick={() =>
+                    handleFilterChange({ ...filters, sortPrice: "lowToHigh" })
+                  }
+                  className={`p-2 rounded-lg ${
+                    filters.sortPrice === "lowToHigh"
+                      ? "bg-emerald-600 text-white"
+                      : "bg-green-100 text-black"
+                  } transition duration-200`}
                 >
                   Low to High
                 </button>
                 <button
-                  onClick={() => handleFilterChange({ ...filters, sortPrice: 'highToLow' })}
-                  className={`p-2 rounded-lg ${filters.sortPrice === 'highToLow' ? 'bg-emerald-600 text-white' : 'bg-green-100 text-black'} transition duration-200`}
+                  onClick={() =>
+                    handleFilterChange({ ...filters, sortPrice: "highToLow" })
+                  }
+                  className={`p-2 rounded-lg ${
+                    filters.sortPrice === "highToLow"
+                      ? "bg-emerald-600 text-white"
+                      : "bg-green-100 text-black"
+                  } transition duration-200`}
                 >
                   High to Low
                 </button>
@@ -344,20 +510,45 @@ const AllProducts = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className={`${isDarkMode ? 'bg-neutral-800' : 'bg-white'} p-4 rounded-lg shadow-md`}
+                      className={`${
+                        isDarkMode ? "bg-neutral-800" : "bg-white"
+                      } p-4 rounded-lg shadow-md`}
                     >
-                      <div className={`${isDarkMode ? 'bg-neutral-900' : 'bg-emerald-100'} h-48 mb-4 rounded animate-pulse`}></div>
-                      <div className={`${isDarkMode ? 'bg-neutral-900' : 'bg-emerald-100'} h-4 w-3/4 mb-2 rounded animate-pulse`}></div>
-                      <div className={`${isDarkMode ? 'bg-neutral-900' : 'bg-emerald-100'} h-4 w-1/2 rounded animate-pulse`}></div>
+                      <div
+                        className={`${
+                          isDarkMode ? "bg-neutral-900" : "bg-emerald-100"
+                        } h-48 mb-4 rounded animate-pulse`}
+                      ></div>
+                      <div
+                        className={`${
+                          isDarkMode ? "bg-neutral-900" : "bg-emerald-100"
+                        } h-4 w-3/4 mb-2 rounded animate-pulse`}
+                      ></div>
+                      <div
+                        className={`${
+                          isDarkMode ? "bg-neutral-900" : "bg-emerald-100"
+                        } h-4 w-1/2 rounded animate-pulse`}
+                      ></div>
                     </motion.div>
                   ))
                 ) : productsData?.products?.length === 0 ? (
                   // No products found message
                   <div className="col-span-full flex flex-col justify-center items-center">
-                    <div className={`text-center ${isDarkMode ? 'text-emerald-400' : 'text-black'}`}>
-                      <h3 className="text-3xl font-bold mb-4">Oops! No Products Found</h3>
-                      <p className="text-lg">We couldn&apos;t find any products matching your criteria.</p>
-                      <p className="mt-2">Please try adjusting your filters or search terms.</p>
+                    <div
+                      className={`text-center ${
+                        isDarkMode ? "text-emerald-400" : "text-black"
+                      }`}
+                    >
+                      <h3 className="text-3xl font-bold mb-4">
+                        Oops! No Products Found
+                      </h3>
+                      <p className="text-lg">
+                        We couldn&apos;t find any products matching your
+                        criteria.
+                      </p>
+                      <p className="mt-2">
+                        Please try adjusting your filters or search terms.
+                      </p>
                     </div>
                   </div>
                 ) : (
@@ -379,31 +570,37 @@ const AllProducts = () => {
 
             {/* Pagination controls */}
             <div className="mt-10 flex flex-wrap justify-center items-center gap-2">
-              {[...Array(productsData?.pagination.totalPage || 1)].map((_, idx) => {
-                const pageNumber = idx + 1;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setCurrentPage(pageNumber);
-                      const newParams = new URLSearchParams(searchParams);
-                      newParams.set('page', pageNumber);
-                      setSearchParams(newParams);
-                    }}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      pageNumber === currentPage
-                        ? isDarkMode
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-green-900 text-white'
-                        : isDarkMode
-                        ? 'bg-green-900 text-emerald-200 hover:bg-emerald-900'
-                        : 'bg-white text-black hover:bg-emerald-100'
-                    } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''} border ${isDarkMode ? 'border-emerald-900' : 'border-emerald-200'}`}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              })}
+              {[...Array(productsData?.pagination.totalPage || 1)].map(
+                (_, idx) => {
+                  const pageNumber = idx + 1;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setCurrentPage(pageNumber);
+                        const newParams = new URLSearchParams(searchParams);
+                        newParams.set("page", pageNumber);
+                        setSearchParams(newParams);
+                      }}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        pageNumber === currentPage
+                          ? isDarkMode
+                            ? "bg-emerald-600 text-white"
+                            : "bg-green-900 text-white"
+                          : isDarkMode
+                          ? "bg-green-900 text-emerald-200 hover:bg-emerald-900"
+                          : "bg-white text-black hover:bg-emerald-100"
+                      } ${
+                        isLoading ? "opacity-50 cursor-not-allowed" : ""
+                      } border ${
+                        isDarkMode ? "border-emerald-900" : "border-emerald-200"
+                      }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                }
+              )}
             </div>
           </div>
         </div>

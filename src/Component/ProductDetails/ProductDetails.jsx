@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {  useParams } from 'react-router-dom';
-import { FaShoppingCart, FaHeart, FaExclamationTriangle, FaSearch, FaShippingFast, FaShieldAlt, FaUndo } from 'react-icons/fa';
+import { FaShoppingCart, FaHeart, FaExclamationTriangle, FaSearch, FaShippingFast, FaShieldAlt, FaUndo, FaStar, FaCheck } from 'react-icons/fa';
 import { TbCurrencyTaka } from 'react-icons/tb';
 import { useGetProductByIdQuery } from '../../redux/api/ProductApi';
 import RelatedProducts from './RelatedProducts';
@@ -12,6 +12,8 @@ import { useTheme } from '../../ThemeContext';
 import ProductImages from './ProductImages';
 import { Helmet } from 'react-helmet';
 import CheckoutForm from '../Checkout/CheckOutForm';
+import { motion } from 'framer-motion';
+
 // import { use } from 'react';
 
 const ProductView = () => {
@@ -189,60 +191,83 @@ const ProductView = () => {
         <meta name="keywords" content={`${product.basicInfo.category}, ${product.basicInfo.brand}, ${product?.tag}`} />
       </Helmet>
 
-      <div className={`min-h-screen  ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50'}`}>
-        {/* Breadcrumb */}
-        <div className="bg-white dark:bg-gray-800 shadow-sm">
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'}`}>
+        {/* Breadcrumb with gradient */}
+        <div className={`${isDarkMode ? 'bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm'} shadow-sm border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4 container">
             <nav className="flex items-center space-x-2 text-sm">
-              <a href="/" className="text-orange-600 dark:text-orange-400 hover:underline">Home</a>
-              <span className="text-gray-400">/</span>
-              <a href={`/shop?category=${encodeURIComponent(product.basicInfo.category)}`} className="text-orange-600 dark:text-orange-400 hover:underline">
+              <a href="/" className="text-orange-500 hover:text-orange-600 transition-colors font-medium">Home</a>
+              <span className={isDarkMode ? 'text-gray-600' : 'text-gray-400'}>/</span>
+              <a href={`/shop?category=${encodeURIComponent(product.basicInfo.category)}`} className="text-orange-500 hover:text-orange-600 transition-colors font-medium">
                 {product.basicInfo.category}
               </a>
-              <span className="text-gray-400">/</span>
-              <span className="text-gray-500">{product.basicInfo.title}</span>
+              <span className={isDarkMode ? 'text-gray-600' : 'text-gray-400'}>/</span>
+              <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>{product.basicInfo.title}</span>
             </nav>
           </div>
         </div>
 
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 container">
-          {/* Main Product Section */}
-          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl min-h-[600px] overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
+          {/* Main Product Section with glassmorphism */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className={`${isDarkMode ? 'bg-gray-800/50 backdrop-blur-xl border border-gray-700/50' : 'bg-white/70 backdrop-blur-xl border border-white/50'} shadow-2xl rounded-2xl overflow-hidden`}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
               {/* Left Column - Product Images */}
-              <div className="p-6 dark:border-gray-700 lg:border-r">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="relative"
+              >
                 <ProductImages images={product.images} currentImage={currentImage} />
-              </div>
+              </motion.div>
 
               {/* Right Column - Product Info */}
-              <div className="space-y-6 p-6">
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="space-y-6"
+              >
                 {/* Basic Info */}
                 <div>
-                  <h1 className="font-bold text-2xl sm:text-3xl">{product.basicInfo.title}</h1>
-                  <div className="flex items-center space-x-4 mt-2 text-sm">
-                    <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                      Brand: {product.basicInfo.brand}
+                  <h1 className={`font-bold text-3xl sm:text-4xl mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'} leading-tight`}>
+                    {product.basicInfo.title}
+                  </h1>
+                  <div className="flex items-center flex-wrap gap-3 mt-4">
+                    <span className={`${isDarkMode ? 'bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-500/30 text-orange-400' : 'bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 text-orange-700'} px-4 py-2 rounded-full text-sm font-semibold`}>
+                      {product.basicInfo.brand}
                     </span>
-                    <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                      Category: {product.basicInfo.category}
+                    <span className={`${isDarkMode ? 'bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-500/30 text-blue-400' : 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 text-blue-700'} px-4 py-2 rounded-full text-sm font-semibold`}>
+                      {product.basicInfo.category}
                     </span>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} className="text-yellow-400 text-sm" />
+                      ))}
+                      <span className={`ml-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>(4.8)</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Price Section */}
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center font-bold text-orange-600 dark:text-orange-400 text-3xl">
-                      <TbCurrencyTaka className="text-3xl" />
+                {/* Price Section with gradient */}
+                <div className={`${isDarkMode ? 'bg-gradient-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20' : 'bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200'} p-6 rounded-2xl`}>
+                  <div className="flex items-center flex-wrap gap-4">
+                    <div className="flex items-center font-bold text-orange-500 dark:text-orange-400 text-4xl">
+                      <TbCurrencyTaka className="text-4xl" />
                       <span>{currentPrice}</span>
                     </div>
                     {product.price.discounted < product.price.regular && (
                       <>
-                        <div className="flex items-center text-gray-400 text-xl line-through">
+                        <div className={`flex items-center ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-xl line-through`}>
                           <TbCurrencyTaka />
                           <span>{product.price.regular}</span>
                         </div>
-                        <span className="bg-green-100 dark:bg-green-900 px-3 py-1 rounded-full font-medium text-green-800 dark:text-green-200 text-sm">
+                        <span className="bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-2 rounded-full font-bold text-white text-sm shadow-lg">
                           {Math.round(((product.price.regular - product.price.discounted) / product.price.regular) * 100)}% OFF
                         </span>
                       </>
@@ -253,24 +278,28 @@ const ProductView = () => {
                 {/* Variants Section */}
                 {product.variants?.map((variantGroup) => (
                   <div key={variantGroup.group} className="space-y-3">
-                    <h3 className="font-medium text-gray-700 dark:text-gray-300">{variantGroup.group}</h3>
-                    <div className="flex flex-wrap gap-2">
+                    <h3 className={`font-semibold text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                      {variantGroup.group}
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
                       {variantGroup.items.map((variant) => (
                         <button
                           key={variant.value}
                           onClick={() => handleVariantSelect(variantGroup.group, variant)}
-                          className={`px-4 py-2 rounded-lg transition-all ${
+                          className={`px-5 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 ${
                             selectedVariants.get(variantGroup.group)?.value === variant.value
-                              ? 'bg-orange-600 text-white'
-                              : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                              ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/50'
+                              : isDarkMode 
+                                ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 border border-gray-600'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
                           }`}
                         >
                           {variant.value}
                           {variant.price > 0 && (
-                            <span className={`ml-1 text-sm ${
+                            <span className={`ml-2 text-xs ${
                               selectedVariants.get(variantGroup.group)?.value === variant.value
-                                ? 'text-orange-200'
-                                : 'text-gray-500 dark:text-gray-400'
+                                ? 'text-orange-100'
+                                : isDarkMode ? 'text-gray-500' : 'text-gray-500'
                             }`}>
                               +৳{variant.price}
                             </span>
@@ -283,123 +312,164 @@ const ProductView = () => {
 
                 {/* Quantity Section */}
                 <div className="flex items-center space-x-4">
-                  <span className="font-medium text-gray-700 dark:text-gray-300">Quantity:</span>
-                  <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg">
+                  <span className={`font-semibold text-lg ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Quantity:</span>
+                  <div className={`flex items-center ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-100 border border-gray-300'} rounded-xl overflow-hidden`}>
                     <button
                       onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                      className="hover:bg-gray-200 dark:hover:bg-gray-600 px-4 py-2 rounded-l-lg text-orange-600 dark:text-orange-400"
+                      className={`${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-200'} px-5 py-3 text-orange-500 font-bold text-xl transition-colors`}
                     >
                       -
                     </button>
-                    <span className="px-6 py-2 font-medium">{quantity}</span>
+                    <span className={`px-8 py-3 font-bold text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{quantity}</span>
                     <button
                       onClick={() => setQuantity(q => q + 1)}
-                      className="hover:bg-gray-200 dark:hover:bg-gray-600 px-4 py-2 rounded-r-lg text-orange-600 dark:text-orange-400"
+                      className={`${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-200'} px-5 py-3 text-orange-500 font-bold text-xl transition-colors`}
                     >
                       +
                     </button>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Action Buttons with gradients */}
                 <div className="gap-4 grid grid-cols-2">
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={handleAddToCart}
-                    className="flex justify-center items-center space-x-2 bg-orange-600 hover:bg-orange-700 px-6 py-3 rounded-lg text-white transition-colors"
+                    className="flex justify-center items-center space-x-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 px-6 py-4 rounded-xl text-white font-semibold shadow-lg shadow-orange-500/30 transition-all duration-300"
                   >
-                    <FaShoppingCart />
+                    <FaShoppingCart className="text-lg" />
                     <span>Add to Cart</span>
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={handleOrderNow}
-                    className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white transition-colors"
+                    className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-6 py-4 rounded-xl text-white font-semibold shadow-lg shadow-green-500/30 transition-all duration-300"
                   >
                     Buy Now
-                  </button>
+                  </motion.button>
                 </div>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
                   onClick={handleWishlist}
-                  className={`w-full flex items-center justify-center space-x-2 py-3 rounded-lg transition-colors ${
+                  className={`w-full flex items-center justify-center space-x-2 py-4 rounded-xl font-semibold transition-all duration-300 ${
                     isInWishlist
-                      ? 'bg-red-50 dark:bg-red-900 text-red-600 dark:text-red-400'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                      ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg shadow-red-500/30'
+                      : isDarkMode
+                        ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 border border-gray-600'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
                   }`}
                 >
-                  <FaHeart />
+                  <FaHeart className="text-lg" />
                   <span>{isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}</span>
-                </button>
+                </motion.button>
 
-                {/* Features */}
-                <div className="gap-4 grid grid-cols-3 pt-6 dark:border-gray-700 border-t">
-                  <div className="flex flex-col items-center space-y-2 text-center">
-                    <FaShippingFast className="text-orange-500 text-2xl" />
-                    <span className="text-sm">Fast Delivery</span>
+                {/* Features with icons */}
+                <div className={`gap-4 grid grid-cols-3 pt-6 ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} border-t`}>
+                  <div className="flex flex-col items-center space-y-2 text-center group">
+                    <div className={`${isDarkMode ? 'bg-orange-500/20' : 'bg-orange-100'} p-4 rounded-xl group-hover:scale-110 transition-transform duration-300`}>
+                      <FaShippingFast className="text-orange-500 text-2xl" />
+                    </div>
+                    <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Fast Delivery</span>
                   </div>
-                  <div className="flex flex-col items-center space-y-2 text-center">
-                    <FaShieldAlt className="text-orange-500 text-2xl" />
-                    <span className="text-sm">Secure Payment</span>
+                  <div className="flex flex-col items-center space-y-2 text-center group">
+                    <div className={`${isDarkMode ? 'bg-orange-500/20' : 'bg-orange-100'} p-4 rounded-xl group-hover:scale-110 transition-transform duration-300`}>
+                      <FaShieldAlt className="text-orange-500 text-2xl" />
+                    </div>
+                    <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Secure Payment</span>
                   </div>
-                  <div className="flex flex-col items-center space-y-2 text-center">
-                    <FaUndo className="text-orange-500 text-2xl" />
-                    <span className="text-sm">Easy Returns</span>
+                  <div className="flex flex-col items-center space-y-2 text-center group">
+                    <div className={`${isDarkMode ? 'bg-orange-500/20' : 'bg-orange-100'} p-4 rounded-xl group-hover:scale-110 transition-transform duration-300`}>
+                      <FaUndo className="text-orange-500 text-2xl" />
+                    </div>
+                    <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Easy Returns</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Product Details Sections */}
           <div className="gap-8 grid grid-cols-1 lg:grid-cols-2 mt-8">
             {/* Description Section */}
-            <div className="bg-white dark:bg-gray-800 shadow-lg p-6 rounded-xl">
-              <h2 className="mb-4 font-bold text-xl">Product Description</h2>
-              <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className={`${isDarkMode ? 'bg-gray-800/50 backdrop-blur-xl border border-gray-700/50' : 'bg-white/70 backdrop-blur-xl border border-white/50'} shadow-xl p-8 rounded-2xl`}
+            >
+              <h2 className={`mb-6 font-bold text-2xl ${isDarkMode ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
+                <span className="w-1 h-8 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full"></span>
+                Product Description
+              </h2>
+              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} whitespace-pre-wrap leading-relaxed`}>
                 {product.basicInfo.description}
               </p>
-            </div>
+            </motion.div>
 
             {/* Key Features Section */}
-            
             {product.basicInfo.keyFeatures && product.basicInfo.keyFeatures.length > 0 && (
-              <div className="bg-white dark:bg-gray-800 shadow-lg p-6 rounded-xl">
-                <h2 className="mb-4 font-bold text-xl">Key Features</h2>
-                <ul className="space-y-3">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className={`${isDarkMode ? 'bg-gray-800/50 backdrop-blur-xl border border-gray-700/50' : 'bg-white/70 backdrop-blur-xl border border-white/50'} shadow-xl p-8 rounded-2xl`}
+              >
+                <h2 className={`mb-6 font-bold text-2xl ${isDarkMode ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
+                  <span className="w-1 h-8 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full"></span>
+                  Key Features
+                </h2>
+                <ul className="space-y-4">
                   {product.basicInfo.keyFeatures.map((feature, index) => (
-                    <li 
-                      key={index} 
-                      className="flex items-start space-x-2 text-gray-600 dark:text-gray-300"
+                    <motion.li 
+                      key={index}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
+                      className={`flex items-start space-x-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
                     >
-                      <span className="mt-1 text-orange-500">•</span>
-                      <span>{feature}</span>
-                    </li>
+                      <FaCheck className="mt-1 text-orange-500 flex-shrink-0"
+                      />
+                      <span className="leading-relaxed">{feature}</span>
+                    </motion.li>
                   ))}
                 </ul>
-              </div>
+              </motion.div>
             )}
           </div>
 
           {/* Specifications Section */}
           {product.specifications?.length > 0 && (
-            <div className="mt-8">
-              <div className="bg-white dark:bg-gray-800 shadow-lg p-6 rounded-xl">
-                <h2 className="mb-4 font-bold text-xl">Specifications</h2>
-                <div className="space-y-6">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="mt-8"
+            >
+              <div className={`${isDarkMode ? 'bg-gray-800/50 backdrop-blur-xl border border-gray-700/50' : 'bg-white/70 backdrop-blur-xl border border-white/50'} shadow-xl p-8 rounded-2xl`}>
+                <h2 className={`mb-6 font-bold text-2xl ${isDarkMode ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
+                  <span className="w-1 h-8 bg-gradient-to-b from-orange-500 to-orange-600 rounded-full"></span>
+                  Specifications
+                </h2>
+                <div className="space-y-8">
                   {product.specifications.map((specGroup, index) => (
                     <div key={index}>
-                      <h3 className="mb-3 font-semibold text-orange-600 dark:text-orange-400 text-lg">
+                      <h3 className="mb-4 font-semibold text-orange-500 dark:text-orange-400 text-xl">
                         {specGroup.group}
                       </h3>
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {specGroup.items.map((spec, sIndex) => (
                           <div 
                             key={sIndex} 
-                            className="flex justify-between py-2 border-gray-200 dark:border-gray-700 border-b"
+                            className={`flex justify-between py-3 ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} border-b last:border-0 hover:bg-orange-500/5 px-4 rounded-lg transition-colors duration-200`}
                           >
-                            <span className="text-gray-600 dark:text-gray-400">
+                            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} font-medium`}>
                               {spec.name}
                             </span>
-                            <span className="font-medium">
+                            <span className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                               {spec.value}
                             </span>
                           </div>
@@ -409,17 +479,22 @@ const ProductView = () => {
                   ))}
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* Related Products */}
           {product && (
-            <div className="mt-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="mt-8"
+            >
               <RelatedProducts 
                 relatedProducts={product?.relatedProducts} 
                 currentProduct={product}
               />
-            </div>
+            </motion.div>
           )}
         </div>
       </div>
